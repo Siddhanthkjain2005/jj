@@ -1,0 +1,16 @@
+{
+  "file": "VelocityVerse/velocityverse.html",
+  "errors": [],
+  "renderer": true,
+  "clean": {
+    "black": 0,
+    "white": 0,
+    "glErrors": []
+  },
+  "hdrProbe": true,
+  "poisoned": {
+    "black": 0,
+    "white": 0,
+    "glErrors": []
+  }
+}

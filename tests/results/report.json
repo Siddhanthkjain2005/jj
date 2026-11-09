@@ -1,0 +1,514 @@
+{
+  "summary": {
+    "date": "2026-11-09T04:36:17.824Z",
+    "node": "v18.20.8",
+    "platform": "darwin arm64",
+    "dt": 0.008333333333333333,
+    "passed": 34,
+    "total": 34,
+    "seconds": 6.848,
+    "goldenRows": 161
+  },
+  "results": [
+    {
+      "name": "Acceleration: 0–100 km/h",
+      "pass": true,
+      "expected": "2.3–3.8 s (fictional open-wheel target, traction-limited launch with TCS)",
+      "measured": "3.21 s",
+      "detects": "Torque curve, gearing, launch clutch, TCS and wheel-spin stability errors"
+    },
+    {
+      "name": "Acceleration: 0–200 km/h and 400 m",
+      "pass": true,
+      "expected": "0–200 km/h in 5.5–10 s; 400 m time reported",
+      "measured": "0–200: 6.66 s, 400 m: 9.93 s",
+      "detects": "Drag/power balance and shift logic"
+    },
+    {
+      "name": "Acceleration: top speed vs power/drag balance",
+      "pass": true,
+      "expected": "within ±3% of analytic 306.8 km/h",
+      "measured": "305.0 km/h (-0.58%)",
+      "detects": "Units errors in drag, efficiency, gear ratios or wheel radius"
+    },
+    {
+      "name": "Acceleration: no speed loss during shifts",
+      "pass": true,
+      "expected": "speed drop per step < 0.25 m/s",
+      "measured": "0.037 m/s worst",
+      "detects": "Torque spikes or reversed forces at gear changes"
+    },
+    {
+      "name": "Braking: 200–0 km/h with ABS vs ideal",
+      "pass": true,
+      "expected": "74.0–96.2 m (ideal = peak grip at average load, an upper bound on deceleration)",
+      "measured": "78.2 m in 3.17 s, peak 2.64 g, locked-wheel steps above 3 m/s: 0",
+      "detects": "Brake torque, bias, ABS and downforce errors"
+    },
+    {
+      "name": "Braking: ABS off locks wheels and stops longer",
+      "pass": true,
+      "expected": "lock-ups occur and distance exceeds the ABS run",
+      "measured": "86.3 m, locked-wheel steps: 373",
+      "detects": "Missing lock-up or post-peak tire behaviour"
+    },
+    {
+      "name": "Braking: no creep or jitter at standstill",
+      "pass": true,
+      "expected": "after a 0.5 s settle: speed < 0.02 m/s with brake held, and with brake released for 5 s",
+      "measured": "held 0.0000 m/s, released 0.0010 m/s; tire spring-back in the first 0.5 s peaks at 0.351 m/s; guard trips 0",
+      "detects": "Low-speed tire singularities and numerical creep"
+    },
+    {
+      "name": "Coast-down: recovered drag area",
+      "pass": true,
+      "expected": "CdA within ±5% of 1 m²",
+      "measured": "0.997 m² from 276 samples",
+      "detects": "Drag formula, density or mass errors"
+    },
+    {
+      "name": "Coast-down: recovered rolling resistance",
+      "pass": true,
+      "expected": "Crr within ±10% of 0.012",
+      "measured": "0.0122",
+      "detects": "Rolling resistance or wheel-torque errors"
+    },
+    {
+      "name": "Coast-down in vacuum: no aerodynamic drag",
+      "pass": true,
+      "expected": "deceleration independent of speed and ≈ rolling resistance only (0.112 m/s²)",
+      "measured": "vacuum: 0.112 m/s² at 250 km/h, 0.112 m/s² at 90 km/h; with air at 250 km/h: 2.82 m/s²",
+      "detects": "Aero forces that ignore air density"
+    },
+    {
+      "name": "Constant radius (R = 50 m): limit lateral acceleration",
+      "pass": true,
+      "expected": "1.57–2.01 g (prediction 1.97 g ignores load-transfer and drive-force losses)",
+      "measured": "1.75 g (0.5 s filtered, path error < 2 m); path lost at 108.5 km/h",
+      "detects": "Tire peak, load sensitivity and downforce coupling errors"
+    },
+    {
+      "name": "Constant radius: stable understeer balance",
+      "pass": true,
+      "expected": "understeer gradient ≥ −0.02 °/(m/s²); sideslip < 6° while on the path",
+      "measured": "K = 0.022 °/(m/s²), max sideslip 2.32°",
+      "detects": "Unstable oversteer from weight transfer or sign errors"
+    },
+    {
+      "name": "Worlds: lower gravity does not add grip (Halcyon Ring 0.7 g)",
+      "pass": true,
+      "expected": "max lateral acceleration lower than on Earth-gravity Lumen Harbor",
+      "measured": "1.18 g vs 1.75 g (prediction 1.37 g)",
+      "detects": "Grip that ignores normal load"
+    },
+    {
+      "name": "Slalom (80 km/h, 0.6 Hz, ±2°): bounded, settles",
+      "pass": true,
+      "expected": "peak lateral < 1.2 g; yaw rate < 0.01 rad/s within 2 s after input stops",
+      "measured": "peak 0.52 g, peak yaw rate 0.238 rad/s, settle 0.05 s",
+      "detects": "Under-damped yaw modes or divergence"
+    },
+    {
+      "name": "Slalom: yaw response lag",
+      "pass": true,
+      "expected": "yaw-rate peak follows steer peak by 0–0.25 s",
+      "measured": "0.048 s average over 4 peaks",
+      "detects": "Excess tire relaxation or missing transient response"
+    },
+    {
+      "name": "Curb strike at 150 km/h (right wheels on a 25 mm curb)",
+      "pass": true,
+      "expected": "max compression < 65 mm, loads 0–16 kN (≈4× an aero-loaded corner), heading error < 4°, yaw rate < 0.3 rad/s",
+      "measured": "comp 29.4 mm, load 703–4833 N, heading err 0.13°, yaw 0.006 rad/s, curb contact steps 11003",
+      "detects": "Excessive impulses, bump-stop explosions, instability on curbs"
+    },
+    {
+      "name": "Curb at 15 m/s with ridges (band-limited)",
+      "pass": true,
+      "expected": "same limits with ridge vibration active",
+      "measured": "comp 22.7 mm, load 0–4855 N, heading err 0.03°",
+      "detects": "Aliasing or resonance from curb ridges"
+    },
+    {
+      "name": "Curb changes wheel loads measurably",
+      "pass": true,
+      "expected": "left/right rear load difference larger on the curb than on flat asphalt",
+      "measured": "129 N vs 1 N",
+      "detects": "Curbs that have no physical effect"
+    },
+    {
+      "name": "Barrier impact 30° at 150 km/h",
+      "pass": true,
+      "expected": "no energy gain; penetration < 0.05 m from 4 steps after contact; outgoing normal speed ≤ 0.3 × incoming + 1 m/s; yaw rate < 6 rad/s",
+      "measured": "KE 660 → 180 kJ; peak pen 0.005 m, later 0.005 m; normal speed 19.34 → 0.41 m/s; yaw 5.94 rad/s",
+      "detects": "Excessive collision impulses, energy injection, sinking into walls"
+    },
+    {
+      "name": "Tunneling: head-on at 90 m/s",
+      "pass": true,
+      "expected": "car centre never passes the barrier; penetration < 0.05 m after resolution",
+      "measured": "CG margin 2.15 m inside; peak pen 0.005 m, later 0.005 m",
+      "detects": "Tunneling through thin geometry at high speed"
+    },
+    {
+      "name": "Low speed: 60 s at rest, no input",
+      "pass": true,
+      "expected": "speed < 0.001 m/s, yaw rate < 1e-4 rad/s, drift < 1 cm",
+      "measured": "speed 0.00e+0 m/s, yaw rate 0.00e+0 rad/s, drift 0.000 mm, yaw drift 0.00e+0 rad",
+      "detects": "Numerical creep and jitter at rest"
+    },
+    {
+      "name": "Low speed: smooth creep with 5% throttle",
+      "pass": true,
+      "expected": "acceleration does not oscillate (≤ 2 sign changes); car moves",
+      "measured": "speed after 6 s 3.82 m/s, sign changes 0, max rear slip 0.004",
+      "detects": "Low-speed slip oscillation (the classic 1/v instability)"
+    },
+    {
+      "name": "Frame-rate independence (30/60/90/144 FPS, jitter)",
+      "pass": true,
+      "expected": "bit-identical final state for every render rate",
+      "measured": "identical: x=6.893213, z=666.305302",
+      "detects": "Simulation coupled to render frame time"
+    },
+    {
+      "name": "Timestep convergence: 120 Hz vs 240 Hz (physics only)",
+      "pass": true,
+      "expected": "speed within 1%, position within 2 m after a 15 s manoeuvre with ABS/TCS off and no wheelspin or lock-up",
+      "measured": "speed diff 0.276% (vs 480 Hz: 0.416%), position diff 0.403 m",
+      "detects": "Results that depend on the step size"
+    },
+    {
+      "name": "Repeatability (same machine, same inputs)",
+      "pass": true,
+      "expected": "bit-identical; cross-device determinism is not claimed",
+      "measured": "identical",
+      "detects": "Hidden state or randomness in the simulation"
+    },
+    {
+      "name": "Worlds: braking 100–0 km/h",
+      "pass": true,
+      "expected": "longer on 0.7 g Halcyon Ring and in vacuum (no downforce, no drag) than on Lumen Harbor",
+      "measured": "Lumen 24.6 m, Halcyon 35.1 m, vacuum 27.1 m",
+      "detects": "World rules that do not reach the vehicle physics"
+    },
+    {
+      "name": "Integration: Rookie preset lap (bot steers only; assists handle throttle/brake)",
+      "pass": true,
+      "expected": "2 valid timed laps, no barrier contact",
+      "measured": "49.947 s valid; 49.742 s valid; impacts 0",
+      "detects": "Broken assists, lap timing, checkpoints or track limits"
+    },
+    {
+      "name": "Integration: Racer preset lap (bot steers, throttles and brakes)",
+      "pass": true,
+      "expected": "2 valid laps; reference profile lap 47.12 s",
+      "measured": "50.151 s valid; 49.950 s valid; impacts 0",
+      "detects": "Speed-profile, braking or stability problems over a full lap"
+    },
+    {
+      "name": "CPU cost per step (this container: x86-64, Node V8 — not a phone measurement)",
+      "pass": true,
+      "expected": "< 50 µs per car-step here; device budget is 1.5 ms per frame for 8 cars at 120 Hz (measure in M1)",
+      "measured": "full stack 11.44 µs/step (vehicle only 12.05 µs) → 0.183 ms per 60 FPS frame for 8 cars",
+      "detects": "Simulation too expensive for the frame budget"
+    },
+    {
+      "name": "Car contact: momentum conserved, energy dissipated (oblique rear-end, 20 m/s closing)",
+      "pass": true,
+      "expected": "linear and angular momentum change < 1e-9 (relative); kinetic energy falls; overlap reduced",
+      "measured": "contacts 1; Δp 1.7e-18; ΔL 3.2e-16; KE 444.1 → 381.6 kJ; overlap 17.4 → 1.0 cm",
+      "detects": "Impulses that create or destroy momentum, or inject energy"
+    },
+    {
+      "name": "Car contact: side-by-side squeeze at 50 m/s stays stable (no tunnelling, no spin-out)",
+      "pass": true,
+      "expected": "contact occurs; overlap < 15 cm; yaw rate < 2 rad/s; both cars keep > 35 m/s; no NaN",
+      "measured": "contact steps 54; max overlap 1.0 cm; max yaw rate 0.98 rad/s; speeds 49.6 / 49.6 m/s",
+      "detects": "Contact jitter, interpenetration or explosive separation"
+    },
+    {
+      "name": "Slipstream: following 12 m behind cuts drag and gains speed (wake model, estimated)",
+      "pass": true,
+      "expected": "drag multiplier < 0.85 at 12 m (model: up to −35% at 0 m, fading to 0 at 45 m); faster and further after 15 s of full throttle",
+      "measured": "drag ×0.766; speed after 15 s 296.9 → 319.1 km/h; +52.0 m covered",
+      "detects": "Slipstream missing, reversed, or applied to the wrong car"
+    },
+    {
+      "name": "AI field: 8 AI cars race 2 laps from a standing grid start (Harbor Loop, medium pace)",
+      "pass": true,
+      "expected": "all 8 finish; no NaN; field spread < 30 s; ≤ 1 race-control reset; ≤ 2 car impacts above 6 m/s (reference lap 47.12 s)",
+      "measured": "finished 8/8; winner 108.53 s, last 117.90 s; best lap 51.69 s; car-contact steps 1859 (impacts > 6 m/s: 0, hardest 4.7 m/s); barrier impacts 0; resets 0; order 0-1-2-3-4-5-6-7; 1.25 s CPU for 117.9 s simulated",
+      "detects": "AI that cannot complete laps, piles up, or destabilises the field"
+    },
+    {
+      "name": "AI field is deterministic (same seeds → identical race)",
+      "pass": true,
+      "expected": "identical final positions and order across two runs",
+      "measured": "identical",
+      "detects": "Hidden randomness or order dependence (would break replays and the Unity port comparison)"
+    }
+  ],
+  "metrics": {
+    "acceleration": {
+      "t100": 3.2083333333333246,
+      "t200": 6.658333333333454,
+      "t400m": 9.93333333333341,
+      "vMax": 84.7225812992669
+    },
+    "braking": {
+      "on": {
+        "v0": 55.06912638990402,
+        "stopT": 3.166666666666522,
+        "stopS": 78.21923602014363,
+        "peakDecel": 2.6445475614835847,
+        "lockSteps": 0,
+        "maxVHold": 0.00003898708345065078,
+        "maxVRelease": 0.0009694850459890194,
+        "rockBack": 0.35092515150488707,
+        "guard": 0
+      },
+      "off": {
+        "v0": 55.06912638990402,
+        "stopT": 3.416666666666508,
+        "stopS": 86.30229212321444,
+        "peakDecel": 2.6246049542173417,
+        "lockSteps": 373,
+        "maxVHold": 0.00007121970762510627,
+        "maxVRelease": 0.001511346620391215,
+        "rockBack": 0.3424323943127757,
+        "guard": 0
+      },
+      "ideal": 73.96356778751395
+    },
+    "coast": {
+      "cdA": 0.9968429063981907,
+      "crr": 0.012160068417765086,
+      "vacuum": {
+        "vHi": 0.11177911424161617,
+        "vLo": 0.11177896012518455
+      },
+      "air": 2.8191590822630856
+    },
+    "skidpad": {
+      "lumen": {
+        "maxLatSteady": 1.7539486199800982,
+        "lostAt": 30.136991064944915,
+        "K": 0.022087299179445827,
+        "maxBeta": 2.319376462927153,
+        "guard": 0
+      },
+      "pred": 1.9657357898002743,
+      "halcyon": {
+        "maxLatSteady": 1.1759936104603204,
+        "lostAt": 24.725459684357887,
+        "K": 0.034925674784437644,
+        "maxBeta": 2.645472803743138,
+        "guard": 0
+      }
+    },
+    "slalom": {
+      "peakAy": 0.5154003713248615,
+      "peakR": 0.23846472978459424,
+      "settle": 0.05,
+      "lag": 0.047916666666665275
+    },
+    "curbs": {
+      "fast": {
+        "maxComp": 0.029421914067431665,
+        "maxLoad": 4833.479934358373,
+        "minLoad": 702.7786618976895,
+        "maxHeadErr": 0.13291071570839533,
+        "maxR": 0.006346242813780893,
+        "rmsDiff": 129.20732872965408,
+        "curbSteps": 11003,
+        "static0": 0.015771461538461543,
+        "guard": 0,
+        "travel": 0.05
+      },
+      "fastRef": {
+        "maxComp": 0.022294189176373956,
+        "maxLoad": 2899.6722069281354,
+        "minLoad": 2194.397205339056,
+        "maxHeadErr": 0.046011925376895885,
+        "maxR": 0.0018540539091676212,
+        "rmsDiff": 1.0093552817560607,
+        "curbSteps": 0,
+        "static0": 0.015771461538461543,
+        "guard": 0,
+        "travel": 0.05
+      },
+      "slow": {
+        "maxComp": 0.02274777468266787,
+        "maxLoad": 4854.697557886213,
+        "minLoad": 0,
+        "maxHeadErr": 0.02566358533310398,
+        "maxR": 0.001498500983177057,
+        "rmsDiff": 1737.715942696399,
+        "curbSteps": 30542,
+        "static0": 0.015771461538461543,
+        "guard": 0,
+        "travel": 0.05
+      }
+    },
+    "collisions": {
+      "a": {
+        "KE0": 659722.2222222222,
+        "KE1": 179772.44394627184,
+        "maxPen": 0.005000000000000782,
+        "maxPenAfter": 0.005000000000000782,
+        "maxR": 5.94456712874241,
+        "vnIn": -19.336125795105684,
+        "vnOut": 0.40709855755573204,
+        "maxCgD": -1.0107487082711062,
+        "contacted": true,
+        "guard": 0
+      },
+      "b": {
+        "KE0": 3078000,
+        "KE1": 4582.443601640891,
+        "maxPen": 0.004999999999999005,
+        "maxPenAfter": 0.004999999999999005,
+        "maxR": 9.512174770979431e-15,
+        "vnIn": -89.83701926410934,
+        "vnOut": 3.4726160325583493,
+        "maxCgD": -2.1450000000000005,
+        "contacted": true,
+        "guard": 0
+      }
+    },
+    "lowSpeed": {
+      "maxV": 0,
+      "maxR": 0,
+      "drift": 0
+    },
+    "frameRate": {
+      "same": true,
+      "dv": 0.0027597523988219085,
+      "dp": 0.4028936668457082
+    },
+    "worlds": {
+      "L": 24.56314284916624,
+      "H": 35.090974953956106,
+      "V": 27.096413008439455
+    },
+    "bots": {
+      "rookie": {
+        "laps": [
+          {
+            "time": 49.946706699418094,
+            "valid": true,
+            "reason": "",
+            "sectors": [
+              16.193583736953997,
+              15.159875704020088,
+              18.59324725844401
+            ]
+          },
+          {
+            "time": 49.741944947331646,
+            "valid": true,
+            "reason": "",
+            "sectors": [
+              15.989019076482336,
+              15.159794571502658,
+              18.593131299346652
+            ]
+          }
+        ],
+        "impacts": 0,
+        "guard": 0,
+        "refLap": 47.11561585950983
+      },
+      "racer": {
+        "laps": [
+          {
+            "time": 50.150569996895676,
+            "valid": true,
+            "reason": "",
+            "sectors": [
+              16.27146969524833,
+              15.239241051432078,
+              18.639859250215267
+            ]
+          },
+          {
+            "time": 49.949519664142855,
+            "valid": true,
+            "reason": "",
+            "sectors": [
+              16.065834303432283,
+              15.243239572678391,
+              18.64044578803218
+            ]
+          }
+        ],
+        "impacts": 0,
+        "guard": 0,
+        "refLap": 47.11561585950983
+      }
+    },
+    "perf": {
+      "usFull": 11.444233263933306,
+      "usVeh": 12.046307847227176,
+      "perFrame8": 0.1831077322229329
+    },
+    "carContacts": {
+      "dP": 1.6997532612877547e-18,
+      "dL": 3.202969193357946e-16,
+      "energyBefore": 444124.275,
+      "energyAfter": 381591.2968467565,
+      "hits": 54,
+      "maxPen": 0.010000000000001563,
+      "maxR": 0.9843659584561539
+    },
+    "slipstream": {
+      "solo": {
+        "v": 82.46984666314941,
+        "ds": 1096.1957676717238,
+        "scale": 1
+      },
+      "tow": {
+        "v": 88.64684467056848,
+        "ds": 1148.2366528475636,
+        "scale": 0.7661378714021363
+      },
+      "gain": 52.040885175839776
+    },
+    "aiField": {
+      "r1": {
+        "hard": 0,
+        "maxHit": 4.688674405695428,
+        "finished": 8,
+        "order": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "times": [
+          108.52582953293914,
+          110.24283838949134,
+          111.82208605349885,
+          113.296536225492,
+          114.59682844556005,
+          115.87348918505147,
+          117.15653696312707,
+          117.90484080819292
+        ],
+        "best": 51.68949636235665,
+        "contacts": 1859,
+        "resets": 0,
+        "barrier": 0,
+        "nan": 0,
+        "simTime": 117.90833333337324
+      },
+      "ms": 1251.7636669995263,
+      "deterministic": true
+    }
+  }
+}

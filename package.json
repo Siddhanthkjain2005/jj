@@ -1,0 +1,21 @@
+{
+  "name": "velocityverse-m0",
+  "version": "0.1.0",
+  "private": true,
+  "description": "VELOCITYVERSE Milestone 0: engine-agnostic vehicle simulation, validation suite and browser driving lab.",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/input_regression.mjs && node tests/validate.mjs",
+    "build": "node tools/build.mjs",
+    "smoke": "node tests/browser_smoke.mjs",
+    "serve": "python3 -m http.server 8080",
+    "test:controls": "node tests/browser_controls.mjs",
+    "test:handling": "node tests/handling_regression.mjs",
+    "test:hdr": "node tests/nan_guard_check.mjs",
+    "test:graphics-handling": "node tests/browser_graphics_handling.mjs"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "playwright": "1.61.1"
+  }
+}

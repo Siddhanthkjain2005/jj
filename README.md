@@ -1,0 +1,154 @@
+# VELOCITYVERSE — Milestone 0: Driving Lab
+
+*Working title, not yet cleared for trademarks or store names.*
+
+Milestone 0 is the smallest runnable slice of the studio plan. It includes:
+
+- an engine-agnostic vehicle and race simulation (one car model for the player and the AI);
+- a headless physics validation suite;
+- a playable browser build: practice, time trial with a ghost, and a Grand Prix against seven AI rivals.
+
+It is **not** the production game. The production target is **Unity 6.3 LTS (URP)**, and this simulation is the tested reference that gets ported to C# in Milestone 1.
+
+## Run it (no installs, no dependencies)
+
+| What | Command | Needs |
+| --- | --- | --- |
+| Play | Open `dist/velocityverse.html` in Chrome, Edge or Safari (desktop or phone) | A browser with WebGL 2 |
+| Play from source | `python3 -m http.server 8080` in this folder, then open `http://localhost:8080/web/` | Python 3 (ES modules need a server) |
+| Physics tests | `node tests/validate.mjs` | Node 18+ |
+| Rebuild the single file | `node tools/build.mjs` | Node 18+ |
+| Browser smoke test | `node tests/browser_smoke.mjs` | Playwright + Chrome (set `PLAYWRIGHT_PATH`, `CHROME_PATH`) |
+
+To test on your Android phone, copy `dist/velocityverse.html` to the phone and open it in Chrome, or use the published link. Hold the phone sideways. On a slow phone set Settings → Graphics to Medium or Low.
+
+**Controls.** Keyboard: arrows or WASD, Q/E to shift (manual gears), C camera, T telemetry, F performance overlay, R reset to track, Esc pause. Gamepad: left stick steers, RT throttle, LT brake, LB/RB shift, Start pause. Touch: steering buttons or slider on the left, pedals on the right, camera and reset at the top left. Tilt only works where the browser allows motion sensors; the claude.ai viewer blocks them.
+
+## What is in the build
+
+- **Flow:** title → first-run assist choice → first practice → garage (3 liveries) → event select → race prep → race → pause/settings → results → retry.
+- **Modes:** Practice (unlimited laps), Time trial (out-lap plus 3 timed laps against your ghost), and **Grand Prix** (3 or 5 laps, standing start from a grid of 8: you start sixth against seven AI rivals at Easy, Medium or Hard pace).
+- **Race presentation:** five F1-style start lights in 3D on the gantry and in the HUD with a random hold before lights out, a cinematic grid camera, live position and timing tower, interval to the car ahead, rivals on the minimap, FINAL LAP and finish banners, a cool-down lap that the car drives itself, and a full classification.
+- **Timing and ghost:** lap timing interpolated to the line crossing, 3 sectors, 12 ordered checkpoints, track limits, wrong-way detection, and a personal-best ghost with live delta (practice and time trial; races do not set personal bests because slipstream and traffic change lap times).
+- **Assist presets:** Rookie, Racer and Pro, plus 9 individual toggles. Personal bests are kept separately for *assisted* and *standard* classes.
+- **Graphics presets:** Ultra, High, Medium, Low and Auto (Auto starts at Ultra on desktop and High on touch devices, and steps down to Medium if frames run slow).
+- **Settings, telemetry (T) and performance overlay (F):** as before; every telemetry value is read from simulation state.
+
+## Rendering (WebGL 2, all procedural and original)
+
+- HDR scene (RGBA16F where supported) with 4× MSAA on High/Ultra.
+- A live cube-map reflection probe around your car (one face per frame, mipmapped for rough reflections). It drives clear-coated car paint with metallic flake, carbon-fibre twill, tire rubber, machined metal and glass.
+- Planar reflections for the wet-look track and the harbour on Ultra, blurred vertically like real wet asphalt, with puddles and a drier rubbered-in racing line.
+- Track markings (edge lines, dashed lanes), red/white curbs and a chequered start line, plus grid boxes.
+- Scenery: packed grandstands on both sides of the main straight with floodlit crowds, phone lights and camera flashes, under curved glass canopies. Also a pit building with lit garages, catch fences, floodlight towers and LED arches.
+- Skyline and sky: needle spires and a city skyline with windows lit floor by floor (detail fades to its average when sub-pixel to avoid shimmer), an elevated S-curved overpass, a loop and a helix tower, and floating platforms. The sky has a Milky Way with dust lanes, a planet and moon, a spiral galaxy, a dusk glow at the end of the main straight, horizon clouds and height fog.
+- Effects driven by simulation state:
+  - camera-facing light trails (tail lights and wing tips) that fade before the camera;
+  - sparks from barrier and car contacts and from the floor plank bottoming out at speed;
+  - tire smoke and skid marks from sliding tires;
+  - brake discs that glow with an estimated brake temperature;
+  - exhaust glow with backfires on lift-off and downshifts;
+  - speed streaks above about 110 km/h.
+- Post-processing: dual-filter bloom, anamorphic lens streaks, ACES tone mapping with light grading, speed-scaled chromatic aberration, radial motion blur (Ultra), speed lines, vignette and grain.
+
+## Layout
+
+```
+src/sim/      engine-agnostic simulation (no DOM): units, data, track, vehicle, assists, race rules,
+              traffic (car contacts, slipstream), ai (rival drivers)
+src/game/     browser client: WebGL2 renderer, car model, effects, procedural scene, camera, input, audio,
+              saves, telemetry, game shell
+web/          HTML/CSS design system and screens
+tools/        build.mjs bundles everything into dist/velocityverse.html
+tests/        validate.mjs (physics), browser_smoke.mjs (UI flow), golden/ traces for the C# port, results/
+```
+
+Car, world and track tuning is data-driven (`src/sim/data.js`), and every parameter group carries a provenance label: sourced, estimated, tuned or fictional.
+
+## Simulation summary
+
+- **Units and axes:** SI units; axes match Unity (x right, y up, z forward).
+- **Loop:** fixed 120 Hz chassis step with 4 wheel/tire substeps (480 Hz); rendering is interpolated between steps.
+- **Chassis:** 6-DOF (planar plus heave, pitch and roll); per-corner springs, asymmetric dampers, bump stops and anti-roll bars.
+- **Tires:** combined-slip tire model with load sensitivity and post-peak falloff; relaxation-length slip states integrated exactly, so there is no 1/v singularity at low speed.
+- **Wheels and drivetrain:** implicit wheel-spin update; torque curve, auto-clutch launch, 8-speed gearbox, 8% driveline loss, limited-slip differential.
+- **Aero:** drag and downforce scale with each world's air density. Per-car multipliers carry slipstream (up to 35% less drag right behind another car, fading to nothing at 45 m) and dirty air (up to 25% less downforce, fading over 25 m). Wake values are **estimates for gameplay**, not measured data.
+- **Car-to-car contact:** oriented-box footprints, separating-axis test, one restitution + friction impulse per pair at the contact point (equal and opposite, so momentum is conserved), and a positional correction that adds no velocity.
+- **Contacts with the circuit:** curbs with sloped ends and band-limited ridges; barriers are half-spaces, so a fast car cannot tunnel through them.
+- **Assists and AI:** assists act only through steering angle, throttle, brake, gear selection or per-wheel brake and engine torque. They never move the car directly. AI rivals drive the same car through the same controls: pure-pursuit steering, the reference speed profile scaled by a tuned pace, and racecraft. Racecraft means passing on a chosen side, giving room alongside, braking on time-to-contact, and slowing in dirty air and when off the ideal line. The only exception is race control: it resets an AI car that cannot move for 4 s.
+- **Brake temperature:** an estimated thermal model used only for the glowing discs; it does not change grip.
+
+## Test results (latest run in this repo)
+
+- `tests/results/report.md`: 34/34 physics checks passed. The original 29 cover acceleration, braking (ABS on/off), coast-down, constant radius, slalom, curbs, barrier impact, tunneling, rest/creep stability, frame-rate independence, timestep convergence, world gravity and air density, bot laps and CPU cost. The 5 new ones:
+  - car contact conserves linear and angular momentum to floating-point precision and dissipates energy;
+  - a side-by-side squeeze at 50 m/s stays stable;
+  - slipstream at 12 m cuts drag and adds speed;
+  - an 8-car AI field finishes 2 laps from a standing start without NaN or hard impacts;
+  - the AI field is deterministic.
+- `tests/results/browser_smoke.json`: UI checks in headless Chrome (see the file for the latest count and details). They cover the full flow, a scripted lap, PB and ghost saving, every graphics preset with no WebGL errors and a lit frame, a Grand Prix (field, start lights, AI racing, classification), reload persistence and the touch layout.
+
+Frame rates from headless Chrome use software rendering (SwiftShader) and are **not** device measurements. **No Android device has been measured yet.**
+
+## Placeholder assets and replacement plan
+
+| Asset | Now (temporary, original) | Replace in |
+| --- | --- | --- |
+| Car model | Procedural VX-1 with LOD0/LOD1, separate wheels (`src/game/carmodel.js`) | M2: modelled and textured VX-1 with LODs |
+| Circuit, stadium and city | Procedural from track data (`src/game/world.js`) | M2: art pass on the same track data |
+| Sky, lighting and reflections | Procedural shaders, live reflection probe | M2: baked lighting and reflection probes in Unity URP |
+| Rival drivers and teams | Fictional names and liveries in `src/game/main.js` | Keep fictional, or license a roster |
+| Engine, tire, wind, rival and backfire audio | WebAudio synthesis | M2: recorded or designed audio in FMOD/Wwise |
+| Fonts | Inter and Barlow Condensed (SIL Open Font License), loaded from Google Fonts with system fallbacks | Keep, or license a display face |
+
+No third-party art, audio or code is bundled.
+
+## Known limitations
+
+- Flat track (no elevation). No tire temperature or wear, damage, wet-weather grip, or camber and kinematic suspension curves. The wet look is visual only.
+- Car-to-car contact uses footprint boxes in the ground plane (no vertical contact, no wheel-to-wheel interlock). The wake model is a tuned estimate.
+- The AI is competent but simple. It does not defend, has no strategy and no mistakes model, rubs wheels at the first corner in some starts, and drives Easy/Medium/Hard pace bands that have not been tuned against real players.
+- ABS and TCS are threshold controllers defined at 120 Hz. Their limit cycles change if the step rate changes.
+- Ghosts and bests live in this browser only. There are no accounts, no online leaderboards, no multiplayer and no data collection.
+- The renderer's cost on phones is unmeasured; High/Ultra add MSAA, a live reflection probe and (Ultra) planar reflections.
+
+## Next milestone (M1): Unity port and device proof
+
+1. Create a Unity 6.3 LTS project with URP and Android (IL2CPP, ARM64) build support.
+2. Port `src/sim/*.js` (including `traffic.js` and `ai.js`) 1:1 to plain C# classes (no MonoBehaviour in the core), keeping SI units and axes.
+3. Load `tests/golden/vx1_scripted_v1.json` in a Unity Test Framework test. The C# port must match position within 0.05 m and speed within 0.1% at t = 16 s.
+4. Port `tests/validate.mjs` to NUnit and keep all 34 checks green.
+5. Drive the core from a fixed 120 Hz loop (`Time.fixedDeltaTime = 1/120`) and interpolate visuals in `Update`.
+6. Build to the reference phone (Samsung Galaxy A37 5G) and capture a 20-minute session with the Unity Profiler and Android GPU Inspector. Report sustained frame time, thermal state and battery use against the budgets in the plan.
+
+## Local review fixes (9 November 2026)
+
+- Cleared keyboard, touch and smoothed pedal/steering state on focus loss, page hiding, pause and touch-control rebuilding. Touch buttons now track their owning pointer.
+- Resume rebuilds touch controls from the current settings, so switching Buttons/Slider and pedal/gear options takes effect during an existing session.
+- Cleared gamepad button history on disconnect so reconnecting does not swallow the first button press.
+- Reduced the personal-best banner and moved it and notifications clear of telemetry.
+- Browser tests now find a local Playwright installation and Chrome on macOS or Linux. Run `npm install`, `npm run smoke`, and `npm run test:controls` (override `CHROME_PATH` if needed).
+
+Verification on this checkout: all 34 simulation checks, input regression checks, all 21 browser smoke checks, and the focused live control/HUD regression passed. Browser runs used software WebGL; their frame rate is not a phone measurement. The focused control test uses an actual held pointer on the pedal; the older smoke test's acceleration check also sets the touch state programmatically. No physical Android phone or gamepad was tested. Tilt sensor permissions and controller menu usability still need device validation. Screenshots are in `tests/results/`.
+
+The reference images are concept-art direction, not a delivered quality level. This repository is a procedural browser prototype; a native Android/Unity project, production assets, online community systems, and device performance proof are not present.
+
+### Graphics corruption and steering follow-up
+
+The HDR shaders now clamp Fresnel inputs, avoid zero-vector normalization, use defined smoothstep ramps, and reject NaN/Infinity or excessive radiance before reflection sampling, bloom filtering and tone mapping. This prevents invalid HDR values from spreading across the frame; higher graphics presets retain their effects.
+
+Assisted keyboard/button steering now has a progressive response, speed/load/surface-aware limits, and wheel-angle smoothing at the fixed simulation rate. The slip allowance retains the angle needed to corner; analog steering keeps its wider range. Slide recovery works through steering. ESC no longer adds rear-wheel braking to force an understeering car to rotate, and remains active when the driver countersteers. Pro/unassisted driving still requires throttle and steering discipline. If R is remapped to steering it no longer also triggers recovery; defaults remain A/D or arrows to steer, R to reset.
+
+Targeted verification: 34/34 physics checks; 30 digital handling trials (72–288 km/h, left/right, lower grip, reversal, release, heading invariance, and Rookie auto-throttle with line guidance disabled for the isolated release check); two ESC countersteering checks; real A/D events at six circuit locations; 120 moving-camera frames each at Medium, High and Ultra; and an HDR regression that deliberately poisons the reflection map with NaN/Infinity. No WebGL errors or black/white blowout appeared in these graphics checks. These are software-WebGL regression checks, not a guarantee for every GPU or a mobile endurance measurement. Run `npm run test:handling`, `npm run test:hdr`, and `node tests/browser_graphics_handling.mjs`. Reload the open game after rebuilding.
+
+The follow-up full browser regression also passed all 21 checks, including a valid lap and ghost save, Grand Prix flow, all graphics presets, persistence, and phone-sized controls.
+
+## City and presentation art pass
+
+The attached visual references informed the stadium canopy, luminous track edges and future-city scale. The playable browser scene now includes 51 detailed track-facing buildings, 115 layered city buildings, recessed lit windows, architectural floor plates/mullions, rooftop equipment, pit-bay depth, planted streets, service vans, freight stacks and a waterfront opening. Grandstands have real stair treads, benches and spectator silhouettes. The car has sculpted sidepod/engine cowls, cooling louvers, machined wheels, technical hardware and an open diffuser exit.
+
+The UI uses Inter/Barlow Condensed with a charcoal/ivory/cyan palette, smaller race instrumentation and revised title/garage/settings presentation. Rendering adds cached directional shadow maps on Medium/High/Ultra, selective warm interiors, restrained bloom, filtered surface detail and original mipmapped circuit signage. Invalid HDR guards remain in place; a Metal-specific negative-base pow expression in the sky was replaced with multiplication.
+
+Verification: 34/34 physics checks and 21/21 browser flow checks passed during the art pass. Final captures cover title, garage, settings, stadium/city/waterfront/chicane and an 844×390 touch layout; all final review views had no WebGL errors on Apple M1 Metal. Minimum touch target was 46 CSS px. The deliberate NaN/Infinity reflection-map regression also passed. Run `node tests/visual_review.mjs` to regenerate the actual-game screenshots in `tests/results/art_*.png`. `VV_NATIVE_GPU=1 npm run smoke` uses the available native GPU; the default smoke test uses SwiftShader.
+
+This is original procedural prototype art, not production asset quality or verified superiority to another game. Additional detail raises GPU cost: a short 30-frame 1440×900 Ultra review was approximately 28 FPS on the tested M1 browser; this is not a sustained benchmark. Auto graphics/dynamic resolution remain available. No Android hardware performance has been measured.

@@ -1,0 +1,74 @@
+{
+  "errors": [],
+  "views": [
+    {
+      "name": "stadium",
+      "tris": 249462,
+      "draws": 33,
+      "quality": "ultra",
+      "shadow": true,
+      "glError": 0
+    },
+    {
+      "name": "city",
+      "tris": 249462,
+      "draws": 33,
+      "quality": "ultra",
+      "shadow": true,
+      "glError": 0
+    },
+    {
+      "name": "harbor",
+      "tris": 249462,
+      "draws": 33,
+      "quality": "ultra",
+      "shadow": true,
+      "glError": 0
+    },
+    {
+      "name": "chicane",
+      "tris": 249462,
+      "draws": 33,
+      "quality": "ultra",
+      "shadow": true,
+      "glError": 0
+    }
+  ],
+  "frameTiming": {
+    "frames": 30,
+    "wallMs": 1209.5
+  },
+  "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+  "touch": [
+    {
+      "name": "Steer left",
+      "w": 78,
+      "h": 78
+    },
+    {
+      "name": "Steer right",
+      "w": 78,
+      "h": 78
+    },
+    {
+      "name": "Brake",
+      "w": 80,
+      "h": 102
+    },
+    {
+      "name": "Throttle",
+      "w": 80,
+      "h": 102
+    },
+    {
+      "name": "Change camera",
+      "w": 60,
+      "h": 46
+    },
+    {
+      "name": "Recover car to track (invalidates lap)",
+      "w": 60,
+      "h": 46
+    }
+  ]
+}

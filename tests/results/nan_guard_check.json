@@ -1,0 +1,36 @@
+{
+ "test": "nan_guard_check (SwiftShader, probe poisoned with NaN/Inf, 640x360, High)",
+ "date": "2026-11-08",
+ "old_build": {
+  "file": "/vv_old.html",
+  "errors": [],
+  "renderer": true,
+  "clean": {
+   "black": 0,
+   "white": 0,
+   "glErrors": []
+  },
+  "hdrProbe": true,
+  "poisoned": {
+   "black": 86.39,
+   "white": 1.07,
+   "glErrors": []
+  }
+ },
+ "fixed_build": {
+  "file": "velocityverse/velocityverse.html",
+  "errors": [],
+  "renderer": true,
+  "clean": {
+   "black": 0,
+   "white": 0,
+   "glErrors": []
+  },
+  "hdrProbe": true,
+  "poisoned": {
+   "black": 0,
+   "white": 0,
+   "glErrors": []
+  }
+ }
+}

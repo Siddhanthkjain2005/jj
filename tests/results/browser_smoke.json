@@ -1,0 +1,127 @@
+{
+  "started": "2026-11-09T04:36:18.204Z",
+  "steps": [
+    {
+      "name": "Boot: WebGL2 renderer and world built",
+      "ok": true,
+      "detail": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version); world built in 135 ms; 200806 triangles"
+    },
+    {
+      "name": "Title → first-run onboarding",
+      "ok": true
+    },
+    {
+      "name": "Onboarding (Rookie) → practice session with HUD",
+      "ok": true,
+      "detail": "{\"mode\":\"race\",\"hud\":true,\"preset\":\"rookie\"}"
+    },
+    {
+      "name": "Scripted player completes timed laps in the browser build",
+      "ok": true,
+      "detail": "50.745 s valid; 49.752 s valid; sim time 105.5 s; wall impacts 0; real time 107 s"
+    },
+    {
+      "name": "Personal best + ghost saved to local storage",
+      "ok": true,
+      "detail": "keys harbor_loop|assisted"
+    },
+    {
+      "name": "Pause menu opens with Escape",
+      "ok": true
+    },
+    {
+      "name": "Results screen lists laps",
+      "ok": true,
+      "detail": "First assisted best: 0:49.752. Your ghost will race you next time."
+    },
+    {
+      "name": "Results → garage",
+      "ok": true
+    },
+    {
+      "name": "Livery change persists",
+      "ok": true
+    },
+    {
+      "name": "Event select → race preparation with assist toggles",
+      "ok": true,
+      "detail": "9 toggles"
+    },
+    {
+      "name": "Time trial starts with the saved ghost loaded",
+      "ok": true,
+      "detail": "{\"mode\":\"timetrial\",\"ghostLoaded\":true,\"countdownDone\":true}"
+    },
+    {
+      "name": "All graphics presets render without WebGL errors and produce a lit, coloured frame",
+      "ok": true,
+      "detail": "low: mean 72/255, 21/64 coloured samples, 14 draws; medium: mean 72/255, 22/64 coloured samples, 24 draws; high: mean 76/255, 21/64 coloured samples, 28 draws; ultra: mean 76/255, 19/64 coloured samples, 35 draws"
+    },
+    {
+      "name": "Event → Grand Prix preparation shows AI difficulty and race distance",
+      "ok": true,
+      "detail": "{\"visible\":true,\"ai\":3,\"laps\":2}"
+    },
+    {
+      "name": "Grand Prix: 8-car field, five start lights then lights out",
+      "ok": true,
+      "detail": "field 8, tower rows 8, most lights lit 5, lights out true"
+    },
+    {
+      "name": "Grand Prix: AI rivals race (speed, positions, contacts resolved without NaN)",
+      "ok": true,
+      "detail": "fastest rival 88 km/h; positions 1,2,3,4,5,6,7,8; player P5; car-contact steps 1722 (the scripted player ignores other cars); sim 17.0 s"
+    },
+    {
+      "name": "Grand Prix results classify all 8 cars",
+      "ok": true,
+      "detail": "{\"visible\":true,\"rows\":8,\"me\":true}"
+    },
+    {
+      "name": "Reload keeps first-run flag, best laps and livery",
+      "ok": true,
+      "detail": "{\"first\":true,\"pbs\":1,\"livery\":\"inferno\"}"
+    },
+    {
+      "name": "Touch layout (Racer): steering, pedals, camera and reset buttons",
+      "ok": true,
+      "detail": "Steer left, Steer right, Brake, Throttle, Change camera, Recover car to track (invalidates lap)"
+    },
+    {
+      "name": "Throttle button drives the car",
+      "ok": true,
+      "detail": "0.0 → 17.0 m/s over 2.0 s of simulated time"
+    },
+    {
+      "name": "Touch targets ≥ 44 CSS px",
+      "ok": true,
+      "detail": "smallest 46 px"
+    },
+    {
+      "name": "No JavaScript errors in the console",
+      "ok": true,
+      "detail": "0 network-only messages (web fonts unavailable offline)"
+    }
+  ],
+  "errors": [],
+  "desktopPerf": {
+    "fps": 58.77886899659585,
+    "avg": 17.01291666666663,
+    "p95": 16.79999999998836,
+    "max": 66.70000000001164,
+    "sim": 0.07749999994024014,
+    "render": 0.6900000000488944,
+    "steps": 2.0416666666666665,
+    "dropped": 70,
+    "w": 480,
+    "h": 270,
+    "draws": 27,
+    "pbs": [
+      "harbor_loop|assisted"
+    ],
+    "saveOk": true,
+    "ghost": true
+  },
+  "passed": 21,
+  "total": 21
+}
