@@ -74,7 +74,7 @@ export const CAR_VX1 = {
   brakes: { maxTorque: 9600, bias: 0.58 },                   // total N·m at the four wheels, front fraction
   aero: { cdA: 1.00, clA: 2.60, balance: 0.42 },             // m², m², front fraction of downforce
   liveries: [
-    { id: 'nova', name: 'Nova', primary: [0.05, 0.06, 0.13], secondary: [0.08, 0.92, 1.0], accent: [1.0, 0.16, 0.80] },
+    { id: 'nova', name: 'Nova', primary: [0.27, 0.37, 0.44], secondary: [0.06, 0.70, 0.77], accent: [0.94, 0.58, 0.24] },
     { id: 'inferno', name: 'Inferno', primary: [0.62, 0.03, 0.06], secondary: [1.0, 0.50, 0.10], accent: [1.0, 0.84, 0.25] },
     { id: 'eclipse', name: 'Eclipse', primary: [0.90, 0.92, 0.96], secondary: [0.56, 0.34, 1.0], accent: [0.08, 0.92, 1.0] },
   ],

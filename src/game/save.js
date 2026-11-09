@@ -2,6 +2,7 @@
 // or throw in some contexts, so every access is guarded and the game still runs without it.
 import { ASSIST_PRESETS } from '../sim/assists.js';
 import { DEFAULT_KEYS } from './input.js';
+import { defaultCareer, normalizeCareer } from './career.js';
 
 const SAVE_KEY = 'velocityverse.m0.save';
 export const SAVE_VERSION = 1;
@@ -18,7 +19,7 @@ export function defaultSave() {
       motion: true, reducedMotion: reduced, renderScale: 'auto', graphics: 'auto', units: 'kmh', textScale: 1, showTelemetry: false, showPerf: false,
       volMaster: 0.8, volEngine: 0.8, volFx: 0.8, keys: { ...DEFAULT_KEYS },
     },
-    pbs: {}, history: [],
+    pbs: {}, history: [], career: defaultCareer(), customLivery: { primary: '#c9d1d5', secondary: '#167c97', accent: '#d1a05b' },
   };
 }
 
@@ -37,6 +38,8 @@ export class SaveStore {
         }
       }
     } catch (e) { this.available = false; }
+    this.data.career = normalizeCareer(this.data.career);
+    this.data.customLivery = { ...defaultSave().customLivery, ...(this.data.customLivery && typeof this.data.customLivery === 'object' ? this.data.customLivery : {}) };
   }
   save() {
     try { window.localStorage.setItem(SAVE_KEY, JSON.stringify(this.data)); this.available = true; return true; }

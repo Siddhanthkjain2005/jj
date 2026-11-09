@@ -31,6 +31,11 @@ export class CameraRig {
     const fwd = [sy, 0, cy], rgt = [cy, 0, -sy];
     const u = Math.max(0, info.speed);
     let eye, tgt, fov;
+    if (mode === 'photo') {
+      const p=s.photo||{angle:2.4,distance:7,height:2,fov:45};
+      this._set([pose.x+Math.sin(p.angle)*p.distance,p.height,pose.z+Math.cos(p.angle)*p.distance],[pose.x,0.52,pose.z],p.fov*DEG);
+      this.lastMode=mode;return this.out;
+    }
     if (mode === 'orbit' || mode === 'title') {
       this.orbit += dt * (mode === 'title' ? 0.12 : 0.22) * (reduced ? 0.4 : 1);
       const r = mode === 'title' ? 8.5 : 7.4, h = mode === 'title' ? 2.1 : 1.6;

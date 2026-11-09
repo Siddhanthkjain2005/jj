@@ -1,12 +1,12 @@
 {
   "summary": {
-    "date": "2026-11-09T04:36:17.824Z",
+    "date": "2026-11-09T10:36:26.276Z",
     "node": "v18.20.8",
     "platform": "darwin arm64",
     "dt": 0.008333333333333333,
     "passed": 34,
     "total": 34,
-    "seconds": 6.848,
+    "seconds": 12.101,
     "goldenRows": 161
   },
   "results": [
@@ -207,10 +207,10 @@
       "detects": "Speed-profile, braking or stability problems over a full lap"
     },
     {
-      "name": "CPU cost per step (this container: x86-64, Node V8 — not a phone measurement)",
+      "name": "CPU cost per step (darwin/arm64, Node v18.20.8 — not a phone measurement)",
       "pass": true,
       "expected": "< 50 µs per car-step here; device budget is 1.5 ms per frame for 8 cars at 120 Hz (measure in M1)",
-      "measured": "full stack 11.44 µs/step (vehicle only 12.05 µs) → 0.183 ms per 60 FPS frame for 8 cars",
+      "measured": "full stack 7.26 µs/step (vehicle only 14.15 µs) → 0.116 ms per 60 FPS frame for 8 cars",
       "detects": "Simulation too expensive for the frame budget"
     },
     {
@@ -238,7 +238,7 @@
       "name": "AI field: 8 AI cars race 2 laps from a standing grid start (Harbor Loop, medium pace)",
       "pass": true,
       "expected": "all 8 finish; no NaN; field spread < 30 s; ≤ 1 race-control reset; ≤ 2 car impacts above 6 m/s (reference lap 47.12 s)",
-      "measured": "finished 8/8; winner 108.53 s, last 117.90 s; best lap 51.69 s; car-contact steps 1859 (impacts > 6 m/s: 0, hardest 4.7 m/s); barrier impacts 0; resets 0; order 0-1-2-3-4-5-6-7; 1.25 s CPU for 117.9 s simulated",
+      "measured": "finished 8/8; winner 108.53 s, last 117.90 s; best lap 51.69 s; car-contact steps 1859 (impacts > 6 m/s: 0, hardest 4.7 m/s); barrier impacts 0; resets 0; order 0-1-2-3-4-5-6-7; 1.70 s CPU for 117.9 s simulated",
       "detects": "AI that cannot complete laps, piles up, or destabilises the field"
     },
     {
@@ -449,9 +449,9 @@
       }
     },
     "perf": {
-      "usFull": 11.444233263933306,
-      "usVeh": 12.046307847227176,
-      "perFrame8": 0.1831077322229329
+      "usFull": 7.258721041596598,
+      "usVeh": 14.146848958399561,
+      "perFrame8": 0.11613953666554556
     },
     "carContacts": {
       "dP": 1.6997532612877547e-18,
@@ -507,7 +507,7 @@
         "nan": 0,
         "simTime": 117.90833333337324
       },
-      "ms": 1251.7636669995263,
+      "ms": 1699.3251670002937,
       "deterministic": true
     }
   }

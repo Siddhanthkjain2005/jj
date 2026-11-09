@@ -98,11 +98,11 @@ export class DriverInput {
 
     // Reverse handling with automatic gears: hold brake at standstill to reverse
     let thr = clamp(raw.throttle, 0, 1), brk = clamp(raw.brake, 0, 1);
-    if (a.autoGears) {
+    if (a.autoGears && a.autoReverse !== false) {
       if (!this.reverseMode) {
         if (Math.abs(u) < 0.8 && brk > 0.5 && thr < 0.05) this.brakeHold += dt; else this.brakeHold = 0;
         if (this.brakeHold > 0.4) { this.reverseMode = true; this.brakeHold = 0; }
-      } else if (Math.abs(u) < 0.8 && thr > 0.3) this.reverseMode = false;
+      } else if (Math.abs(u) < 0.8 && (thr > 0.3 || (a.autoThrottle && brk < 0.05))) this.reverseMode = false;
     } else this.reverseMode = false;
     o.gearRequest = this.reverseMode ? 'R' : 'D';
     if (this.reverseMode) { o.throttle = brk; o.brake = thr; o.assistBraking = false; return o; }

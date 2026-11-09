@@ -3,7 +3,7 @@
   "views": [
     {
       "name": "stadium",
-      "tris": 249462,
+      "tris": 304384,
       "draws": 33,
       "quality": "ultra",
       "shadow": true,
@@ -11,7 +11,7 @@
     },
     {
       "name": "city",
-      "tris": 249462,
+      "tris": 304384,
       "draws": 33,
       "quality": "ultra",
       "shadow": true,
@@ -19,7 +19,7 @@
     },
     {
       "name": "harbor",
-      "tris": 249462,
+      "tris": 304384,
       "draws": 33,
       "quality": "ultra",
       "shadow": true,
@@ -27,7 +27,15 @@
     },
     {
       "name": "chicane",
-      "tris": 249462,
+      "tris": 304384,
+      "draws": 33,
+      "quality": "ultra",
+      "shadow": true,
+      "glError": 0
+    },
+    {
+      "name": "beacon",
+      "tris": 304384,
       "draws": 33,
       "quality": "ultra",
       "shadow": true,
@@ -36,7 +44,7 @@
   ],
   "frameTiming": {
     "frames": 30,
-    "wallMs": 1209.5
+    "wallMs": 1010.8000000007451
   },
   "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
   "touch": [

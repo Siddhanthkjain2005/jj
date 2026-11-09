@@ -2,13 +2,74 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0A1117">
-<title>VELOCITYVERSE Driving Lab</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>VELOCITYVERSE · World Hub 0.4</title>
 <style>
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../assets/fonts/HTx3L3I-JCGChYJ8VI-L6OO_au7B2xY.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(../assets/fonts/HTxwL3I-JCGChYJ8VI-L6OO_au7B4-Lw_3E.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(../assets/fonts/HTxwL3I-JCGChYJ8VI-L6OO_au7B4873_3E.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(../assets/fonts/HTxwL3I-JCGChYJ8VI-L6OO_au7B46r2_3E.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url(../assets/fonts/HTxwL3I-JCGChYJ8VI-L6OO_au7B47b1_3E.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../assets/fonts/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(../assets/fonts/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(../assets/fonts/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(../assets/fonts/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZg.ttf) format('truetype');
+}
+
 :root {
   /* Neon multiverse: deep space field, cyan → violet → magenta energy gradient, glass panels with glowing edges. */
   --bg: #04050D;
@@ -517,7 +578,33 @@ tr.p1 td:first-child { text-shadow:none; }
   .tb-small { min-height:44px; }
 }
 
+
+/* Connected offline academy, driver licence and paint studio. */
+#academy-hud[hidden],#btn-school-retry[hidden]{display:none!important}
+.garage-main-actions{position:sticky;top:0;z-index:2;padding:8px 0;background:rgba(8,18,25,.95)}
+.driver-card{padding:12px 14px;border-left:2px solid #a3dce1;background:rgba(143,202,209,.06)}
+.driver-card strong{display:block;font:600 1.3rem var(--font-display);letter-spacing:.04em}
+.driver-card small{color:var(--dim);font-size:.65rem}
+#academy-hud{position:fixed;bottom:28px;left:var(--safe-l);width:330px;padding:16px;pointer-events:auto;z-index:5}
+#academy-hud h3{margin:0 0 8px;color:var(--cyan);letter-spacing:.06em;font-size:.8rem}
+#academy-hud p{font-size:.75rem;line-height:1.4;margin:4px 0}
+#school-metric{font:600 1rem var(--font-display);color:#fff}
+#school-feedback{color:#d7b777}
+#school-progress{display:block;width:100%;height:4px;accent-color:#a3dce1;margin:10px 0}
+#btn-school-retry{margin-top:8px}
+.paint-grid{display:grid;grid-template-columns:1fr;gap:18px;margin:12px 0}
+.paint-field{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.paint-field input{width:72px;height:48px;border:1px solid var(--line);background:#16242e;cursor:pointer;padding:3px}
+#scr-photo input[type="range"]{width:55%;height:36px;accent-color:#a3dce1}
+#results-progression,#lesson-xp{padding:12px 16px;border-left:2px solid #a3dce1;background:rgba(143,202,209,.07);font-weight:600}
+@media(max-height:500px),(max-width:900px){
+ #academy-hud{top:calc(var(--safe-t) + 95px);bottom:auto;left:50%;transform:translateX(-50%);width:min(350px,46vw);padding:10px 14px}
+ #academy-hud p{font-size:.65rem}#academy-hud h3{font-size:.65rem;margin-bottom:4px}#school-metric{font-size:.9rem}
+ #school-feedback:empty{display:none}
+}
+
 </style>
+<link rel="stylesheet" href="./app.css">
 </head>
 <body>
 <canvas id="gl" aria-label="3D view of the car and circuit"></canvas>
@@ -562,29 +649,41 @@ tr.p1 td:first-child { text-shadow:none; }
 <div id="perf" hidden aria-label="Performance overlay"></div>
 
 <section class="screen" id="scr-title" aria-labelledby="title-h">
-  <div class="title-masthead" aria-hidden="true"><span class="title-mark">VELOCITYVERSE</span><span class="edition">DRIVING LAB / 01</span></div>
+  <div class="title-masthead" aria-hidden="true"><span class="title-mark">VELOCITYVERSE</span><span class="edition">WORLD HUB / 04</span></div>
   <div class="title-block">
     <div class="eyebrow">A new world of motorsport</div>
     <h1 class="logo" id="title-h"><span class="a">VELOCITY</span><span class="b">VERSE</span></h1>
     <p class="tagline">Master the car. Build your team. Race across worlds.</p>
     <div class="row"><button id="btn-start" class="btn primary" type="button">Enter the grid</button><button id="btn-fullscreen" class="btn" type="button">Fullscreen</button><span class="press" aria-hidden="true">PRESS START</span></div>
     <p id="title-error" class="error" hidden></p>
-    <p class="fineprint">Development build · One car. One circuit. Local racing and time trials. Procedural art and synthesized sound.</p>
+    <p class="fineprint">Offline prototype 0.4 · Racing, engineering, discovery and your own team identity.</p>
   </div>
   <div class="title-destination" aria-hidden="true"><span class="destination-label">THE FIRST DESTINATION</span><strong>LUMEN HARBOR</strong><small>Harbor Loop · 2.10 km · Blue hour</small></div>
 </section>
 
-<section class="screen" id="scr-onboard" aria-labelledby="onboard-h">
-  <div class="panel wide glass">
-    <div class="eyebrow">First drive</div>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute"><defs><symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11h-6v-7H9v7H3z"/></symbol><symbol id="i-car" viewBox="0 0 24 24"><path d="m4 10 2-5h12l2 5M3 10h18v8H3zM5 18v3m14-3v3M6 13h2m8 0h2"/></symbol><symbol id="i-race" viewBox="0 0 24 24"><path d="M5 22V3m0 0c5-4 9 4 15 0v11c-6 4-10-4-15 0"/><path d="m5 7 5 2 5-1 5 1M10 4v9m5-8v9"/></symbol><symbol id="i-lab" viewBox="0 0 24 24"><path d="m14 5 5-3 3 3-3 5-4-1-8 11a3 3 0 0 1-4-4L14 9z"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M5 6h14M5 18h14"/></symbol><symbol id="i-helmet" viewBox="0 0 24 24"><path d="M3 16c-2-8 3-13 9-13 7 0 10 6 9 14l-4 4H5zM4 10h15l2 6H10zM8 21v-5"/></symbol><symbol id="i-team" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3 21v-5a6 6 0 0 1 12 0v5zM16 4a3 3 0 0 1 0 6m2 3c3 1 4 4 3 8h-3"/></symbol><symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 3h10v6a5 5 0 0 1-10 0zM7 5H3v3a5 5 0 0 0 5 5m9-8h4v3a5 5 0 0 1-5 5M12 14v6m-5 1h10"/></symbol><symbol id="i-settings" viewBox="0 0 24 24"><path d="m9 3 1-2h4l1 2 3 2 3 1v4l-2 2 2 2v4l-3 1-3 2-1 2h-4l-1-2-3-2-3-1v-4l2-2-2-2V6l3-1z"/><circle cx="12" cy="12" r="4"/></symbol></defs></svg>
+<section class="screen" id="scr-hub" aria-labelledby="hub-h"><canvas id="hub-atmosphere" aria-hidden="true"></canvas><div class="hub-layout">
+<header class="hub-top"><button class="hub-profile" type="button" data-nav="records" aria-label="Open driver profile"><span class="profile-monogram" id="hub-tag">VX</span><span><strong id="hub-profile-name">Independent driver</strong><small id="hub-profile-xp">Your racing story starts here</small></span></button>
+<div class="hub-brand"><h2 id="hub-h">VELOCITY<span>VERSE</span></h2><p>Master the car. Find your world.</p></div><div class="hub-tools"><span class="hub-badge"><i></i>OFFLINE / LOCAL</span><button class="icon-button" type="button" data-nav="settings" aria-label="Settings"><svg class="app-icon" aria-hidden="true"><use href="#i-settings"></use></svg></button></div></header>
+<div class="hub-worlds" aria-label="Choose a destination"><button type="button" class="world-gate gate-race" data-nav="event"><svg class="app-icon" aria-hidden="true"><use href="#i-race"></use></svg><span><strong>Racing world</strong><small>Practice · Time trial · Grand Prix</small></span></button><button type="button" class="world-gate gate-lab" data-nav="lab"><svg class="app-icon" aria-hidden="true"><use href="#i-lab"></use></svg><span><strong>Engineering lab</strong><small>Experiment · Compare · Understand</small></span></button><button type="button" class="world-gate gate-team" data-nav="team"><svg class="app-icon" aria-hidden="true"><use href="#i-team"></use></svg><span><strong>Team clubhouse</strong><small>Create your racing identity</small></span></button><button type="button" class="world-gate gate-explorer" data-nav="explorer"><svg class="app-icon" aria-hidden="true"><use href="#i-globe"></use></svg><span><strong>Circuit explorer</strong><small>Discover every corner of Harbor Loop</small></span></button><button type="button" class="world-gate gate-academy" data-nav="academy"><svg class="app-icon" aria-hidden="true"><use href="#i-helmet"></use></svg><span><strong>Driver academy</strong><small>Train · Master · Earn your licence</small></span></button><button type="button" class="world-gate gate-records" data-nav="records"><svg class="app-icon" aria-hidden="true"><use href="#i-trophy"></use></svg><span><strong>Driver archive</strong><small>Personal bests · Medals · Race history</small></span></button><button type="button" class="world-gate gate-garage" data-nav="garage"><svg class="app-icon" aria-hidden="true"><use href="#i-car"></use></svg><span><strong>Your garage</strong><small>VX-1 Kestrel · Paint · Photography</small></span></button></div>
+<footer class="hub-bottom"><button type="button" class="hub-next" id="hub-next"><span>Your next milestone</span><strong id="hub-next-title"></strong><small id="hub-next-detail"></small></button><nav class="app-nav" aria-label="App destinations"><button type="button" data-nav="hub" aria-current="page"><svg class="app-icon" aria-hidden="true"><use href="#i-home"></use></svg><span>Home</span></button><button type="button" data-nav="garage"><svg class="app-icon" aria-hidden="true"><use href="#i-car"></use></svg><span>Garage</span></button><button type="button" data-nav="academy"><svg class="app-icon" aria-hidden="true"><use href="#i-helmet"></use></svg><span>Academy</span></button><button type="button" data-nav="lab"><svg class="app-icon" aria-hidden="true"><use href="#i-lab"></use></svg><span>Engineering</span></button><button type="button" data-nav="team"><svg class="app-icon" aria-hidden="true"><use href="#i-team"></use></svg><span>Team</span></button><button type="button" data-nav="records"><svg class="app-icon" aria-hidden="true"><use href="#i-trophy"></use></svg><span>Records</span></button></nav><div class="hub-licence"><span>DRIVER LICENCE</span><strong id="hub-licence"></strong><progress id="hub-licence-progress" max="1" value="0" aria-label="Progress to next licence"></progress></div></footer>
+</div></section>
+<section class="screen app-page" id="scr-explorer" aria-labelledby="explorer-h"><div class="app-shell"><header class="app-header"><div><div class="eyebrow">Lumen Harbor / Circuit intelligence</div><h2 id="explorer-h">Circuit explorer</h2></div><button class="btn ghost" type="button" data-nav="hub" data-back>Home</button></header><p class="app-intro">Trace the actual Harbor Loop. Select a section to study its geometry, braking approach and modeled reference pace.</p><div class="explorer-layout"><div class="app-surface"><div id="explorer-map" aria-label="Interactive Harbor Loop map"></div><div id="explorer-segments" role="group" aria-label="Track sections"></div></div><div class="app-surface"><div id="explorer-detail" aria-live="polite"></div><button type="button" class="btn primary" data-nav="event">Drive this circuit</button></div></div><footer class="app-foot"><p>One playable world · Lumen Harbor. The hub islands are destination artwork.</p><nav class="app-nav" aria-label="App destinations"><button type="button" data-nav="hub"><svg class="app-icon" aria-hidden="true"><use href="#i-home"></use></svg><span>Home</span></button><button type="button" data-nav="garage"><svg class="app-icon" aria-hidden="true"><use href="#i-car"></use></svg><span>Garage</span></button><button type="button" data-nav="academy"><svg class="app-icon" aria-hidden="true"><use href="#i-helmet"></use></svg><span>Academy</span></button><button type="button" data-nav="lab"><svg class="app-icon" aria-hidden="true"><use href="#i-lab"></use></svg><span>Engineering</span></button><button type="button" data-nav="team"><svg class="app-icon" aria-hidden="true"><use href="#i-team"></use></svg><span>Team</span></button><button type="button" data-nav="records"><svg class="app-icon" aria-hidden="true"><use href="#i-trophy"></use></svg><span>Records</span></button></nav></footer></div></section>
+<section class="screen app-page" id="scr-lab" aria-labelledby="lab-h"><div class="app-shell"><header class="app-header"><div><div class="eyebrow">Vehicle science / Controlled experiments</div><h2 id="lab-h">Engineering lab</h2></div><button class="btn ghost" type="button" data-nav="hub" data-back>Home</button></header><p class="app-intro">A private test bench for curiosity. Compare grip and aero changes using the same tire and chassis model that powers racing.</p><div class="app-columns"><div class="app-surface"><h3>Change one idea. Measure the tradeoff.</h3><div class="lab-setups" id="lab-setups"></div><p class="note" id="lab-protocol"></p><button type="button" class="btn primary" id="btn-lab-run" style="margin-top:18px">Run comparison</button><p id="lab-status" role="status" aria-live="polite">Choose a study and run it against the standard VX-1.</p></div><div class="app-surface"><h3 id="lab-result-title">Measured in the vehicle simulation</h3><div class="metric-grid" id="lab-metrics"></div><div class="lab-controls" id="lab-chart-tabs" role="group" aria-label="Experiment chart"></div><div id="lab-chart" aria-label="Speed versus time chart"></div><div class="lab-chart-legend"><span>Standard VX-1</span><span>Selected study</span></div><p class="note">Fictional, tuned car parameters. A controlled flat straight, calm air, manual pedals, automatic gears and ABS/TCS. These are model measurements, not real-car specifications.</p></div></div><footer class="app-foot"><p>Isolated experiments · Your race car and competitive performance stay unchanged.</p><nav class="app-nav" aria-label="App destinations"><button type="button" data-nav="hub"><svg class="app-icon" aria-hidden="true"><use href="#i-home"></use></svg><span>Home</span></button><button type="button" data-nav="garage"><svg class="app-icon" aria-hidden="true"><use href="#i-car"></use></svg><span>Garage</span></button><button type="button" data-nav="academy"><svg class="app-icon" aria-hidden="true"><use href="#i-helmet"></use></svg><span>Academy</span></button><button type="button" data-nav="lab" aria-current="page"><svg class="app-icon" aria-hidden="true"><use href="#i-lab"></use></svg><span>Engineering</span></button><button type="button" data-nav="team"><svg class="app-icon" aria-hidden="true"><use href="#i-team"></use></svg><span>Team</span></button><button type="button" data-nav="records"><svg class="app-icon" aria-hidden="true"><use href="#i-trophy"></use></svg><span>Records</span></button></nav></footer></div></section>
+<section class="screen app-page" id="scr-records" aria-labelledby="records-h"><div class="app-shell"><header class="app-header"><div><div class="eyebrow">Your racing story / Local profile</div><h2 id="records-h">Driver archive</h2></div><button class="btn ghost" type="button" data-nav="hub" data-back>Home</button></header><p class="app-intro">Your actual results, academy medals and personal bests. Assist classes stay separate so every improvement has context.</p><div id="records-summary" class="metric-grid"></div><div class="app-columns equal"><div class="app-surface"><h3>Personal bests</h3><div id="records-bests"></div><button type="button" class="btn" data-nav="event" style="margin-top:20px">Chase your ghost</button></div><div class="app-surface"><h3>Recent laps</h3><div id="records-history"></div></div></div><footer class="app-foot"><p>Your progress stays on this device.</p><nav class="app-nav" aria-label="App destinations"><button type="button" data-nav="hub"><svg class="app-icon" aria-hidden="true"><use href="#i-home"></use></svg><span>Home</span></button><button type="button" data-nav="garage"><svg class="app-icon" aria-hidden="true"><use href="#i-car"></use></svg><span>Garage</span></button><button type="button" data-nav="academy"><svg class="app-icon" aria-hidden="true"><use href="#i-helmet"></use></svg><span>Academy</span></button><button type="button" data-nav="lab"><svg class="app-icon" aria-hidden="true"><use href="#i-lab"></use></svg><span>Engineering</span></button><button type="button" data-nav="team"><svg class="app-icon" aria-hidden="true"><use href="#i-team"></use></svg><span>Team</span></button><button type="button" data-nav="records" aria-current="page"><svg class="app-icon" aria-hidden="true"><use href="#i-trophy"></use></svg><span>Records</span></button></nav></footer></div></section>
+<section class="screen app-page" id="scr-team" aria-labelledby="team-h"><div class="app-shell"><header class="app-header"><div><div class="eyebrow">Identity workshop / Local clubhouse</div><h2 id="team-h">Team clubhouse</h2></div><button class="btn ghost" type="button" data-nav="hub" data-back>Home</button></header><p class="app-intro">Make a team name, racing tag and colors your own. Celebrate real academy and racing achievements with a downloadable card.</p><div class="app-columns equal"><div class="app-surface"><form id="team-form" class="app-form"><label>Team name<input type="text" id="team-name" maxlength="24" autocomplete="off" placeholder="Your team name"></label><div class="form-pair"><label>Race tag<input type="text" id="team-tag" maxlength="4" autocomplete="off" placeholder="VXR"></label><label>Team color<input type="color" id="team-color" value="#87dae7"></label></div><label>Community affiliation · Optional<select id="team-region"><option value="">Prefer not to choose</option><option>Asia</option><option>Europe</option><option>Africa</option><option>North America</option><option>South America</option><option>Oceania</option></select></label><button type="submit" class="btn primary">Save team identity</button><p id="team-save-note" role="status" aria-live="polite"></p></form></div><div class="app-surface"><div id="team-preview"></div><button type="button" class="btn" id="btn-team-export" style="margin:20px 0">Save achievement card</button><p class="note">This clubhouse creates a local identity and a shareable image of your own progress. Online membership, chat and leagues are not connected in this build.</p></div></div><footer class="app-foot"><p>No GPS · No public profile · Your affiliation is optional and stored locally.</p><nav class="app-nav" aria-label="App destinations"><button type="button" data-nav="hub"><svg class="app-icon" aria-hidden="true"><use href="#i-home"></use></svg><span>Home</span></button><button type="button" data-nav="garage"><svg class="app-icon" aria-hidden="true"><use href="#i-car"></use></svg><span>Garage</span></button><button type="button" data-nav="academy"><svg class="app-icon" aria-hidden="true"><use href="#i-helmet"></use></svg><span>Academy</span></button><button type="button" data-nav="lab"><svg class="app-icon" aria-hidden="true"><use href="#i-lab"></use></svg><span>Engineering</span></button><button type="button" data-nav="team" aria-current="page"><svg class="app-icon" aria-hidden="true"><use href="#i-team"></use></svg><span>Team</span></button><button type="button" data-nav="records"><svg class="app-icon" aria-hidden="true"><use href="#i-trophy"></use></svg><span>Records</span></button></nav></footer></div></section>
+<section class="screen app-page" id="scr-onboard" aria-labelledby="onboard-h">
+  <div class="app-shell onboard-shell">
+    <div class="eyebrow">First drive / Welcome to VelocityVerse</div>
     <h2 id="onboard-h">Find your racing rhythm.</h2>
     <p class="dim">Same car and same physics for everyone. Assists only work through the controls, and you can change them before every session.</p>
+    <button class="btn primary" id="btn-onboard-school" type="button">Learn the controls · Driving academy</button>
     <div class="cards">
       <button class="card" type="button" data-preset="rookie"><h3>Rookie</h3><p>You steer. The car handles throttle and braking from the racing line and keeps the front tires inside their grip.</p><ul class="chips"><li>Auto throttle</li><li>Brake assist</li><li>Steering assist</li><li>ABS · TCS · ESC</li></ul></button>
       <button class="card" type="button" data-preset="racer"><h3>Racer</h3><p>You drive: throttle, brake and steering. Electronics catch lock-ups, wheelspin and slides.</p><ul class="chips"><li>Steering assist</li><li>ABS · TCS · ESC</li><li>Auto gears</li></ul></button>
       <button class="card" type="button" data-preset="pro"><h3>Pro</h3><p>No electronic help and manual gears. Nothing between you and the tires.</p><ul class="chips"><li>Manual gears</li><li>No assists</li></ul></button>
     </div>
-    <div class="row"><button class="btn ghost" type="button" data-nav="title" data-back>Back</button></div>
+    <div class="row"><button class="btn ghost" type="button" data-nav="hub" data-back>Explore the hub</button></div>
   </div>
 </section>
 
@@ -593,23 +692,25 @@ tr.p1 td:first-child { text-shadow:none; }
     <div class="eyebrow">The collection / 01</div>
     <h2 id="garage-h">VX-1 Kestrel</h2>
     <p class="dim">Sculpted for speed. Engineered for precision. Choose your racing colors and take the VX-1 to Lumen Harbor.</p>
+    <div class="row garage-main-actions"><button id="btn-garage-drive" class="btn primary" type="button">Choose event</button><button class="btn" type="button" data-nav="settings">Settings</button><button class="btn ghost" type="button" data-nav="hub" data-back>Home</button></div>
+    <div class="driver-card"><span class="eyebrow">Driver licence · Local profile</span><strong id="driver-licence"></strong><small id="driver-xp"></small></div>
+    <div class="row"><button id="btn-academy" class="btn" type="button">Driving academy</button><button id="btn-customize" class="btn" type="button">Paint studio</button><button id="btn-garage-photo" class="btn" type="button">Photo mode</button></div>
     <dl class="specs" id="car-specs"></dl>
     <h3>Livery</h3>
     <div class="swatches" id="liveries"></div>
-    <div class="row"><button id="btn-garage-drive" class="btn primary" type="button">Choose event</button><button class="btn" type="button" data-nav="settings">Settings</button><button class="btn ghost" type="button" data-nav="title" data-back>Title</button></div>
+
   </div>
 </section>
 
-<section class="screen" id="scr-event" aria-labelledby="event-h">
-  <div class="panel glass">
-    <div class="eyebrow">Lumen Harbor · Harbor Loop · 2.10 km</div>
-    <h2 id="event-h">Your next session</h2>
-    <button class="card" type="button" data-mode="practice"><h3>Practice</h3><p>Free laps with live telemetry. Learn the braking points.</p><div class="meta" id="ev-practice-meta"></div></button>
-    <button class="card race" type="button" data-mode="race"><h3>Grand Prix</h3><p>Standing start from the grid against seven AI rivals. Five red lights, slipstream, side-by-side racing.</p><div class="meta" id="ev-race-meta"></div></button>
-    <button class="card" type="button" data-mode="timetrial"><h3>Time trial</h3><p>Short out-lap, then three timed laps against the ghost of your best lap.</p><div class="meta" id="ev-tt-meta"></div></button>
-    <div class="row"><button class="btn ghost" type="button" data-nav="garage" data-back>Back</button></div>
-  </div>
-</section>
+<section class="screen app-page" id="scr-event" aria-labelledby="event-h"><div class="app-shell">
+<header class="app-header"><div><div class="eyebrow">Racing world / Lumen Harbor</div><h2 id="event-h">Racing world</h2></div><button class="btn ghost" type="button" data-nav="hub" data-back>Home</button></header>
+<div class="circuit-banner"><div><span class="eyebrow">DESTINATION 01 / OPEN</span><h3>Harbor Loop</h3><p>2.10 km · 9 corners · Blue hour</p><small>A coastal city circuit. Fast sweeps, a technical hairpin and the ferry chicane.</small></div><button type="button" class="btn" data-nav="explorer">Study the circuit</button></div>
+<div class="cards event-cards">
+<button class="card" type="button" data-mode="practice"><span class="event-number">01 / DISCOVER</span><h3>Practice</h3><p>Find your rhythm with unlimited laps. Learn braking points with live telemetry and your own ghost.</p><div class="meta" id="ev-practice-meta"></div><span class="event-action">Explore the circuit ↗</span></button>
+<button class="card race" type="button" data-mode="race"><span class="event-number">02 / COMPETE</span><h3>Grand Prix</h3><p>Race seven AI rivals from a standing start. Work through traffic, slipstream and fight for the podium.</p><div class="meta" id="ev-race-meta"></div><span class="event-action">Take the grid ↗</span></button>
+<button class="card" type="button" data-mode="timetrial"><span class="event-number">03 / MASTER</span><h3>Time trial</h3><p>Three timed laps. Chase your personal ghost, compare sectors and make every clean exit count.</p><div class="meta" id="ev-tt-meta"></div><span class="event-action">Chase your best ↗</span></button>
+</div><footer class="app-foot"><p>One car. The same performance for every driver. Assisted and standard bests stay separate.</p><div class="row"><button type="button" class="btn" data-nav="garage">Your garage</button><button type="button" class="btn" data-nav="academy">Driving academy</button></div></footer>
+</div></section>
 
 <section class="screen" id="scr-prep" aria-labelledby="prep-h">
   <div class="panel glass">
@@ -635,7 +736,7 @@ tr.p1 td:first-child { text-shadow:none; }
     <h2 id="pause-h">Session paused</h2>
     <p class="dim" id="pause-sub"></p>
     <div class="row"><button id="btn-resume" class="btn primary" type="button">Resume</button><button id="btn-restart" class="btn" type="button">Restart</button></div>
-    <div class="row"><button id="btn-pause-settings" class="btn" type="button">Settings</button><button id="btn-copy-tel" class="btn" type="button">Copy telemetry</button></div>
+    <div class="row"><button id="btn-pause-settings" class="btn" type="button">Settings</button><button id="btn-copy-tel" class="btn" type="button">Copy telemetry</button><button id="btn-photo" class="btn" type="button">Photo mode</button></div>
     <div class="row"><button id="btn-end" class="btn ghost" type="button">End session</button></div>
   </div>
 </section>
@@ -653,13 +754,41 @@ tr.p1 td:first-child { text-shadow:none; }
   <div class="panel wide glass">
     <div class="eyebrow">Results · Harbor Loop</div>
     <h2 id="results-title">Session complete</h2>
-    <p id="results-summary"></p>
+    <p id="results-summary"></p><p id="results-progression"></p>
     <div class="results-wrap"><table id="results-table"></table></div>
     <div class="results-wrap" id="results-laps-wrap" hidden><h3>Your laps</h3><table id="results-laps"></table></div>
     <p class="note" id="results-note"></p>
     <div class="row"><button id="btn-retry" class="btn primary" type="button">Retry</button><button id="btn-results-garage" class="btn" type="button" data-back>Garage</button></div>
   </div>
 </section>
+
+
+<section class="screen" id="scr-photo" aria-labelledby="photo-h"><div class="panel glass">
+<div class="eyebrow">Circuit photography</div><h2 id="photo-h">Find your angle</h2><p class="dim">Frame your car and the world. Saved images contain the actual 3D scene, without interface panels.</p>
+<label class="paint-field">Orbit<input type="range" id="photo-angle" min="0" max="360" step="1" aria-label="Photo orbit"></label>
+<label class="paint-field">Distance<input type="range" id="photo-distance" min="3.5" max="18" step="0.1" aria-label="Photo distance"></label>
+<label class="paint-field">Height<input type="range" id="photo-height" min="0.6" max="10" step="0.1" aria-label="Photo height"></label>
+<label class="paint-field">Lens<input type="range" id="photo-fov" min="25" max="80" step="1" aria-label="Photo field of view"></label>
+<div class="row"><button id="btn-photo-save" class="btn primary" type="button">Save PNG</button><button id="btn-photo-back" class="btn" type="button" data-back>Back</button></div>
+</div></section>
+<section class="screen app-page" id="scr-academy" aria-labelledby="academy-h"><div class="app-shell">
+<header class="app-header"><div><div class="eyebrow">Driver development / The fundamentals</div><h2 id="academy-h">Driver academy</h2></div><button class="btn ghost" data-nav="hub" data-back type="button">Home</button></header>
+<p class="app-intro">Confidence comes from understanding the car. Three practical exercises, real measurements and a medal for each skill you master.</p>
+<div class="driver-card"><p id="academy-progress"></p></div><div class="cards" id="academy-cards"></div>
+<div class="app-surface"><h3>Your car. Your inputs. Real feedback.</h3><p class="note">Lessons use manual throttle and braking with steering, traction and stability assistance. Your car, track and tire physics stay the same. Every first pass earns 100 cosmetic driver XP; replay as often as you like.</p></div>
+<footer class="app-foot"><p>Your medals and licence stay on this device.</p><nav class="app-nav" aria-label="App destinations"><button type="button" data-nav="hub"><svg class="app-icon" aria-hidden="true"><use href="#i-home"></use></svg><span>Home</span></button><button type="button" data-nav="garage"><svg class="app-icon" aria-hidden="true"><use href="#i-car"></use></svg><span>Garage</span></button><button type="button" data-nav="academy" aria-current="page"><svg class="app-icon" aria-hidden="true"><use href="#i-helmet"></use></svg><span>Academy</span></button><button type="button" data-nav="lab"><svg class="app-icon" aria-hidden="true"><use href="#i-lab"></use></svg><span>Engineering</span></button><button type="button" data-nav="team"><svg class="app-icon" aria-hidden="true"><use href="#i-team"></use></svg><span>Team</span></button><button type="button" data-nav="records"><svg class="app-icon" aria-hidden="true"><use href="#i-trophy"></use></svg><span>Records</span></button></nav></footer></div></section>
+<section class="screen" id="scr-lesson" aria-labelledby="lesson-title"><div class="panel glass">
+ <div class="eyebrow">Academy medal earned</div><h2 id="lesson-title"></h2><p id="lesson-metric" class="num"></p>
+ <p id="lesson-feedback"></p><p id="lesson-xp"></p>
+ <div class="row"><button class="btn primary" id="btn-lesson-next" type="button">Next exercise</button><button class="btn" id="btn-lesson-retry" type="button">Replay</button></div>
+ <button class="btn ghost" id="btn-lesson-school" type="button" data-back>Academy</button>
+</div></section>
+<section class="screen" id="scr-customize" aria-labelledby="customize-h"><div class="panel glass">
+ <div class="eyebrow">Personal build / VX-1</div><h2 id="customize-h">Make it yours</h2><p class="dim">Original racing colors. The same performance.</p>
+ <div class="paint-grid"><label class="paint-field">Body paint<input type="color" id="paint-primary" aria-label="Body paint"></label><label class="paint-field">Aero panels<input type="color" id="paint-secondary" aria-label="Aero panels"></label><label class="paint-field">Accent finish<input type="color" id="paint-accent" aria-label="Accent finish"></label></div>
+ <p class="note" id="paint-status">Changes save automatically on this device.</p><button class="btn primary" data-nav="garage" data-back type="button">Back to garage</button>
+</div></section>
+<div id="academy-hud" class="glass" hidden><h3 id="school-title"></h3><p id="school-instruction"></p><p id="school-metric"></p><progress id="school-progress" max="1" value="0" aria-label="Exercise progress"></progress><p id="school-feedback"></p><button class="btn small" id="btn-school-retry" type="button" hidden>Retry exercise</button></div>
 
 <div id="toast" class="glass" role="status" aria-live="polite"></div>
 <div id="rotate" hidden>Turn your phone sideways to drive.</div>

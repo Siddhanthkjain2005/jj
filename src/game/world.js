@@ -58,7 +58,7 @@ export function buildWorld(track) {
       const rampI = side > 0 ? track.curbRampR[i] : track.curbRampL[i], rampJ = side > 0 ? track.curbRampR[j] : track.curbRampL[j];
       let edge = hw;
       if (curbI || curbJ) {
-        const hI = def.curbHeight * (curbI ? rampI : 0) * 4, hJ = def.curbHeight * (curbJ ? rampJ : 0) * 4, w = def.curbWidth;
+        const hI = def.curbHeight * (curbI ? rampI : 0), hJ = def.curbHeight * (curbJ ? rampJ : 0), w = def.curbWidth;
         const col = (Math.floor(si / 2) % 2 === 0) ? [0.82, 0.05, 0.1, 0] : [0.86, 0.88, 0.9, 0];
         mb.quad(P(i, side * hw, 0.004), P(i, side * (hw + 0.25), hI + 0.004), P(j, side * (hw + 0.25), hJ + 0.004), P(j, side * hw, 0.004), col, 19);
         mb.quad(P(i, side * (hw + 0.25), hI + 0.004), P(i, side * (hw + w), hI + 0.004), P(j, side * (hw + w), hJ + 0.004), P(j, side * (hw + 0.25), hJ + 0.004), col, 19, [0, 1, 0]);
@@ -79,6 +79,30 @@ export function buildWorld(track) {
   for (const side of [-1, 1]) for (let i = 0; i < N; i++) { // fence top rail
     const j = (i + 1) % N, bI = side > 0 ? track.barrierR[i] : track.barrierL[i], bJ = side > 0 ? track.barrierR[j] : track.barrierL[j];
     mb.quad(P(i, side * (bI + 0.1), 3.05), P(j, side * (bJ + 0.1), 3.05), P(j, side * (bJ + 0.1), 3.12), P(i, side * (bI + 0.1), 3.12), METAL, 14);
+  }
+
+  // Expansion joints, reflector studs, drain grates and service access seams.
+  // These are flush visual details, never unmodelled bumps in the driving surface.
+  for(let ss=0;ss<L;ss+=12){
+    const p=track.pointAt(ss,0,{}),i=p.i,sy=Math.sin(p.heading),co=Math.cos(p.heading);
+    const V=(d,along,y)=>[p.x+track.nx[i]*d+track.tx[i]*along,y,p.z+track.nz[i]*d+track.tz[i]*along];
+    for(const side of [-1,1]){
+      const b=side>0?track.barrierR[i]:track.barrierL[i],d=side*(b-.018);
+      mb.quad(V(d,-.026,.04),V(d,.026,.04),V(d,.026,1.03),V(d,-.026,1.03),[.025,.03,.035,0],19);
+      for(const yy of [.20,.89]){
+        const P0=V(d,0,yy);mb.boxYaw(P0[0],P0[1],P0[2],.036,.055,.075,p.heading,[.36,.38,.38,0],14);
+      }
+      if(Math.floor(ss/12)%2===0){
+        const dd=side*(hw-.16),P0=V(dd,0,.004);
+        mb.boxYaw(P0[0],P0[1],P0[2],.23,.006,.86,p.heading,[.12,.14,.15,0],14);
+        for(let j=0;j<6;j++){
+          const A=V(dd,-.34+j*.13,.008);
+          mb.boxYaw(A[0],A[1],A[2],.18,.003,.045,p.heading,[.025,.03,.035,0],19);
+        }
+        const rp=V(side*(b-.04),.25,.78);
+        mb.boxYaw(rp[0],rp[1],rp[2],.035,.085,.24,p.heading,[.68,.72,.62,0],19);
+      }
+    }
   }
 
   // ---- start/finish: chequered line, grid slots, gantry with five start lights and a screen ----
@@ -356,20 +380,66 @@ export function buildWorld(track) {
     }
     const tw = w * (variant === 1 ? 0.76 : 0.84), td = d * (variant === 3 ? 0.68 : 0.85);
     const towerH = h - podiumH;
-    B(0, podiumH + towerH / 2, 0, tw, towerH, td, frames, 14, variant === 0 ? 4 : 18, glass);
-    // Thin extruded floor plates and vertical fins read as structure in silhouette
-    // and at grazing angles, instead of a flat box covered in random white pixels.
-    if (detail) {
-      for (let y = podiumH + 4; y < h; y += 4.0) {
-        B(0, y, 0, tw + 0.42, 0.20, td + 0.42, variant === 0 ? shell : frames, variant === 0 ? 19 : 14);
+    const round = variant === 2 || variant === 3;
+    // Curved and canted envelopes break the repeated office-box silhouette.
+    // All offsets remain inside the previously validated lot footprint.
+    const lean = variant === 3 ? tw * 0.16 : 0;
+    const local = (lx, yy, lz) => [x + co * lx + sy * lz, yy, z - sy * lx + co * lz];
+    const curveAt = (f) => {
+      const keys=[[0,.50,.50],[.32,.49,.49],[.76,.42,.46],[1,.37,.44]];
+      let k=0;while(k<keys.length-2&&f>keys[k+1][0])k++;
+      const a=keys[k],b=keys[k+1],u=(f-a[0])/(b[0]-a[0]);
+      return {hx:tw*(a[1]+(b[1]-a[1])*u),hz:td*(a[2]+(b[2]-a[2])*u),dx:lean*f*f};
+    };
+    const ellipse = (y0,y1,hx,hz,dx,c,m=18) => {
+      const pt=local(dx,0,0);
+      mb.loftY(pt[0],pt[2],yaw,[[y0,hx,hz,2.4],[y1,hx,hz,2.4]],24,c,m,c);
+    };
+    if (round) {
+      const v0=mb.n,i0=mb.i.length;
+      mb.loftY(x,z,yaw,[[podiumH,tw*.50,td*.50,2.6],[podiumH+towerH*.32,tw*.49,td*.49,2.5],[podiumH+towerH*.76,tw*.42,td*.46,2.3],[h,tw*.37,td*.44,2.1]],24,frames,18,glass);
+      // Bend the upper envelope, then recompute its lighting normals.
+      if (lean) for(let id=v0;id<mb.n;id++){
+        const o=id*13,f=Math.max(0,(mb.v[o+1]-podiumH)/towerH),dx=lean*f*f;
+        mb.v[o]+=co*dx;mb.v[o+2]-=sy*dx;
       }
-      for (const side of [-1, 1]) {
-        for (let j = -td / 2; j <= td / 2 + 0.1; j += 3.6) B(side * (tw / 2 + 0.10), podiumH + towerH / 2, j, 0.22, towerH, 0.22, frames, 14);
-        for (let j = -tw / 2; j <= tw / 2 + 0.1; j += 3.6) B(j, podiumH + towerH / 2, side * (td / 2 + 0.10), 0.22, towerH, 0.22, frames, 14);
+      mb.smooth(v0,i0);
+      if (detail) for(let yy=podiumH+6;yy<h;yy+=12){
+        const f=(yy-podiumH)/towerH,q=curveAt(f);
+        ellipse(yy-.13,yy+.13,q.hx+.25,q.hz+.25,q.dx,frames,14);
+      }
+      // Sparse external structural fins reveal depth without a neon cage.
+      for(let fi=0;fi<2;fi++){
+        const ang=fi*Math.PI,pts=[];
+        for(let j=0;j<=7;j++){const f=j/7,q=curveAt(f);pts.push(local(q.dx+Math.cos(ang)*(q.hx+.25),podiumH+f*towerH,Math.sin(ang)*(q.hz+.25)));}
+        mb.sweep(framesAlong(pts),circle(.16,5),[.28,.34,.38,0],14,true,false);
+      }
+      const q=curveAt(1);ellipse(h,h+.8,q.hx+.45,q.hz+.45,q.dx,shell,19);
+      ellipse(h+.82,h+.96,q.hx+.48,q.hz+.48,q.dx,n(NEON.cyan,.14),5);
+    } else {
+      // Two setbacks and planted sky terraces rather than one extruded cuboid.
+      const bands=variant===1?3:1;
+      for(let band=0;band<bands;band++){
+        const f0=band/bands,f1=(band+1)/bands,shrink=1-band*.13;
+        const yy=podiumH+towerH*(f0+f1)/2,ww=tw*shrink,dd=td*shrink,dx=band*tw*.035;
+        B(dx,yy,0,ww,towerH/bands,dd,frames,14,variant===0?4:18,glass);
+        if (detail) for(let y=podiumH+towerH*f0+4;y<podiumH+towerH*f1;y+=5.4)B(dx,y,0,ww+.40,.16,dd+.4,variant===0?shell:frames,variant===0?19:14);
+        if(band<bands-1){
+          const roof=podiumH+towerH*f1;
+          B(dx,roof+.22,0,ww+.8,.44,dd+.8,shell);
+          for(const side of [-1,1]){
+            B(dx+side*ww*.42,roof+.65,0,ww*.12,.70,dd*.72,[.25,.28,.27,0],19);
+            B(dx+side*ww*.42,roof+1.15,0,ww*.10,.55,dd*.70,[.11,.23,.14,0],23);
+          }
+        }
+      }
+      if(detail)for(const side of [-1,1]){
+        for(let j=-td/2;j<=td/2+.1;j+=5.0)B(side*(tw/2+.1),podiumH+towerH/2,j,.18,towerH,.18,frames,14);
+        for(let j=-tw/2;j<=tw/2+.1;j+=5.0)B(j,podiumH+towerH/2,side*(td/2+.1),.18,towerH,.18,frames,14);
       }
     }
     // Mechanical crown: parapet, cooling boxes, screened plant and aerials.
-    B(0, h + 0.35, 0, tw + 0.6, 0.7, td + 0.6, shell);
+    if (!round) B(0, h + 0.35, 0, tw + 0.6, 0.7, td + 0.6, shell);
     B(0, h + 2.1, 0, tw * 0.55, 3.0, td * 0.52, [0.17, 0.19, 0.21, 0], 14);
     if (detail) {
       for (const side of [-1, 1]) {
@@ -382,8 +452,27 @@ export function buildWorld(track) {
       beacon(x, h + 10.6, z);
     }
     // One quiet architectural crown light; no full-height neon cage.
-    if (variant !== 0) B(0, h + 0.8, 0, tw + 0.7, 0.12, td + 0.7, n(seed > 0.5 ? NEON.cyan : NEON.warm, 0.12), 5);
+    if (variant === 1) B(0, h + 0.8, 0, tw + 0.7, 0.12, td + 0.7, n(seed > 0.5 ? NEON.cyan : NEON.warm, 0.12), 5);
   };
+  // Lumen Beacon: an inhabited waterfront observation deck on an engineered
+  // elliptical core. Its open underside and cantilevered roof frame the port view.
+  let beaconLandmark = false;
+  if (lotSafe(552,-350,44,54,0)) {
+    beaconLandmark=true;
+    const x=552,z=-350;
+    mb.loftY(x,z,0,[[0,10,14,3],[6,10,14,3],[29,6,8,2.6],[35,7,9,2.6]],24,frames,18,[.11,.19,.24,.72]);
+    mb.loftY(x,z,0,[[29.4,21,26,2.4],[31,21,26,2.4],[31.3,19,24,2.4]],32,[.33,.37,.39,0],14);
+    mb.loftY(x,z,0,[[31.3,18.6,23.6,2.4],[36.5,18.6,23.6,2.4]],32,frames,18,[.13,.23,.27,.42]);
+    mb.loftY(x,z,0,[[36.5,19,24,2.4],[37.2,22,27,2.4],[38,22,27,2.4],[40.2,12,17,2.4]],32,[.38,.43,.46,0],14);
+    mb.loftY(x,z,0,[[37.15,22.1,27.1,2.4],[37.28,22.1,27.1,2.4]],32,n(NEON.cyan,.20),5);
+    for(const sx of [-1,1])for(const sz of [-1,1]){
+      const pts=bezier([x+sx*15,0,z+sz*19],[x+sx*14,12,z+sz*17],[x+sx*9,22,z+sz*12],[x+sx*18,30,z+sz*20],10);
+      mb.sweep(framesAlong(pts),circle(.42,8),[.36,.40,.43,0],14,true,false);
+    }
+    for(let yy=8;yy<29;yy+=5)mb.loftY(x,z,0,[[yy,9.1,12.2,2.8],[yy+.2,9.1,12.2,2.8]],24,frames,14);
+    mb.box(x,48,z,.8,16,.8,frames,14);beacon(x,56.3,z);
+  }
+
   let frontageCount = 0;
   for (let ss = 25; ss < L; ss += 48) for (const side of [-1, 1]) {
     const p = track.pointAt(ss, 0, {}), barrier = side > 0 ? track.barrierR[p.i] : track.barrierL[p.i];
@@ -515,7 +604,7 @@ export function buildWorld(track) {
   mb.quad([-3000, -0.03, -2400], [600, -0.03, -2400], [600, -0.03, 2600], [-3000, -0.03, 2600], [0.03, 0.033, 0.045, 0], 2, [0, 1, 0]);
   const water = new MeshBuilder();
   water.quad([600, -0.8, -2800], [3600, -0.8, -2800], [3600, -0.8, 3000], [600, -0.8, 3000], [0.008, 0.016, 0.035, 0], 3, [0, 1, 0]);
-  return { world: mb, water, fence, artStats: { frontageBuildings: frontageCount, cityBuildings: placed, occupiedLots: lots.length, freightStacks: freightCount } };
+  return { world: mb, water, fence, artStats: { frontageBuildings: frontageCount, cityBuildings: placed, beaconLandmark, occupiedLots: lots.length, freightStacks: freightCount } };
 }
 
 // Racing line coloured by the reference profile: braking red, accelerating green, steady amber (drawn additively)

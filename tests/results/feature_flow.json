@@ -1,0 +1,12 @@
+{
+  "steps": [
+    "Real keyboard launch → observed pass → one saved medal and 100 XP",
+    "Real keyboard measured braking → actual stop → second saved medal",
+    "Real simulation corner exercise → observed progression → third saved medal",
+    "Paint changes rebuild real model; paint, medals and licence survive reload",
+    "Empty/repeated results award zero XP",
+    "Standalone game makes zero external HTTP requests"
+  ],
+  "errors": [],
+  "externalRequests": []
+}

@@ -1,0 +1,293 @@
+{
+  "checks": [
+    {
+      "name": "First launch enters live world hub",
+      "pass": true
+    },
+    {
+      "name": "New driver racing gate opens driving introduction",
+      "pass": true
+    },
+    {
+      "name": "All seven destination gates connect",
+      "pass": true
+    },
+    {
+      "name": "Grip study measures actual simulation traces",
+      "pass": true
+    },
+    {
+      "name": "Aero study compares a separate controlled vehicle",
+      "pass": true
+    },
+    {
+      "name": "Circuit explorer selects all actual track sections",
+      "pass": true
+    },
+    {
+      "name": "Circuit map fits above section selectors",
+      "pass": true
+    },
+    {
+      "name": "Team fields keep native typing and cursor control",
+      "pass": true
+    },
+    {
+      "name": "Local identity treats malicious input as text",
+      "pass": true
+    },
+    {
+      "name": "Identity card download contains real local achievements",
+      "pass": true
+    },
+    {
+      "name": "Team identity survives reload and appears on home profile",
+      "pass": true
+    },
+    {
+      "name": "Driver archive renders actual saved fixtures with assist separation",
+      "pass": true
+    },
+    {
+      "name": "Mock Android host cold-starts in game hub",
+      "pass": true
+    },
+    {
+      "name": "Lobby atmosphere changes actual pixels while motion is enabled",
+      "pass": true
+    },
+    {
+      "name": "App reduced motion freezes canvas and removes CSS motion",
+      "pass": true
+    },
+    {
+      "name": "OS reduced-motion preference takes precedence over app motion",
+      "pass": true
+    },
+    {
+      "name": "Android Back dismisses text editing before leaving team",
+      "pass": true
+    },
+    {
+      "name": "Android Back cancels destructive dialog and pending key remap",
+      "pass": true
+    },
+    {
+      "name": "Mock native identity export receives an SVG file",
+      "pass": true
+    },
+    {
+      "name": "Android Back pauses and resumes actual driving safely",
+      "pass": true
+    },
+    {
+      "name": "Android Back returns from race settings and photo to pause",
+      "pass": true
+    },
+    {
+      "name": "Simulated background lifecycle pauses driving and releases keep-awake",
+      "pass": true
+    },
+    {
+      "name": "Mobile 390×844: home gates have no overlaps",
+      "pass": true
+    },
+    {
+      "name": "Mobile 390×844: lab remains reachable at 130% text",
+      "pass": true
+    },
+    {
+      "name": "Mobile 390×844: explorer remains reachable at 130% text",
+      "pass": true
+    },
+    {
+      "name": "Mobile 390×844: team remains reachable at 130% text",
+      "pass": true
+    },
+    {
+      "name": "Mobile 390×844: records remains reachable at 130% text",
+      "pass": true
+    },
+    {
+      "name": "Mobile 390×844: long team identity fits profile",
+      "pass": true
+    },
+    {
+      "name": "Mobile 844×390: home gates have no overlaps",
+      "pass": true
+    },
+    {
+      "name": "Mobile 844×390: lab remains reachable at 130% text",
+      "pass": true
+    },
+    {
+      "name": "Mobile 844×390: explorer remains reachable at 130% text",
+      "pass": true
+    },
+    {
+      "name": "Mobile 844×390: team remains reachable at 130% text",
+      "pass": true
+    },
+    {
+      "name": "Mobile 844×390: records remains reachable at 130% text",
+      "pass": true
+    },
+    {
+      "name": "Mobile 844×390: long team identity fits profile",
+      "pass": true
+    },
+    {
+      "name": "No JavaScript errors or external network dependency",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "mobile": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screens": [
+        {
+          "screen": "lab",
+          "width": 390,
+          "scroll": 390,
+          "minTarget": 44
+        },
+        {
+          "screen": "explorer",
+          "width": 390,
+          "scroll": 390,
+          "minTarget": 44
+        },
+        {
+          "screen": "team",
+          "width": 390,
+          "scroll": 390,
+          "minTarget": 44
+        },
+        {
+          "screen": "records",
+          "width": 390,
+          "scroll": 390,
+          "minTarget": 44
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "screens": [
+        {
+          "screen": "lab",
+          "width": 844,
+          "scroll": 844,
+          "minTarget": 44
+        },
+        {
+          "screen": "explorer",
+          "width": 844,
+          "scroll": 844,
+          "minTarget": 44
+        },
+        {
+          "screen": "team",
+          "width": 844,
+          "scroll": 844,
+          "minTarget": 44
+        },
+        {
+          "screen": "records",
+          "width": 844,
+          "scroll": 844,
+          "minTarget": 44
+        }
+      ]
+    }
+  ],
+  "measurements": {
+    "grip": {
+      "base": {
+        "accelerationSeconds": 3.2077245040447684,
+        "brakingMetres": 24.902238329228084,
+        "brakingSeconds": 1.8666666666667173,
+        "brakingEntryKmh": 100.02298016070743,
+        "coastSeconds": 13.56666666666625,
+        "coastMetres": 460.4195397281264,
+        "coastEntryKmh": 150.2221476872626
+      },
+      "selected": {
+        "accelerationSeconds": 2.6745036548492993,
+        "brakingMetres": 22.146431656882584,
+        "brakingSeconds": 1.6416666666666777,
+        "brakingEntryKmh": 100.02273957439718,
+        "coastSeconds": 13.541666666666323,
+        "coastMetres": 459.3891972301481,
+        "coastEntryKmh": 150.14737833089205
+      }
+    },
+    "aero": {
+      "base": {
+        "accelerationSeconds": 3.2077245040447684,
+        "brakingMetres": 24.902238329228084,
+        "brakingSeconds": 1.8666666666667173,
+        "brakingEntryKmh": 100.02298016070743,
+        "coastSeconds": 13.56666666666625,
+        "coastMetres": 460.4195397281264,
+        "coastEntryKmh": 150.2221476872626
+      },
+      "selected": {
+        "accelerationSeconds": 3.169881914547243,
+        "brakingMetres": 24.416945000931463,
+        "brakingSeconds": 1.8333333333333806,
+        "brakingEntryKmh": 100.17350073704712,
+        "coastSeconds": 11.6499999999997,
+        "coastMetres": 395.0623171852052,
+        "coastEntryKmh": 150.14347555896802
+      }
+    }
+  },
+  "artifactSHA256": "35ba5a5e96fee8dafcea91959f9fe1cda121611bcaf47acd595964b3e4dda9b1",
+  "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+  "explorerBounds": {
+    "host": {
+      "top": 181.890625,
+      "bottom": 541.890625,
+      "height": 360
+    },
+    "svg": {
+      "top": 181.890625,
+      "bottom": 540.890625,
+      "height": 359
+    }
+  },
+  "lobbyMotion": {
+    "before": {
+      "hash": 948691619,
+      "elapsed": 0.15000000000000002,
+      "pixels": 329160
+    },
+    "after": {
+      "hash": 2276956980,
+      "elapsed": 0.40010000000000007,
+      "pixels": 329160
+    }
+  },
+  "nativeIdentity": {
+    "filename": "velocityverse-vxr-identity.svg",
+    "mime": "image/svg+xml",
+    "base64Length": 2000
+  },
+  "nativePhoto": {
+    "filename": "VelocityVerse-1794220728429.png",
+    "mime": "image/png",
+    "base64Length": 188916
+  },
+  "nativeBridgeMock": true,
+  "passed": 35,
+  "total": 35
+}

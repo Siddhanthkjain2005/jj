@@ -1,13 +1,17 @@
 {
-  "started": "2026-11-09T04:36:18.204Z",
+  "started": "2026-11-09T10:25:48.219Z",
   "steps": [
     {
       "name": "Boot: WebGL2 renderer and world built",
       "ok": true,
-      "detail": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version); world built in 135 ms; 200806 triangles"
+      "detail": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version); world built in 233 ms; 304384 triangles"
     },
     {
-      "name": "Title → first-run onboarding",
+      "name": "Title → world hub",
+      "ok": true
+    },
+    {
+      "name": "World hub → first-run onboarding",
       "ok": true
     },
     {
@@ -18,7 +22,7 @@
     {
       "name": "Scripted player completes timed laps in the browser build",
       "ok": true,
-      "detail": "50.745 s valid; 49.752 s valid; sim time 105.5 s; wall impacts 0; real time 107 s"
+      "detail": "50.745 s valid; 49.750 s valid; sim time 104.7 s; wall impacts 0; real time 104 s"
     },
     {
       "name": "Personal best + ghost saved to local storage",
@@ -32,7 +36,7 @@
     {
       "name": "Results screen lists laps",
       "ok": true,
-      "detail": "First assisted best: 0:49.752. Your ghost will race you next time."
+      "detail": "First assisted best: 0:49.750. Your ghost will race you next time."
     },
     {
       "name": "Results → garage",
@@ -55,7 +59,7 @@
     {
       "name": "All graphics presets render without WebGL errors and produce a lit, coloured frame",
       "ok": true,
-      "detail": "low: mean 72/255, 21/64 coloured samples, 14 draws; medium: mean 72/255, 22/64 coloured samples, 24 draws; high: mean 76/255, 21/64 coloured samples, 28 draws; ultra: mean 76/255, 19/64 coloured samples, 35 draws"
+      "detail": "low: mean 56/255, 14/64 coloured samples, 14 draws; medium: mean 54/255, 12/64 coloured samples, 21 draws; high: mean 61/255, 20/64 coloured samples, 28 draws; ultra: mean 64/255, 20/64 coloured samples, 35 draws"
     },
     {
       "name": "Event → Grand Prix preparation shows AI difficulty and race distance",
@@ -70,7 +74,7 @@
     {
       "name": "Grand Prix: AI rivals race (speed, positions, contacts resolved without NaN)",
       "ok": true,
-      "detail": "fastest rival 88 km/h; positions 1,2,3,4,5,6,7,8; player P5; car-contact steps 1722 (the scripted player ignores other cars); sim 17.0 s"
+      "detail": "fastest rival 93 km/h; positions 1,2,3,4,5,6,7,8; player P5; car-contact steps 1856 (the scripted player ignores other cars); sim 17.0 s"
     },
     {
       "name": "Grand Prix results classify all 8 cars",
@@ -90,7 +94,7 @@
     {
       "name": "Throttle button drives the car",
       "ok": true,
-      "detail": "0.0 → 17.0 m/s over 2.0 s of simulated time"
+      "detail": "0.0 → 17.1 m/s over 2.0 s of simulated time"
     },
     {
       "name": "Touch targets ≥ 44 CSS px",
@@ -105,23 +109,23 @@
   ],
   "errors": [],
   "desktopPerf": {
-    "fps": 58.77886899659585,
-    "avg": 17.01291666666663,
-    "p95": 16.79999999998836,
-    "max": 66.70000000001164,
-    "sim": 0.07749999994024014,
-    "render": 0.6900000000488944,
-    "steps": 2.0416666666666665,
-    "dropped": 70,
+    "fps": 60.00300015000745,
+    "avg": 16.665833333333346,
+    "p95": 16.70000000001164,
+    "max": 16.80000000000291,
+    "sim": 0.07250000000931323,
+    "render": 0.43375000002173086,
+    "steps": 2,
+    "dropped": 0,
     "w": 480,
     "h": 270,
-    "draws": 27,
+    "draws": 28,
     "pbs": [
       "harbor_loop|assisted"
     ],
     "saveOk": true,
     "ghost": true
   },
-  "passed": 21,
-  "total": 21
+  "passed": 22,
+  "total": 22
 }

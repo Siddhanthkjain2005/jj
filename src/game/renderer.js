@@ -7,6 +7,7 @@ import { M4, compile, upload, dynamicMesh } from './gfx.js';
 import { buildWorld, buildRacingLine, buildSoftQuad, buildRing, NEON, LANES } from './world.js';
 import { buildCarLOD0, buildCarLOD1, buildWheel } from './carmodel.js';
 import { FX } from './fx.js';
+import { ASPHALT_URL } from './assets.js';
 
 export const QUALITY = {
   low: { shadow: 0, bloom: 0, refl: false, msaa: 0, radial: false, lines: false, streak: false, probe: 'static', probeSize: 64, smoke: false },
@@ -39,7 +40,7 @@ ${SAFE_GLSL}
 in vec3 vW; in vec3 vN; in vec4 vC; in float vM; in vec2 vUV; in vec3 vO;
 uniform vec3 uCam, uMoon, uMoonCol, uSkyAmb, uGndAmb, uFog, uTint, uSunDir, uSunCol;
 uniform float uTime, uFogD, uReflOn, uPass, uTintK, uAlpha, uEnvOn, uBrake, uStart, uHW, uLane, uFlood;
-uniform sampler2D uSign;
+uniform sampler2D uSign, uRoad;
 uniform mat4 uShadowVP; uniform sampler2D uShadow; uniform float uShadowOn, uShadowSize;
 uniform vec2 uRes; uniform sampler2D uRefl; uniform samplerCube uEnv;
 out vec4 o;
@@ -64,19 +65,25 @@ vec3 skyEnv(vec3 d){ // analytic environment (used while the probe itself is bei
 vec3 envAt(vec3 d, float lod){ return uEnvOn > 0.5 ? safeHDR(textureLod(uEnv, d, lod).rgb) : skyEnv(d); }
 float D_GGX(float NdH, float a){ float a2 = a * a, d = NdH * NdH * (a2 - 1.0) + 1.0; return a2 / (3.14159 * d * d + 1e-5); }
 vec3 surface(vec3 base, float metal, float rough, float clear, vec3 n, vec3 v){
-  float NdV = clamp(dot(n, v), 1e-3, 1.0), NdL = max(dot(n, uMoon), 0.0) * shadowAt(vW,n);
-  vec3 R = reflect(-v, n), h = safeNormalize(uMoon + v);
-  vec3 F0 = mix(vec3(0.04), base, metal);
-  vec3 F = F0 + (1.0 - F0) * pow(1.0 - NdV, 5.0) * (1.0 - 0.7 * rough);
-  vec3 irr = envAt(n, 6.0) * 1.1 + mix(uGndAmb, uSkyAmb, n.y * 0.5 + 0.5) * 0.5;
-  vec3 col = base * (1.0 - metal) * (irr + uMoonCol * NdL * 0.8) * (1.0 - F) + envAt(R, rough * 6.0) * F;
-  col += uMoonCol * min(D_GGX(max(dot(n, h), 0.0), max(rough * rough, 0.03)) * NdL * 0.25, 12.0) * mix(vec3(1.0), base, metal);
-  if (clear > 0.0) {
-    float Fc = 0.04 + 0.96 * pow(1.0 - NdV, 5.0);
-    col = col * (1.0 - Fc * clear) + envAt(R, 0.5) * Fc * clear + uMoonCol * min(D_GGX(max(dot(n, h), 0.0), 0.02) * NdL * 0.05, 8.0) * clear;
-  }
+  float NdV=clamp(dot(n,v),0.001,1.0),NdL=max(dot(n,uMoon),0.0);
+  vec3 h=safeNormalize(v+uMoon),R=reflect(-v,n);
+  float NdH=max(dot(n,h),0.0),VdH=clamp(dot(v,h),0.0,1.0);
+  rough=clamp(rough,0.08,0.95);float a=rough*rough,k=(rough+1.0)*(rough+1.0)/8.0;
+  float G=(NdV/(NdV*(1.0-k)+k))*(NdL/(NdL*(1.0-k)+k));
+  vec3 f0=mix(vec3(0.04),base,metal),F=f0+(1.0-f0)*pow(1.0-VdH,5.0);
+  vec3 spec=D_GGX(NdH,a)*G*F/max(4.0*NdV*NdL,0.001);
+  vec3 diffuse=(1.0-F)*(1.0-metal)*base/3.14159;
+  vec3 col=(diffuse+min(spec,vec3(8.0)))*uMoonCol*NdL*3.2*shadowAt(vW,n);
+  vec3 irr=envAt(n,6.0)*0.65+mix(uGndAmb,uSkyAmb,n.y*0.5+0.5)*1.6;
+  vec3 Fe=f0+(1.0-f0)*pow(1.0-NdV,5.0);
+  col+=base*(1.0-metal)*irr+envAt(R,rough*6.0)*Fe*(1.0-0.45*rough);
+  // A broad, cool stadium fill reveals curved bodywork; warm pit-side bounce gives contrast.
+  col+=base*(1.0-metal)*(vec3(0.15,0.20,0.26)*max(dot(n,safeNormalize(vec3(-0.5,0.8,0.2))),0.0)
+    +vec3(0.14,0.09,0.045)*max(dot(n,safeNormalize(vec3(0.7,0.25,-0.3))),0.0));
+  if(clear>0.0){float fc=0.04+0.96*pow(1.0-NdV,5.0);col=col*(1.0-fc*clear)+envAt(R,0.5)*fc*clear;}
   return col;
 }
+
 vec3 planarRefl(float spread, float wob){
   vec2 suv = gl_FragCoord.xy / uRes + (vec2(vn(vW.xz * 0.45), vn(vW.zx * 0.5 + 7.0)) - 0.5) * wob;
   vec3 rc = vec3(0.0); float ws = 0.0;
@@ -157,7 +164,12 @@ void main(){
     col = mix(vec3(0.05, 0.004, 0.006), vec3(1.0, 0.04, 0.05) * 9.0, on); em = on;
   } else if (m == 1) { // asphalt: aggregate, painted lines, puddles, wet reflections, glints
     float d = vUV.x, s = vUV.y, rub = vC.a;
-    float g = vn(vW.xz * 3.1) * 0.5 + vn(vW.xz * 0.4) * 0.5;
+    vec2 roadUV=vW.xz/2.0;
+    vec3 stone=texture(uRoad,roadUV).rgb;
+    float hE=textureOffset(uRoad,roadUV,ivec2(1,0)).r,hW=textureOffset(uRoad,roadUV,ivec2(-1,0)).r;
+    float hN=textureOffset(uRoad,roadUV,ivec2(0,1)).r,hS=textureOffset(uRoad,roadUV,ivec2(0,-1)).r;
+    vec3 roadN=safeNormalize(vec3((hW-hE)*2.4,1.0,(hS-hN)*2.4));
+    float g=dot(stone,vec3(0.333))*8.0;
     float aw = fwidth(d) + 0.002, as = fwidth(s) + 0.002;
     float edge = (1.0 - smoothstep(0.1 - aw, 0.1 + aw, abs(abs(d) - (uHW - 0.42))));
     float ph = fract(s / 12.0), dash = smoothstep(0.0, as * 2.0 / 12.0 + 0.01, ph) * (1.0 - smoothstep(0.5 - as * 2.0 / 12.0 - 0.01, 0.5, ph));
@@ -166,14 +178,15 @@ void main(){
     float wet = smoothstep(0.38, 0.72, vn(vW.xz * 0.06 + 3.1) * 0.65 + vn(vW.xz * 0.27) * 0.35) * (1.0 - 0.6 * rub);
     wet = max(wet, 0.22) * (1.0 - paint * 0.6);
     vec3 light = amb * 1.2 + uMoonCol * NdL * 0.5 + vec3(uFlood) * (0.4+0.5*shadow);
-    float fine = vn(vW.xz*36.0), wear = vn(vec2(d*1.8,s*0.11));
-    vec3 asphalt = vec3(0.018,0.022,0.028) * (0.62+0.42*g+0.15*fine) * (1.0-0.20*rub);
+    float fine = clamp(g*0.7,0.0,1.0), wear = vn(vec2(d*1.8,s*0.11));
+    vec3 asphalt = stone * vec3(0.42,0.46,0.51) * (1.0-0.24*rub);
     float seams = (1.0-smoothstep(0.018,0.045,abs(fract(s/32.0)-0.5))) * 0.15;
     asphalt *= (1.0-seams) * (0.92+0.08*wear);
     col = mix(asphalt, vec3(0.56,0.59,0.61), paint*(0.85+0.15*fine)) * light;
     float fres = pow(1.0 - clamp(v.y, 0.0, 1.0), 4.0);
-    vec3 refl = (uReflOn > 0.5 && uPass < 0.5) ? planarRefl(0.003, 0.0015) : envAt(reflect(-v, vec3(0.0, 1.0, 0.0)), 1.0 + 3.5 * (1.0 - wet));
-    col += refl * (0.045 + 0.48 * wet) * (0.25 + 0.75 * fres);
+    vec3 refl = (uReflOn > 0.5 && uPass < 0.5) ? planarRefl(0.003, 0.0015) : envAt(reflect(-v,roadN),1.0+3.5*(1.0-wet));
+    col += refl * (0.025+0.34*wet*wet)*(0.25+0.75*fres);
+    col += uMoonCol*pow(max(dot(reflect(-uMoon,roadN),v),0.0),100.0)*wet*0.12;
 
   } else if (m == 2 || m == 3) { // run-off / ground, harbour water
     float g = vn(vW.xz * 2.7) * 0.5 + vn(vW.xz * 0.33) * 0.5;
@@ -418,8 +431,24 @@ export class Renderer {
     this.triangles = this.worldMesh.tris + this.waterMesh.tris + this.fenceMesh.tris;
     this.drawCalls = 0; this.targets = null; this.qName = 'high'; this.q = QUALITY.high;
     this.signTex = this._makeSign();
+    this.roadTex = this._makeRoadTexture();
     this.black2D = this._solidTex(gl.TEXTURE_2D); this.blackCube = this._solidTex(gl.TEXTURE_CUBE_MAP);
     this.probe = null; this.probeFace = 0; this.probeFrame = 0; this.probePos = [1e9, 0, 0];
+  }
+
+  _makeRoadTexture() {
+    const gl=this.gl,tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.SRGB8_ALPHA8,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([75,75,75,255]));
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+    this.assetsReady=new Promise(resolve=>{
+      const img=new Image();img.onload=()=>{
+        gl.bindTexture(gl.TEXTURE_2D,tex);gl.texImage2D(gl.TEXTURE_2D,0,gl.SRGB8_ALPHA8,gl.RGBA,gl.UNSIGNED_BYTE,img);
+        gl.generateMipmap(gl.TEXTURE_2D);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.REPEAT);
+        const aniso=gl.getExtension('EXT_texture_filter_anisotropic');if(aniso)gl.texParameterf(gl.TEXTURE_2D,aniso.TEXTURE_MAX_ANISOTROPY_EXT,Math.min(8,gl.getParameter(aniso.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
+        this.materialLoaded=true;resolve(true);
+      };img.onerror=()=>{this.materialLoaded=false;resolve(false);};img.src=ASPHALT_URL;
+    });return tex;
   }
 
   _makeSign() {
@@ -464,6 +493,11 @@ export class Renderer {
     return m;
   }
 
+  invalidateModel(id) {
+    const m=this.models.get(id);if(!m)return;const gl=this.gl;
+    for(const mesh of [m.lod0,m.lod1,m.glow,...m.wheels,...m.wheelsLod]){gl.deleteBuffer(mesh.vb);gl.deleteBuffer(mesh.ib);gl.deleteVertexArray(mesh.vao);}
+    this.models.delete(id);
+  }
   resize(pixelRatio) {
     const c = this.canvas;
     const w = Math.max(1, Math.round(c.clientWidth * pixelRatio)), h = Math.max(1, Math.round(c.clientHeight * pixelRatio));
@@ -613,6 +647,7 @@ export class Renderer {
     gl.uniform3f(u.uCam, cam.eye[0], reflPass ? -cam.eye[1] : cam.eye[1], cam.eye[2]);
     gl.uniform3fv(u.uMoon, L.moon); gl.uniform3fv(u.uMoonCol, L.moonCol); gl.uniform3fv(u.uSkyAmb, L.sky); gl.uniform3fv(u.uGndAmb, L.gnd);
     gl.uniform3fv(u.uFog, L.fog); gl.uniform1f(u.uFogD, L.fogD); gl.uniform3fv(u.uSunDir, L.sun); gl.uniform3fv(u.uSunCol, L.sunCol);
+    gl.activeTexture(gl.TEXTURE4);gl.bindTexture(gl.TEXTURE_2D,this.roadTex);gl.uniform1i(u.uRoad,4);
     gl.activeTexture(gl.TEXTURE3);gl.bindTexture(gl.TEXTURE_2D,this.signTex);gl.uniform1i(u.uSign,3);
     gl.uniformMatrix4fv(u.uShadowVP,false,this.shadowVP);
     gl.uniform1f(u.uShadowOn,this.shadowMap ? 1 : 0);gl.uniform1f(u.uShadowSize,this.shadowMap ? this.shadowMap.size : 1);

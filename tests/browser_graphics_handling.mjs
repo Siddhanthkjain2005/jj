@@ -11,7 +11,7 @@ try {
  await page.addInitScript(()=>localStorage.setItem('velocityverse.m0.save',JSON.stringify({version:1,firstRunDone:false,settings:{graphics:'low',renderScale:'0.5'}})));
  await page.goto('file://'+path.resolve('dist/velocityverse.html'));
  await page.waitForFunction(()=>window.__vv?.renderer);
- await page.click('#btn-start');await page.click('#scr-onboard [data-preset="racer"]');
+ await page.click('#btn-start');await page.click('.gate-race');await page.click('#scr-onboard [data-preset="racer"]');
  await page.evaluate(()=>{const g=window.__vv;g.paused=true;g.countdown=0;g._goShown=true;});
  for(const fraction of [0.05,0.19,0.35,0.55,0.72,0.9]) for(const key of ['a','d']) {
   await page.evaluate(f=>{

@@ -1,4 +1,4 @@
-# VELOCITYVERSE — Milestone 0: Driving Lab
+# VELOCITYVERSE — Milestone 0: Android Lobby 0.4
 
 *Working title, not yet cleared for trademarks or store names.*
 
@@ -20,13 +20,13 @@ It is **not** the production game. The production target is **Unity 6.3 LTS (URP
 | Rebuild the single file | `node tools/build.mjs` | Node 18+ |
 | Browser smoke test | `node tests/browser_smoke.mjs` | Playwright + Chrome (set `PLAYWRIGHT_PATH`, `CHROME_PATH`) |
 
-To test on your Android phone, copy `dist/velocityverse.html` to the phone and open it in Chrome, or use the published link. Hold the phone sideways. On a slow phone set Settings → Graphics to Medium or Low.
+To test on your Android phone, copy `dist/velocityverse.html` to the phone and open it in Chrome, or serve the source from your computer on the same local network. No hosted deployment is implied by the repository push. Hold the phone sideways. On a slow phone set Settings → Graphics to Medium or Low.
 
-**Controls.** Keyboard: arrows or WASD, Q/E to shift (manual gears), C camera, T telemetry, F performance overlay, R reset to track, Esc pause. Gamepad: left stick steers, RT throttle, LT brake, LB/RB shift, Start pause. Touch: steering buttons or slider on the left, pedals on the right, camera and reset at the top left. Tilt only works where the browser allows motion sensors; the claude.ai viewer blocks them.
+**Controls.** Keyboard: arrows or WASD, Q/E to shift (manual gears), C camera, T telemetry, F performance overlay, R reset to track, Esc pause. Gamepad: left stick steers, RT throttle, LT brake, LB/RB shift, Start pause. Touch: steering buttons or slider on the left, pedals on the right, camera and reset at the top left. With automatic gears, hold Brake at standstill to reverse. With auto-throttle, release Brake and the car returns to Drive once safely stopped; with manual throttle, press Gas at standstill to return to Drive. Tilt only works where the browser allows motion sensors; the claude.ai viewer blocks them.
 
 ## What is in the build
 
-- **Flow:** title → first-run assist choice → first practice → garage (3 liveries) → event select → race prep → race → pause/settings → results → retry.
+- **Flow:** title → world hub → racing/garage/academy/explorer/engineering/team/records. First racing entry introduces assist choices. Garage → event → preparation → race → results → retry stays connected.
 - **Modes:** Practice (unlimited laps), Time trial (out-lap plus 3 timed laps against your ghost), and **Grand Prix** (3 or 5 laps, standing start from a grid of 8: you start sixth against seven AI rivals at Easy, Medium or Hard pace).
 - **Race presentation:** five F1-style start lights in 3D on the gantry and in the HUD with a random hold before lights out, a cinematic grid camera, live position and timing tower, interval to the car ahead, rivals on the minimap, FINAL LAP and finish banners, a cool-down lap that the car drives itself, and a full classification.
 - **Timing and ghost:** lap timing interpolated to the line crossing, 3 sectors, 12 ordered checkpoints, track limits, wrong-way detection, and a personal-best ghost with live delta (practice and time trial; races do not set personal bests because slipstream and traffic change lap times).
@@ -34,7 +34,7 @@ To test on your Android phone, copy `dist/velocityverse.html` to the phone and o
 - **Graphics presets:** Ultra, High, Medium, Low and Auto (Auto starts at Ultra on desktop and High on touch devices, and steps down to Medium if frames run slow).
 - **Settings, telemetry (T) and performance overlay (F):** as before; every telemetry value is read from simulation state.
 
-## Rendering (WebGL 2, all procedural and original)
+## Rendering (WebGL 2, original geometry and generated materials)
 
 - HDR scene (RGBA16F where supported) with 4× MSAA on High/Ultra.
 - A live cube-map reflection probe around your car (one face per frame, mipmapped for rough reflections). It drives clear-coated car paint with metallic flake, carbon-fibre twill, tire rubber, machined metal and glass.
@@ -99,9 +99,9 @@ Frame rates from headless Chrome use software rendering (SwiftShader) and are **
 | Sky, lighting and reflections | Procedural shaders, live reflection probe | M2: baked lighting and reflection probes in Unity URP |
 | Rival drivers and teams | Fictional names and liveries in `src/game/main.js` | Keep fictional, or license a roster |
 | Engine, tire, wind, rival and backfire audio | WebAudio synthesis | M2: recorded or designed audio in FMOD/Wwise |
-| Fonts | Inter and Barlow Condensed (SIL Open Font License), loaded from Google Fonts with system fallbacks | Keep, or license a display face |
+| Fonts | Inter and Barlow Condensed (SIL Open Font License), bundled locally and embedded in the standalone build | Keep, or license a display face |
 
-No third-party art, audio or code is bundled.
+Original geometry and synthesized audio are project-authored. The asphalt material is AI-generated; bundled Google Fonts retain their OFL licences. See assets/textures/README.md and assets/fonts/.
 
 ## Known limitations
 
@@ -119,7 +119,7 @@ No third-party art, audio or code is bundled.
 3. Load `tests/golden/vx1_scripted_v1.json` in a Unity Test Framework test. The C# port must match position within 0.05 m and speed within 0.1% at t = 16 s.
 4. Port `tests/validate.mjs` to NUnit and keep all 34 checks green.
 5. Drive the core from a fixed 120 Hz loop (`Time.fixedDeltaTime = 1/120`) and interpolate visuals in `Update`.
-6. Build to the reference phone (Samsung Galaxy A37 5G) and capture a 20-minute session with the Unity Profiler and Android GPU Inspector. Report sustained frame time, thermal state and battery use against the budgets in the plan.
+6. Build to the reference phone (Samsung Galaxy A54 5G) and capture a 20-minute session with the Unity Profiler and Android GPU Inspector. Report sustained frame time, thermal state and battery use against the budgets in the plan.
 
 ## Local review fixes (9 November 2026)
 
@@ -152,3 +152,41 @@ The UI uses Inter/Barlow Condensed with a charcoal/ivory/cyan palette, smaller r
 Verification: 34/34 physics checks and 21/21 browser flow checks passed during the art pass. Final captures cover title, garage, settings, stadium/city/waterfront/chicane and an 844×390 touch layout; all final review views had no WebGL errors on Apple M1 Metal. Minimum touch target was 46 CSS px. The deliberate NaN/Infinity reflection-map regression also passed. Run `node tests/visual_review.mjs` to regenerate the actual-game screenshots in `tests/results/art_*.png`. `VV_NATIVE_GPU=1 npm run smoke` uses the available native GPU; the default smoke test uses SwiftShader.
 
 This is original procedural prototype art, not production asset quality or verified superiority to another game. Additional detail raises GPU cost: a short 30-frame 1440×900 Ultra review was approximately 28 FPS on the tested M1 browser; this is not a sustained benchmark. Auto graphics/dynamic resolution remain available. No Android hardware performance has been measured.
+
+## Latest iteration: Driving Lab 0.2
+
+- A connected three-exercise academy teaches manual launch/speed control, measured braking and clean cornering using actual car/circuit data. Resets, teleports, wrong-way driving and absent player input cannot earn false passes. First-pass medals and cosmetic XP save locally. Academy setup explicitly positions the car; the instructor never applies hidden forces. Automatic reverse is disabled only during the exercises so a held brake means a controlled stop.
+- Driver licences, capped session XP and personal three-color liveries add offline identity/progression. They do not change car performance or imply online teams/leaderboards. Empty or repeated result screens do not manufacture XP.
+- Photo mode in the garage/pause flow offers orbit, height, distance and lens controls and saves a real rendered PNG without UI. Escape returns through paused menus; starting a fresh session clears audio's pause mute.
+- District geometry mixes curved, canted and terraced towers, planted sky terraces and a waterfront Beacon landmark. The car has partial rear-wheel fairings and integrated lamps. Visual curb height now matches the physical 25 mm model (plus the render offset).
+- The road uses a generated albedo texture with shader-derived bump detail; paint uses a revised energy-aware BRDF and fill lighting. All fonts/materials are local and embedded in the standalone HTML; the connected feature test verified zero external HTTP requests. Audio is still synthesized, but firing-pulse/load/intake/transmission/grip layers replace the former detuned saw timbre.
+
+Run `npm test` for input, career, academy and 34 physics checks; `npm run test:features` for connected medals/paint/persistence; `npm run test:photo` for export and pause navigation; `npm run test:audio` for real OfflineAudioContext signal/lifecycle checks. Existing smoke/HDR/visual commands remain. Screenshots and JSON reports are in tests/results.
+
+The answer to whether the entire original Claude brief is implemented remains **no**. See [the full requirement audit](docs/REQUIREMENTS.md) and [the sourced product/production plan](docs/PRODUCT_PLAN.md). Native Unity/Android builds, physical-device/sustained thermal proof, production art/audio, accounts, parent-managed online connections, moderation, verified leaderboards, multiplayer and community championships remain outside this build. Design documents are not shipped services. No Asphalt parity or commercial-readiness claim is made.
+
+
+## Latest app iteration: World Hub 0.3
+
+The floating-island home is original cinematic menu art inspired by the supplied reference. Seven real destination buttons lead to racing, the live 3D garage, academy, circuit explorer, engineering lab, local team identity and driver records. The scene is menu artwork, not extra playable tracks. XP, medals, personal times and licence progress come from local saves; there are no invented currencies, online ranks or live-event counters.
+
+- **Circuit explorer:** an interactive map of the real 17-section Harbor Loop, with actual length/radius and modeled reference-speed guidance.
+- **Engineering:** three isolated studies use the real Vehicle simulation at 120 Hz. Baseline 0–100: 3.208 s; 100–0: 24.902 m. Grip and aero studies show measured comparisons and speed traces. They never upgrade or alter the live race car.
+- **Team clubhouse:** choose a local name, tag, color and optional broad affiliation; save an SVG achievement card with your actual local progress. Online members, leagues and communication remain unimplemented.
+- **Driver archive:** saved clean laps, XP, medals, race finishes, podiums, assist-separated personal bests/ghost availability and recent lap history.
+- **Presentation:** a responsive world hub, coherent academy/event/app pages, phone layouts at 130% text, native text-editing controls, and bounded circuit-map sizing. Opaque app pages suspend unnecessary 3D rendering. Race HUD and driving dynamics were kept as the accepted foundation in this app-focused pass.
+
+Build: `npm run build`. Open `dist/velocityverse.html` directly; artwork, asphalt and licensed fonts are embedded for offline use. Run `npm run test:app` for connected app routes, real lab comparisons, record/identity persistence, safe text, download and mobile layout checks. The record fixtures in that test verify presentation; academy/race tests independently exercise earning real progress.
+
+App artwork and the exact built-in imagegen prompt are in [assets/art/README.md](assets/art/README.md). Source bitmap: `assets/art/archipelago-source.png`; optimized runtime artwork: `assets/art/archipelago.jpg`. The original prompt's full current status is in [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md). Native Android validation, production assets/audio and account-backed community competition remain open; this is an offline browser prototype.
+
+
+## Android lobby 0.4
+
+The hub now uses a game lobby layout in both phone orientations: seven compact touch destinations, a persistent dock, layered hologram/bridge/mote motion, illuminated selection, tap ripples and short panel transitions. This is a bundled app experience with no navigation URLs, store currency or artificial social feed. App and OS reduced-motion preferences stop both Canvas and CSS animation; the lobby loop stops while racing or hidden. Decorative animation is capped at 20 paint Hz/approximately 650k pixels on Low and 30 Hz/2.1M pixels otherwise.
+
+The Android project in `android/` packages the offline WebGL reference in an immersive hardware-accelerated WebView. It has Android Back handling, native touch feedback, clipboard support, scoped PNG/SVG exports and lifecycle pause. No Internet, GPS or broad storage permissions are requested. Only the trusted embedded app document can reach the JavaScript bridge. This is **Android packaging of the prototype**, not the planned Unity/C# engine port.
+
+Run `npm run build:android` after installing SDK Platform 36, Build Tools 36.0.0 and a compatible JDK. The checked-in Gradle wrapper pins the build tools; see [android/README.md](android/README.md) for exact setup and proof/limits. No physical Android device, emulator endurance run or Play Store release is implied by a successful APK build.
+
+`npm test` also covers lobby animation lifecycle/resource limits. `npm run test:app` now verifies 35 connected checks, including actual animation pixels, OS/app reduced motion, native-bridge exports/Back behavior under a test double, seven mobile destinations and the persistent dock. Native bridge test doubles do not replace testing the installed APK on a phone. Actual browser captures are `tests/results/v4_hub_*.png`.

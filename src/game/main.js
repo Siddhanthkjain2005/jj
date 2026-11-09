@@ -7,6 +7,8 @@ import { DriverInput, ASSIST_PRESETS, assistClass } from '../sim/assists.js';
 import { RaceSession, RaceField, ghostPoseAt, ghostTimeAtS } from '../sim/race.js';
 import { resolveCarContacts, applySlipstream } from '../sim/traffic.js';
 import { AIDriver, AI_LEVELS } from '../sim/ai.js';
+import { AcademySession, ACADEMY_DRILLS } from '../sim/academy.js';
+import { licenceFor, awardLesson, awardSession, personalLivery } from './career.js';
 import { MS_TO_KMH, MS_TO_MPH, clamp } from '../sim/units.js';
 import { Renderer } from './renderer.js';
 import { CameraRig } from './camera.js';
@@ -14,6 +16,11 @@ import { Input, ACTIONS, keyLabel, DEFAULT_KEYS } from './input.js';
 import { GameAudio } from './audio.js';
 import { SaveStore, encodeGhost, decodeGhost } from './save.js';
 import { Telemetry, PerfStats } from './telemetry.js';
+import { AppFeatures } from './app.js';
+import { HubShell } from './hub.js';
+import { LobbyMotion } from './lobby.js';
+import { AppNavigation } from './navigation.js';
+import { downloadBlob } from './platform.js';
 
 const SIM_DT = 1 / 120, MAX_STEPS = 8;
 const $ = (id) => document.getElementById(id);
@@ -82,6 +89,7 @@ class Game {
     this.track = new Track(TRACK_HARBOR, this.world, CAR_VX1);
     this.veh = new Vehicle(CAR_VX1, this.world, this.track);
     this.veh.reset(this.track.def.lineS + 18, 0);
+    this.school = null; this.pendingLessonResult = null;
     this.driver = new DriverInput();
     this.input = new Input($('touch'));
     this.input.bindings = { ...DEFAULT_KEYS, ...this.S.keys };
@@ -108,16 +116,25 @@ class Game {
     this.buildGaugeTicks();
     this.buildMinimap();
     this.applySettings();
+    this.app = new AppFeatures(this); this.hub = new HubShell(this);
+    this.navigation = new AppNavigation(this); this.navigation.wire();
+    this.nativeSaveResult = (success,message) => {
+      const note=message || (success ? 'File saved.' : 'File could not be saved.');
+      this.toast(note);if(this.screen==='team')$('team-save-note').textContent=note;
+    };
+    document.body.classList.toggle('native-android', !!window.NativeBridge);
+    this.lobby = new LobbyMotion(this);
     this.wireUi();
-    this.show('title');
+    this.app.wire(); this.hub.wire();
+    this.show(window.NativeBridge ? 'hub' : 'title');
     document.addEventListener('visibilitychange', () => { if (document.hidden && this.mode === 'race' && !this.paused) this.pause(); });
     window.addEventListener('resize', () => this.layoutCheck());
     requestAnimationFrame((t) => this.frame(t));
     window.__vv = this; // exposed for automated smoke tests and debugging
   }
 
-  livery() { return CAR_VX1.liveries.find((l) => l.id === this.save.data.livery) || CAR_VX1.liveries[0]; }
-  assists() { return this.save.data.assists; }
+  livery() { if (this.save.data.livery === 'custom') return personalLivery(this.save.data.customLivery); return CAR_VX1.liveries.find((l) => l.id === this.save.data.livery) || CAR_VX1.liveries[0]; }
+  assists() { return this.school ? { ...ASSIST_PRESETS.racer, autoReverse: false } : this.save.data.assists; }
   isRace() { return !!(this.race && this.race.mode === 'race'); }
 
   // ---------- loop ----------
@@ -127,6 +144,7 @@ class Game {
     this.handleGlobalInput(raw);
     if (this.mode === 'race' && !this.paused) this.simulate(dtReal, raw);
     else { this.simMs = 0; this.steps = 0; }
+    if (this.pendingLessonResult) this.completeLesson();
     const t0 = performance.now();
     this.draw(dtReal);
     this.renderMs = performance.now() - t0;
@@ -138,7 +156,7 @@ class Game {
       if (this.finishT !== null && this.time - this.finishT > 4.5) { this.finishT = null; this.finishSession(); }
     }
     if (this.S.showPerf && (this.time - (this._perfT || 0)) > 0.5) { this._perfT = this.time; this.updatePerf(); }
-    this.audio.update({ rpm: this.veh.rpm, throttle: this.driver.out.throttle * this.veh.tcsFactor, speed: Math.abs(this.veh.forwardSpeed), slip: Math.max(...this.veh.wheels.map((w) => w.slipNorm)), curb: this.veh.wheels.some((w) => w.surface === 'curb') && Math.abs(this.veh.forwardSpeed) > 2 ? 1 : 0, running: this.mode === 'race' && !this.paused });
+    this.audio.update({ rpm: this.veh.rpm, throttle: this.driver.out.throttle * this.veh.tcsFactor, speed: Math.abs(this.veh.forwardSpeed), slip: Math.max(...this.veh.wheels.map((w) => w.slipNorm)), curb: this.veh.wheels.some((w) => w.surface === 'curb') && Math.abs(this.veh.forwardSpeed) > 2 ? 1 : 0, gear: this.veh.gear, aLong: this.veh.aLong, running: this.mode === 'race' && !this.paused });
     this.rivalAudio();
     requestAnimationFrame((t) => this.frame(t));
   }
@@ -182,6 +200,16 @@ class Game {
     for (const r of this.rivals) this.collectHits(r.id, r.veh);
     if (this.field) this.field.update(SIM_DT, veh.time);
     race.update(SIM_DT, veh.time, veh, assistClass(a));
+    if (this.school) {
+      this.school.update(SIM_DT, veh, raw, this.track);
+      for (const ev of this.school.events.splice(0)) {
+        if (ev.type === 'complete') {
+          const award = awardLesson(this.save.data.career, ev.drillId);
+          this.save.data.career = award.career; this.save.save();
+          this.pendingLessonResult = { ...ev, earned: award.earned };
+        }
+      }
+    }
     this.telemetry.sample(veh, ctl, raw, veh.time);
     if (veh.gear !== gearBefore) { this.audio.click(); this.buzz(6); if (veh.gear < gearBefore) { this.gearEvents.add('player'); this.audio.pop(); } }
     const hard = this.collectHits('player', veh);
@@ -210,6 +238,8 @@ class Game {
 
   draw(dt) {
     if (!this.renderer) return;
+    // Opaque app pages need no 3D frames. Resume rendering for the showroom and racing.
+    if (this.mode === 'menu' && ['hub','lab','explorer','records','team','academy','event','onboard'].includes(this.screen)) return;
     const R = this.renderer;
     R.resize(Math.min(window.devicePixelRatio || 1, 2) * this.renderScale());
     const racing = this.mode === 'race', alpha = this.paused ? 1 : Math.min(1, this.acc / SIM_DT);
@@ -217,10 +247,11 @@ class Game {
     let camMode = racing ? this.S.camera : (this.screen === 'title' || this.screen === 'onboard' ? 'title' : 'orbit');
     if (racing && this.isRace() && this.countdown > 1.3) camMode = 'grid';
     if (racing && this.autopilot) camMode = 'finish';
+    if (this.screen === 'photo') camMode = 'photo';
     const info = { speed: this.veh.forwardSpeed, aLat: this.veh.aLat, aLong: this.veh.aLong, curb: this.veh.wheels.some((w) => w.surface === 'curb'), impact: this.lastImpact || 0 };
     this.lastImpact = 0;
     const motion = !this.S.reducedMotion && this.S.motion;
-    const cam = this.cam.update(dt, camMode, pose, info, { fov: this.S.fov, shake: this.S.shake, reducedMotion: !motion, aspect: R.canvas.clientWidth / Math.max(1, R.canvas.clientHeight) });
+    const cam = this.cam.update(dt, camMode, pose, info, { fov: this.S.fov, shake: this.S.shake, reducedMotion: !motion, aspect: R.canvas.clientWidth / Math.max(1, R.canvas.clientHeight), photo: this.photo });
     const playerModel = R.carModel(this.livery());
     const cars = [{ id: 'player', pose, model: playerModel, brakes: brakeGlow(this.veh) }];
     for (const r of this.rivals) { r.pose = lerpPose(r.prev, r.curr, alpha, r.pose || {}); cars.push({ id: r.id, pose: r.pose, model: R.carModel(r.livery), brakes: brakeGlow(r.veh) }); }
@@ -240,6 +271,7 @@ class Game {
     R.render({ cam, cars, focus: pose, showLine: racing && this.assists().showLine && !this.autopilot, time: this.time, fxTime: simT,
       speed: racing ? clamp((u - 40) / 50, 0, 1) : 0, showroom: !racing, motion, startLights: this.startLightsLit(),
       fxOpts: { streakK: racing && motion ? clamp((u - 30) / 40, 0, 1) : 0, speed: u, fwd: [Math.sin(pose.yaw), Math.cos(pose.yaw)], trailCols } });
+    if(this.capturePhoto){this.capturePhoto=false;R.canvas.toBlob(blob=>{if(!blob){this.toast('Photo could not be saved.');return;}const target=downloadBlob(blob,'VelocityVerse-'+Date.now()+'.png');this.toast(target==='native'?'Saving photo…':'Photo saved.');},'image/png');}
   }
   fxCar(id, pose, veh, throttle) {
     return { id, pose, speed: Math.abs(veh.forwardSpeed), vx: veh.vx, vz: veh.vz, throttle, rpm: veh.rpm, slip: veh.wheels.map((w) => w.slipNorm),
@@ -285,7 +317,7 @@ class Game {
     if (raw.perf) { this.S.showPerf = !this.S.showPerf; this.applySettings(); this.save.save(); }
     if (this.mode === 'race') {
       if (raw.pause && !this.paused) { this.pause(); return; }
-      if (this.paused) { if (raw.back && this.screen === 'pause') this.resume(); this.menuNav(raw); return; }
+      if (this.paused) { if (raw.back) { if(this.screen==='pause')this.resume();else document.querySelector('.screen.active [data-back]')?.click(); return; } this.menuNav(raw); return; }
       if (raw.telemetry) { this.S.showTelemetry = !this.S.showTelemetry; this.applySettings(); this.save.save(); }
       if (raw.camera) { this.S.camera = this.S.camera === 'chase' ? 'cockpit' : 'chase'; this.cam.snap(); this.save.save(); }
       if (raw.recover && this.countdown <= 0 && !this.autopilot) this.recover();
@@ -299,7 +331,9 @@ class Game {
     const scr = document.querySelector('.screen.active'); if (!scr) return;
     const items = [...scr.querySelectorAll('button:not([disabled]), input, select')].filter((e) => e.offsetParent !== null);
     if (!items.length) return;
-    const i = items.indexOf(document.activeElement);
+    const focused=document.activeElement;
+    if(focused?.tagName==='INPUT' && focused.type==='range' && raw.source==='keyboard' && (raw.navNext||raw.navPrev))return;
+    const i = items.indexOf(focused);
     if (raw.confirm && i >= 0) { items[i].click(); return; }
     if (raw.navNext) items[(i + 1 + items.length) % items.length].focus();
     if (raw.navPrev) items[(i - 1 + items.length) % items.length].focus();
@@ -307,8 +341,13 @@ class Game {
 
   // ---------- screens ----------
   show(id) {
+    const previous = this.screen;
     document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('active', s.id === 'scr-' + id));
     this.screen = id;
+    this.navigation.onScreen(id, previous);
+    this.lobby?.sync();
+    window.NativeBridge?.setKeepScreenOn?.(this.mode === 'race' && !this.paused);
+    document.body.classList.toggle('app-art', this.mode === 'menu' && ['hub','lab','explorer','records','team','academy','event','onboard'].includes(id));
     const inRace = this.mode === 'race' && !this.paused;
     $('hud').hidden = this.mode !== 'race';
     $('touch').hidden = !(this.mode === 'race' && isTouch && this.S.layout !== 'keyboard') || this.paused;
@@ -321,6 +360,12 @@ class Game {
     if (id === 'event') this.renderEvent();
     if (id === 'prep') this.renderPrep();
     if (id === 'settings') this.renderSettings();
+    if (id === 'photo') $('hud').hidden=true;
+    if (id === 'academy') this.renderAcademy();
+    if (id === 'customize') this.renderCustomize();
+    this.app.render(id); this.hub.render(id);
+    $('academy-hud').hidden = !(this.school && this.mode === 'race' && !this.paused);
+    if (this.school && this.mode === 'race' && !this.paused) $('hud-coach').classList.remove('on');
     const first = document.querySelector('.screen.active .btn.primary, .screen.active button');
     if (first && !isTouch) setTimeout(() => first.focus({ preventScroll: true }), 0);
     this.layoutCheck();
@@ -339,10 +384,17 @@ class Game {
   }
 
   wireUi() {
+    document.addEventListener('pointerdown',e=>{
+      const b=e.target.closest('button');if(!b||b.disabled||!b.closest('.screen.active'))return;
+      if(this.S.haptics)window.NativeBridge?.haptic?.();
+      if(this.S.reducedMotion||this.S.motion===false||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+      if(!b.matches('.world-gate,.app-nav button,.lab-setup,.icon-button'))return;
+      const r=b.getBoundingClientRect(),wave=document.createElement('span');wave.className='tap-ripple';wave.setAttribute('aria-hidden','true');wave.style.left=(e.clientX-r.left)+'px';wave.style.top=(e.clientY-r.top)+'px';b.append(wave);setTimeout(()=>wave.remove(),500);
+    });
     document.addEventListener('click', (e) => {
       const nav = e.target.closest('[data-nav]'); if (nav) { this.audio.unlock(); this.navTo(nav.dataset.nav); }
     });
-    $('btn-start').addEventListener('click', () => { this.audio.unlock(); this.show(this.save.data.firstRunDone ? 'garage' : 'onboard'); });
+    $('btn-start').addEventListener('click', () => { this.audio.unlock(); this.show('hub'); });
     $('btn-fullscreen').addEventListener('click', () => { const el = document.documentElement; try { (el.requestFullscreen ? el.requestFullscreen() : Promise.reject()).catch(() => this.toast('Fullscreen is not allowed here.')); } catch (e) { this.toast('Fullscreen is not allowed here.'); } });
     document.querySelectorAll('#scr-onboard [data-preset]').forEach((b) => b.addEventListener('click', () => {
       this.setPreset(b.dataset.preset);
@@ -350,7 +402,21 @@ class Game {
       this.firstDrive = true;
       this.startRace('practice');
     }));
-    $('btn-garage-drive').addEventListener('click', () => this.show('event'));
+    for(const id of ['btn-photo','btn-garage-photo'])$(id).addEventListener('click',()=>{
+      this.photoReturn=this.screen;this.photo={angle:((this.veh.yaw+2.4)%(Math.PI*2)+Math.PI*2)%(Math.PI*2),distance:7,height:2,fov:45};
+      for(const k of ['angle','distance','height','fov']){const el=$('photo-'+k);el.value=k==='angle'?this.photo[k]*180/Math.PI:this.photo[k];el.oninput=()=>{this.photo[k]=Number(el.value)*(k==='angle'?Math.PI/180:1);};}
+      this.show('photo');
+    });
+    $('btn-photo-save').addEventListener('click',()=>{this.capturePhoto=true;});
+    $('btn-photo-back').addEventListener('click',()=>{this.cam.snap();this.show(this.photoReturn||'garage');});
+    $('btn-onboard-school').addEventListener('click',()=>{this.save.data.firstRunDone=true;this.save.save();this.startSchool('launch');});
+    $('btn-academy').addEventListener('click', () => { this.mode='menu';this.school=null;this.show('academy'); });
+    $('btn-customize').addEventListener('click', () => this.show('customize'));
+    $('btn-school-retry').addEventListener('click', () => this.startSchool(this.school?.status.drillId || 'launch'));
+    $('btn-lesson-retry').addEventListener('click', () => this.startSchool(this.school?.status.drillId || 'launch'));
+    $('btn-lesson-next').addEventListener('click', () => { const i=ACADEMY_DRILLS.findIndex(d=>d.id===this.school?.status.drillId); if(i<2)this.startSchool(ACADEMY_DRILLS[i+1].id);else {this.mode='menu';this.school=null;this.show('academy');} });
+    $('btn-lesson-school').addEventListener('click', () => {this.mode='menu';this.school=null;this.show('academy');});
+    $('btn-garage-drive').addEventListener('click', () => this.navTo('event'));
     document.querySelectorAll('#scr-event [data-mode]').forEach((b) => b.addEventListener('click', () => { this.pendingMode = b.dataset.mode; this.show('prep'); }));
     $('btn-prep-start').addEventListener('click', () => this.startRace(this.pendingMode || 'timetrial'));
     $('btn-pause').addEventListener('click', () => this.pause());
@@ -367,6 +433,7 @@ class Game {
   }
   navTo(where) {
     if (where === 'settings') { this.settingsReturn = this.screen; this.show('settings'); return; }
+    if (where === 'event' && !this.save.data.firstRunDone) { this.show('onboard'); return; }
     this.show(where);
   }
 
@@ -384,8 +451,11 @@ class Game {
       ['Tire peak friction', `μ ${c.tire.mu}`, 'E'], ['Gearbox', '8-speed sequential, RWD, limited-slip diff', 'T'],
     ];
     $('car-specs').innerHTML = rows.map(([k, v, p]) => `<div><dt>${k}</dt><dd>${v} <abbr class="prov" title="${PROVENANCE_LABEL[p] || 'measured in sim'}">${PROVENANCE_LABEL[p] || 'measured in sim'}</abbr></dd></div>`).join('');
+    const career=this.save.data.career;
+    $('driver-licence').textContent=licenceFor(career.xp).name;
+    $('driver-xp').textContent=`${career.xp} XP · ${Object.keys(career.school).length}/3 academy medals · ${career.validLaps} clean laps`;
     const box = $('liveries'); box.innerHTML = '';
-    c.liveries.forEach((l) => {
+    [...c.liveries, personalLivery(this.save.data.customLivery)].forEach((l) => {
       const b = document.createElement('button'); b.className = 'swatch'; b.type = 'button';
       b.setAttribute('aria-pressed', String(l.id === this.save.data.livery)); b.setAttribute('aria-label', `Livery: ${l.name}`);
       b.innerHTML = `<span class="sw" style="background:linear-gradient(135deg, ${css(l.primary)} 0 55%, ${css(l.secondary)} 55% 80%, ${css(l.accent)} 80%)"></span><span>${l.name}</span>`;
@@ -438,6 +508,7 @@ class Game {
     $('controls-note').textContent = isTouch
       ? (this.S.layout === 'tilt' ? 'Tilt needs motion sensors. If the car does not respond, switch to Buttons or Slider.' : 'Steer on the left, pedals on the right. RESET puts the car back on track and invalidates the lap.')
       : `Steer ${keyLabel(keys.left)}/${keyLabel(keys.right)}, throttle ${keyLabel(keys.throttle)}, brake ${keyLabel(keys.brake)}, gears ${keyLabel(keys.shiftDown)}/${keyLabel(keys.shiftUp)}. C camera, T telemetry, R reset, Esc pause, F performance.${this.input.padConnected ? ' Gamepad detected.' : ''}`;
+    if(a.autoGears)$('controls-note').textContent+=' Hold Brake at rest to reverse. '+(a.autoThrottle?'Release Brake to return to Drive once stopped.':'Use Gas at standstill to return to Drive.');
   }
 
   renderSettings() {
@@ -487,7 +558,7 @@ class Game {
     box.querySelectorAll('[data-remap]').forEach((b) => b.addEventListener('click', () => {
       b.textContent = 'Press a key…';
       this.input.remapCallback = (code) => {
-        if (code) { this.input.bindings[b.dataset.remap] = code; S.keys = { ...this.input.bindings }; this.save.save(); }
+        if (code) { const action=b.dataset.remap,old=this.input.bindings[action],conflict=ACTIONS.map(([id])=>id).find(id=>id!==action&&this.input.bindings[id]===code);if(conflict)this.input.bindings[conflict]=old;this.input.bindings[action]=code;S.keys={...this.input.bindings};this.save.save(); }
         this.renderSettings();
       };
     }));
@@ -498,6 +569,8 @@ class Game {
     const S = this.S;
     document.documentElement.style.setProperty('--ts', String(S.textScale || 1));
     document.documentElement.classList.toggle('reduced', !!S.reducedMotion);
+    document.body.classList.toggle('reduce-motion', !!S.reducedMotion || S.motion === false);
+    this.lobby?.sync();
     this.audio.setVolumes({ master: S.volMaster, engine: S.volEngine, fx: S.volFx });
     $('perf').hidden = !S.showPerf;
     $('telemetry').hidden = !(this.mode === 'race' && S.showTelemetry && !this.paused);
@@ -511,7 +584,9 @@ class Game {
 
   startRace(mode) {
     if (!this.renderer) return;
-    this.audio.unlock();
+    this.audio.unlock(); this.audio.mute(false);
+    this.school=null; this.pendingLessonResult=null;
+    this.sessionId=`${Date.now()}-${Math.random().toString(36).slice(2)}`;
     this.lastMode = mode;
     const a = this.assists(), cls = assistClass(a), laps = mode === 'race' ? Number(this.S.raceLaps || 3) : 3;
     this.clearRivals();
@@ -577,6 +652,7 @@ class Game {
     const race = this.race;
     if (ev.type === 'start') { if (!this.isRace()) this.coach('Timing started.', 2, 'start'); return; }
     if (ev.type === 'invalid') { const f = $('hud-flag'); f.hidden = false; f.textContent = `✕ Lap invalid: ${ev.reason}`; this.coach(ev.reason === 'track limits' ? 'Keep at least one wheel on the asphalt or curb.' : 'This lap will not count.', 3, 'inv-' + ev.reason); return; }
+    if (this.school && ev.type === 'lap') return;
     if (ev.type === 'lap') {
       const lap = ev.lap, a = this.assists();
       $('hud-flag').hidden = true; $('hud-delta').textContent = '';
@@ -655,14 +731,63 @@ class Game {
         : (pb ? `Your ${cls} best is still ${fmtTime(pb.time)}.` : 'Finish a valid lap to set your first best.');
       $('results-note').textContent = `Lap times come from fixed ${Math.round(1 / SIM_DT)} Hz simulation steps, interpolated to the line, so they do not depend on frame rate. Dropped simulation steps this session: ${this.perf.dropped}.`;
     }
-    this.show('results');
+    const me=this.field?.entries[0];
+    const earned=awardSession(this.save.data.career,{id:this.sessionId,validLaps:race.laps.filter(l=>l.valid).length,personalBest:race.laps.some(l=>l.pb),finishedRace:!!me?.finished,position:me?.pos});
+    this.save.data.career=earned.career;this.save.save();
+    $('results-progression').textContent=`+${earned.earned} driver XP · ${licenceFor(earned.career.xp).name} · ${earned.career.xp} XP total`;
+    this.school=null;this.show('results');
   }
 
   copyTelemetry() {
     const h = this.telemetry.hist;
     const csv = ['sample,speed_mps,throttle,brake', ...h.map((r, i) => `${i},${r[0].toFixed(3)},${r[1].toFixed(3)},${r[2].toFixed(3)}`)].join('\n');
+    if(window.NativeBridge?.copyText){window.NativeBridge.copyText(csv);return;}
     try { navigator.clipboard.writeText(csv).then(() => this.toast(`Copied ${h.length} telemetry samples (last 10 s) as CSV.`), () => this.toast('Copying is not allowed here.')); }
     catch (e) { this.toast('Copying is not allowed here.'); }
+  }
+
+  renderAcademy() {
+    const school=this.save.data.career.school;
+    $('academy-cards').innerHTML='';
+    for(const d of ACADEMY_DRILLS){
+      const b=document.createElement('button');b.type='button';b.className='card';b.dataset.drill=d.id;
+      b.innerHTML=`<div class="meta">${school[d.id]?'✓ PASSED · REPLAY':'DRIVING FUNDAMENTALS'}</div><h3>${d.title}</h3><p>${d.summary}</p><div class="meta">${d.target}</div>`;
+      b.addEventListener('click',()=>this.startSchool(d.id));$('academy-cards').appendChild(b);
+    }
+    $('academy-progress').textContent=`${Object.keys(school).length} of 3 medals earned. Each first pass earns 100 driver XP. The instructor observes your real controls and grip.`;
+  }
+  startSchool(id) {
+    this.startRace('practice');
+    this.school=new AcademySession(this.track);
+    // Race-control placement is explicit exercise setup, never an assist force.
+    this.veh.reset(this.track.def.lineS-45,0);
+    this.driver=new DriverInput();this.prev=snapshot(this.veh,this.prev);this.curr=snapshot(this.veh,this.curr);
+    this.school.start(id,this.veh,this.track);this.countdown=0.8;this._goShown=true;
+    this.input.buildTouch(this.S.layout==='keyboard'?'buttons':this.S.layout,false,false);
+    $('hud-mode').textContent='DRIVING ACADEMY';$('hud-best').textContent='INSTRUCTOR SESSION';
+    $('hud-coach').classList.remove('on');this.show('none');this.updateAcademyHud();this.cam.snap();
+  }
+  updateAcademyHud() {
+    if(!this.school)return;const s=this.school.status;
+    $('school-title').textContent=s.title;$('school-instruction').textContent=s.instruction;
+    $('school-metric').textContent=s.metric;$('school-feedback').textContent=s.feedback;
+    $('school-progress').value=s.progress;$('btn-school-retry').hidden=s.phase!=='retry';
+  }
+  completeLesson() {
+    const ev=this.pendingLessonResult;this.pendingLessonResult=null;
+    this.input.reset();this.paused=true;this.acc=0;this.audio.mute(true);
+    const d=ACADEMY_DRILLS.find(d=>d.id===ev.drillId);
+    $('lesson-title').textContent=d.title+' · passed';$('lesson-feedback').textContent=d.lesson;
+    $('lesson-metric').textContent=this.school.status.metric;
+    $('lesson-xp').textContent=ev.earned?`+${ev.earned} driver XP · ${this.save.available?'Academy medal saved':'Session medal (storage unavailable)'}`:'Medal already earned · Practice makes precision';
+    $('btn-lesson-next').textContent=ev.drillId==='cornering'?'Academy summary':'Next exercise';this.show('lesson');
+  }
+  renderCustomize() {
+    const colors=this.save.data.customLivery;
+    for(const k of ['primary','secondary','accent']){
+      const el=$('paint-'+k);el.value=/^#[0-9a-f]{6}$/i.test(colors[k])?colors[k]:'#c9d1d5';
+      el.onchange=()=>{colors[k]=el.value;this.save.data.livery='custom';this.renderer.invalidateModel('custom');const saved=this.save.save();$('paint-status').textContent=saved?'Personal build saved on this device.':'Storage unavailable: colors are kept for this session only.';};
+    }
   }
 
   // ---------- HUD ----------
@@ -676,6 +801,7 @@ class Game {
     for (const r of this.rivals) { const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('r', '2.6'); c.setAttribute('class', 'mm-rival'); c.style.fill = css(r.livery.secondary); g.appendChild(c); r.dot = c; }
   }
   updateHud() {
+    this.updateAcademyHud();
     const veh = this.veh, race = this.race, S = this.S;
     const k = S.units === 'mph' ? MS_TO_MPH : MS_TO_KMH;
     const u = Math.abs(veh.forwardSpeed);

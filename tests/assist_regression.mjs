@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {DriverInput,ASSIST_PRESETS} from '../src/sim/assists.js';
+import {Vehicle} from '../src/sim/vehicle.js';import {Track} from '../src/sim/track.js';
+import {CAR_VX1,WORLDS,TRACK_HARBOR} from '../src/sim/data.js';
+const track=new Track(TRACK_HARBOR,WORLDS.lumen_harbor,CAR_VX1),v=new Vehicle(CAR_VX1,WORLDS.lumen_harbor,track);
+v.reset(155,0);const raw={steer:0,throttle:0,brake:1},steering={speedRef:25};
+const rookie=new DriverInput();for(let i=0;i<50;i++)rookie.process(.01,raw,v,track,ASSIST_PRESETS.rookie,steering);
+assert.equal(rookie.out.gearRequest,'R');rookie.process(.01,{...raw,brake:0},v,track,ASSIST_PRESETS.rookie,steering);
+assert.equal(rookie.out.gearRequest,'D');assert.ok(rookie.out.throttle>0,'touch Rookie cannot leave reverse without a Gas button');
+const racer=new DriverInput();for(let i=0;i<50;i++)racer.process(.01,raw,v,track,ASSIST_PRESETS.racer,steering);
+racer.process(.01,{...raw,brake:0},v,track,ASSIST_PRESETS.racer,steering);assert.equal(racer.out.gearRequest,'R');
+racer.process(.01,{...raw,brake:0,throttle:.5},v,track,ASSIST_PRESETS.racer,steering);assert.equal(racer.out.gearRequest,'D');
+const school=new DriverInput();for(let i=0;i<100;i++)school.process(.01,raw,v,track,{...ASSIST_PRESETS.racer,autoReverse:false},steering);assert.equal(school.out.gearRequest,'D');
+console.log('PASS automatic reverse: touch auto-throttle returns to Drive, manual Gas selection, academy stop remains braked');

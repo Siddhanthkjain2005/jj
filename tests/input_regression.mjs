@@ -29,3 +29,16 @@ listeners.keydown({code:'KeyR',preventDefault(){}});
 raw = input.poll(1/60);
 assert.ok(raw.steer > 0); assert.equal(raw.recover,false); assert.equal(raw.digitalSteer,true);
 console.log('PASS remapped R steers without resetting the car');
+
+for(const [key,action] of [['KeyC','camera'],['KeyT','telemetry'],['KeyF','perf'],['KeyP','pause']]){
+ input.reset();input.bindings.right=key;listeners.keydown({code:key,preventDefault(){}});raw=input.poll(1/60);
+ assert.ok(raw.steer>0);assert.equal(raw[action],false);
+}
+console.log('PASS remapped driving keys do not trigger camera, telemetry, performance or pause shortcuts');
+
+input.reset();input.inRace=false;
+for(const tagName of ['INPUT','SELECT','TEXTAREA']){
+ for(const code of ['KeyF','ArrowLeft','ArrowRight'])listeners.keydown({code,target:{tagName},preventDefault(){}});
+ raw=input.poll(1/60);assert.equal(raw.perf,false);assert.equal(raw.navNext,false);assert.equal(raw.navPrev,false);
+}
+console.log('PASS native text/select keyboard editing does not trigger game shortcuts or menu navigation');

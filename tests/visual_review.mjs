@@ -18,10 +18,10 @@ try {
  report.gpu=await page.evaluate(()=>{const g=window.__vv.renderer.gl,e=g.getExtension('WEBGL_debug_renderer_info');return e?g.getParameter(e.UNMASKED_RENDERER_WEBGL):g.getParameter(g.RENDERER);});
  console.log('GPU '+report.gpu);
  await page.screenshot({path:'tests/results/art_title.png'});
- await page.click('#btn-start');await frames(4);await page.screenshot({path:'tests/results/art_garage.png'});
+ await page.click('#btn-start');await page.click('.gate-garage');await frames(4);await page.screenshot({path:'tests/results/art_garage.png'});
  await page.click('#btn-garage-drive');await page.click('#scr-event [data-mode="practice"]');await page.click('#btn-prep-start');
  await page.evaluate(()=>{const g=window.__vv;g.countdown=0;g._goShown=true;g.paused=true;g.show('none');document.getElementById('hud-center').className='hud-center';document.getElementById('hud-coach').classList.remove('on');});
- for(const [name,s] of [['stadium',240],['city',560],['harbor',1100],['chicane',1600]]) {
+ for(const [name,s] of [['stadium',240],['city',560],['harbor',1100],['chicane',1600],['beacon',1475]]) {
   await page.evaluate(s=>{const g=window.__vv,v=g.veh;v.reset(s,0);for(const o of [g.prev,g.curr])Object.assign(o,{x:v.x,z:v.z,yaw:v.yaw,h:0,pitch:0,roll:0,steer:0});g.cam.snap();},s);
   await frames(10);await page.screenshot({path:'tests/results/art_'+name+'.png'});
   const stats=await page.evaluate(()=>{const R=window.__vv.renderer;return {tris:R.triangles,draws:R.drawCalls,quality:R.qName,shadow:!!R.shadowMap,glError:R.gl.getError()};});
@@ -34,7 +34,7 @@ try {
  await mobile.addInitScript(()=>localStorage.setItem('velocityverse.m0.save',JSON.stringify({version:1,firstRunDone:false,settings:{graphics:'high',renderScale:'1',showTelemetry:false,showPerf:false,reducedMotion:true}})));
  await mobile.goto('file://'+path.resolve('dist/velocityverse.html'));
  await mobile.waitForFunction(()=>window.__vv?.renderer);
- await mobile.click('#btn-start');await mobile.click('#scr-onboard [data-preset="racer"]');
+ await mobile.click('#btn-start');await mobile.click('.gate-race');await mobile.click('#scr-onboard [data-preset="racer"]');
  await mobile.evaluate(()=>{const g=window.__vv;g.countdown=0;g._goShown=true;g.paused=true;g.show('none');document.getElementById('touch').hidden=false;document.getElementById('hud-center').className='hud-center';document.getElementById('hud-coach').classList.remove('on');});
  await mobile.evaluate(async()=>{for(let i=0;i<8;i++)await new Promise(r=>requestAnimationFrame(r));});
  await mobile.screenshot({path:'tests/results/art_mobile.png'});

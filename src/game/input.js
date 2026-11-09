@@ -27,6 +27,9 @@ export class Input {
     this.touchRoot = touchRoot;
     window.addEventListener('keydown', (e) => {
       if (this.remapCallback) { e.preventDefault(); const cb = this.remapCallback; this.remapCallback = null; if (e.code !== 'Escape') cb(e.code); else cb(null); return; }
+      // Text editing, selects and sliders own their native keyboard interaction in menus.
+      const target = e.target;
+      if (!this.inRace && e.code !== 'Escape' && (['INPUT','TEXTAREA','SELECT'].includes(target?.tagName) || target?.isContentEditable)) return;
       if (!this.keys.has(e.code)) this.edges.add(e.code);
       this.keys.add(e.code);
       if (this.inRace && BLOCK.has(e.code)) e.preventDefault();
@@ -139,11 +142,12 @@ export class Input {
     const te = (k) => this.touchEdges.has(k);
     r.shiftUp = this.edge('shiftUp') || pe(5) || te('up');
     r.shiftDown = this.edge('shiftDown') || pe(4) || te('down');
-    r.pause = this.edges.has('Escape') || this.edges.has('KeyP') || pe(9);
-    r.camera = this.edges.has('KeyC') || pe(3) || te('cam');
-    r.recover = (this.edges.has('KeyR') && !Object.values(this.bindings).includes('KeyR')) || pe(2) || te('recover');
-    r.telemetry = this.edges.has('KeyT') || pe(8);
-    r.perf = this.edges.has('KeyF');
+    const shortcut = code => this.edges.has(code) && !Object.values(this.bindings).includes(code);
+    r.pause = shortcut('Escape') || shortcut('KeyP') || pe(9);
+    r.camera = shortcut('KeyC') || pe(3) || te('cam');
+    r.recover = shortcut('KeyR') || pe(2) || te('recover');
+    r.telemetry = shortcut('KeyT') || pe(8);
+    r.perf = shortcut('KeyF');
     r.navNext = this.edges.has('ArrowDown') || this.edges.has('ArrowRight') || pe(13) || pe(15);
     r.navPrev = this.edges.has('ArrowUp') || this.edges.has('ArrowLeft') || pe(12) || pe(14);
     r.confirm = pe(0);

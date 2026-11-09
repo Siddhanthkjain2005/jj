@@ -137,6 +137,27 @@ function carLOD0(car, livery) {
     // Thin painted shoulder seam and lower carbon cut-out keep the broad surfaces precise.
     mb.taper(sx*0.715,-1.06,0.47,0.012,0.012,0.36,0.385,0.43,0.45,S,0);
   }
+  // A partially faired rear axle gives the original Kestrel a distinct future-
+  // endurance silhouette. The top arc clears the tire at full suspension travel;
+  // its open ends and lower half retain visible wheels and mechanical detail.
+  for(const sx of [-1,1]){
+    const x0=sx*.545,x1=sx*.982,r=.415,zc=zr;
+    const pt=(x,t,rr)=>[x,.33+Math.cos(t)*rr,zc+Math.sin(t)*rr];
+    const steps=20;
+    for(let j=0;j<steps;j++){
+      const t0=(-1.12+j/steps*2.24),t1=(-1.12+(j+1)/steps*2.24);
+      mb.quad(pt(x0,t0,r),pt(x1,t0,r),pt(x1,t1,r),pt(x0,t1,r),shoulder,0);
+      mb.quad(pt(x1,t0,r),pt(x1,t0,r-.025),pt(x1,t1,r-.025),pt(x1,t1,r),CARBON,12);
+      mb.quad(pt(x0,t1,r-.018),pt(x1,t1,r-.018),pt(x1,t0,r-.018),pt(x0,t0,r-.018),CARBON,12);
+    }
+    // Painted longitudinal break line, rather than a luminous wheel outline.
+    const line=[];for(let j=0;j<=12;j++){const t=-.82+j/12*1.64;line.push(pt(sx*.89,t,r+.004));}
+    tube(mb,line,.007,S,0,5,.35);
+    // Compact rear-facing lamp and dark recessed vent in each aero shoulder.
+    mb.taper(sx*.73,-1.84,-1.78,.25,.25,.45,.51,.45,.51,DARK,12);
+    mb.taper(sx*.73,-1.846,-1.836,.21,.21,.473,.490,.473,.490,RED,5);
+    for(let j=0;j<4;j++)mb.taper(sx*.73,-1.73+j*.065,-1.71+j*.065,.13,.13,.681,.688,.681,.688,CARBON,12);
+  }
   // floor, edge fences, underglow line, plank, diffuser and strakes
   mb.taper(0, -1.96, 1.48, 1.56, 1.24, 0.035, 0.065, 0.035, 0.065, CARBON, 12);
   for (const sx of [-1, 1]) {
@@ -203,6 +224,13 @@ function carLOD1(car, livery) {
     mb.taper(sx * 0.53, -2.64, -2.02, 0.022, 0.022, 0.36, 1.03, 0.36, 0.99, P);
     mb.taper(sx * 0.53, -2.665, -2.635, 0.03, 0.03, 0.57, 0.79, 0.57, 0.79, RED, 5);
     mb.taper(sx * 0.98, 2.22, 2.86, 0.02, 0.02, 0.05, 0.31, 0.05, 0.20, P);
+  }
+  for(const sx of [-1,1]){
+    const zc=-car.wheelbase*car.frontWeight,pt=(x,t)=>[x,.33+Math.cos(t)*.415,zc+Math.sin(t)*.415];
+    for(let j=0;j<6;j++){
+      const t0=-1.12+j/6*2.24,t1=-1.12+(j+1)/6*2.24;
+      mb.quad(pt(sx*.545,t0),pt(sx*.982,t0),pt(sx*.982,t1),pt(sx*.545,t1),livery.primary.map((v,i)=>v*.55+IVORY[i]*.45).concat(0),0);
+    }
   }
   mb.taper(0, -1.96, 1.48, 1.56, 1.24, 0.035, 0.065, 0.035, 0.065, CARBON, 12);
   // Open diffuser exit: a ramp and vertical strakes, not a solid black rear wall.

@@ -13,7 +13,7 @@ try {
   });
   await page.goto('file://' + path.resolve('dist/velocityverse.html'));
   await page.waitForFunction(() => window.__vv?.renderer);
-  await page.click('#btn-start');
+  await page.click('#btn-start');await page.click('.gate-race');
   await page.click('#scr-onboard [data-preset="racer"]');
   const gas = page.getByRole('button', {name:'Throttle', exact:true});
   const box = await gas.boundingBox();

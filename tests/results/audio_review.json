@@ -1,0 +1,50 @@
+[
+  {
+    "mode": "silent",
+    "rms": 0,
+    "peak": 0,
+    "bad": 0,
+    "remainingSources": 0,
+    "remainingShots": 0
+  },
+  {
+    "mode": "idle",
+    "rms": 0.02963540227141254,
+    "peak": 0.07927762717008591,
+    "bad": 0,
+    "remainingSources": 0,
+    "remainingShots": 0
+  },
+  {
+    "mode": "loaded",
+    "rms": 0.082585102459929,
+    "peak": 0.23509001731872559,
+    "bad": 0,
+    "remainingSources": 0,
+    "remainingShots": 0
+  },
+  {
+    "mode": "coast",
+    "rms": 0.036354763551086015,
+    "peak": 0.09327709674835205,
+    "bad": 0,
+    "remainingSources": 0,
+    "remainingShots": 0
+  },
+  {
+    "mode": "scrub",
+    "rms": 0.049712459507411655,
+    "peak": 0.18399490416049957,
+    "bad": 0,
+    "remainingSources": 0,
+    "remainingShots": 0
+  },
+  {
+    "mode": "shots",
+    "rms": 0.03656055750623663,
+    "peak": 0.09327708929777145,
+    "bad": 0,
+    "remainingSources": 0,
+    "remainingShots": 0
+  }
+]

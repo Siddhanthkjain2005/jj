@@ -580,7 +580,7 @@ function testPerf() {
   for (let k = 0; k < N; k++) veh.step(DT, ctl2);
   const usVeh = (performance.now() - t0) * 1000 / N;
   const perFrame8 = usFull * 8 * 2 / 1000;
-  record('CPU cost per step (this container: x86-64, Node V8 — not a phone measurement)', usFull < 50, '< 50 µs per car-step here; device budget is 1.5 ms per frame for 8 cars at 120 Hz (measure in M1)', `full stack ${f(usFull, 2)} µs/step (vehicle only ${f(usVeh, 2)} µs) → ${f(perFrame8, 3)} ms per 60 FPS frame for 8 cars`, 'Simulation too expensive for the frame budget');
+  record(`CPU cost per step (${process.platform}/${process.arch}, Node ${process.version} — not a phone measurement)`, usFull < 50, '< 50 µs per car-step here; device budget is 1.5 ms per frame for 8 cars at 120 Hz (measure in M1)', `full stack ${f(usFull, 2)} µs/step (vehicle only ${f(usVeh, 2)} µs) → ${f(perFrame8, 3)} ms per 60 FPS frame for 8 cars`, 'Simulation too expensive for the frame budget');
   return { usFull, usVeh, perFrame8 };
 }
 

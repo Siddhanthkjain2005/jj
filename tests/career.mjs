@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {defaultCareer,normalizeCareer,awardLesson,awardSession,licenceFor,personalLivery} from '../src/game/career.js';
+let c=defaultCareer();let a=awardLesson(c,'launch');assert.equal(a.earned,100);assert.equal(c.xp,0);c=a.career;
+assert.equal(awardLesson(c,'launch').earned,0);assert.equal(awardLesson(c,'unknown').earned,0);
+a=awardSession(c,{id:'one',validLaps:8,personalBest:true,finishedRace:false});assert.equal(a.earned,85);c=a.career;
+assert.equal(licenceFor(c.xp).name,'Circuit driver');assert.equal(awardSession(c,{id:'one',validLaps:8}).earned,0);
+assert.equal(awardSession(c,{id:'invalid',validLaps:0,personalBest:true}).earned,0);
+a=awardSession(c,{id:'race',validLaps:3,finishedRace:true,position:2});assert.equal(a.career.completedRaces,1);assert.equal(a.career.podiums,1);assert.equal(a.earned,150);
+assert.equal(normalizeCareer({xp:NaN,school:{launch:'yes',braking:true}}).school.launch,undefined);
+assert.deepEqual(personalLivery({primary:'#ff0000'}).primary,[1,0,0]);assert.ok(personalLivery({primary:'bad'}).primary.every(Number.isFinite));
+console.log('PASS career: one-time lessons, per-session caps, invalid-lap exclusion, duplicate awards, licences and safe colors');

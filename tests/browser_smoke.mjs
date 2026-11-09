@@ -69,7 +69,9 @@ try {
   await page.waitForTimeout(2500);
   await page.click('#btn-start', { timeout: 90000 });
   await page.waitForTimeout(300);
-  step('Title → first-run onboarding', await page.isVisible('#scr-onboard.active'));
+  step('Title → world hub', await page.isVisible('#scr-hub.active'));
+  await page.click('.gate-race');
+  step('World hub → first-run onboarding', await page.isVisible('#scr-onboard.active'));
   await page.evaluate(() => { const g = window.__vv; g.S.renderScale = '0.5'; g.S.graphics = 'medium'; g.S.showTelemetry = true; g.S.showPerf = true; g.applySettings(); });
   await page.click('#scr-onboard [data-preset="rookie"]');
   await page.waitForTimeout(400);
@@ -178,7 +180,7 @@ try {
   await m.goto(url); await m.waitForTimeout(4000);
   await m.evaluate(() => { const g = window.__vv; g.S.renderScale = '0.5'; g.S.graphics = 'low'; g.applySettings(); });
   await m.waitForTimeout(1500);
-  await m.tap('#btn-start'); await m.waitForTimeout(300);
+  await m.tap('#btn-start'); await m.tap('.gate-race'); await m.waitForTimeout(300);
   await m.evaluate(() => { const g = window.__vv; g.S.renderScale = '0.5'; g.applySettings(); });
   await m.tap('#scr-onboard [data-preset="racer"]');
   for (let k = 0; k < 120; k++) { await m.waitForTimeout(500); if (await m.evaluate(() => window.__vv.countdown <= 0)) break; }
