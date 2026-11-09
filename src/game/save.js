@@ -3,6 +3,7 @@
 import { ASSIST_PRESETS } from '../sim/assists.js';
 import { DEFAULT_KEYS } from './input.js';
 import { defaultCareer, normalizeCareer } from './career.js';
+import { defaultOpenline, normalizeOpenline } from './openline-state.js';
 
 const SAVE_KEY = 'velocityverse.m0.save';
 export const SAVE_VERSION = 1;
@@ -19,7 +20,7 @@ export function defaultSave() {
       motion: true, reducedMotion: reduced, renderScale: 'auto', graphics: 'auto', units: 'kmh', textScale: 1, showTelemetry: false, showPerf: false,
       volMaster: 0.8, volEngine: 0.8, volFx: 0.8, keys: { ...DEFAULT_KEYS },
     },
-    pbs: {}, history: [], career: defaultCareer(), customLivery: { primary: '#c9d1d5', secondary: '#167c97', accent: '#d1a05b' },
+    pbs: {}, history: [], career: defaultCareer(), openline: defaultOpenline(), customLivery: { primary: '#c9d1d5', secondary: '#167c97', accent: '#d1a05b' },
   };
 }
 
@@ -39,6 +40,7 @@ export class SaveStore {
       }
     } catch (e) { this.available = false; }
     this.data.career = normalizeCareer(this.data.career);
+    this.data.openline = normalizeOpenline(this.data.openline);
     this.data.customLivery = { ...defaultSave().customLivery, ...(this.data.customLivery && typeof this.data.customLivery === 'object' ? this.data.customLivery : {}) };
   }
   save() {

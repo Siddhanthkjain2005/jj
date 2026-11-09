@@ -1,6 +1,6 @@
 # VELOCITYVERSE vehicle validation report
 
-Run 2026-11-09T12:13:47.646Z on darwin arm64, Node v18.20.8, fixed step 120 Hz. 34/34 checks passed in 6.1 s.
+Run 2026-11-09T16:55:41.077Z on darwin arm64, Node v18.20.8, fixed step 120 Hz. 34/34 checks passed in 6.1 s.
 
 | Result | Test | Expected | Measured | Detects |
 | --- | --- | --- | --- | --- |
@@ -32,7 +32,7 @@ Run 2026-11-09T12:13:47.646Z on darwin arm64, Node v18.20.8, fixed step 120 Hz. 
 | PASS | Worlds: braking 100–0 km/h | longer on 0.7 g Halcyon Ring and in vacuum (no downforce, no drag) than on Lumen Harbor | Lumen 24.6 m, Halcyon 35.1 m, vacuum 27.1 m | World rules that do not reach the vehicle physics |
 | PASS | Integration: Rookie preset lap (bot steers only; assists handle throttle/brake) | 2 valid timed laps, no barrier contact | 49.947 s valid; 49.742 s valid; impacts 0 | Broken assists, lap timing, checkpoints or track limits |
 | PASS | Integration: Racer preset lap (bot steers, throttles and brakes) | 2 valid laps; reference profile lap 47.12 s | 50.151 s valid; 49.950 s valid; impacts 0 | Speed-profile, braking or stability problems over a full lap |
-| PASS | CPU cost per step (darwin/arm64, Node v18.20.8 — not a phone measurement) | < 50 µs per car-step here; device budget is 1.5 ms per frame for 8 cars at 120 Hz (measure in M1) | full stack 5.39 µs/step (vehicle only 8.28 µs) → 0.086 ms per 60 FPS frame for 8 cars | Simulation too expensive for the frame budget |
+| PASS | CPU cost per step (darwin/arm64, Node v18.20.8 — not a phone measurement) | < 50 µs per car-step here; device budget is 1.5 ms per frame for 8 cars at 120 Hz (measure in M1) | full stack 5.46 µs/step (vehicle only 8.39 µs) → 0.087 ms per 60 FPS frame for 8 cars | Simulation too expensive for the frame budget |
 | PASS | Car contact: momentum conserved, energy dissipated (oblique rear-end, 20 m/s closing) | linear and angular momentum change < 1e-9 (relative); kinetic energy falls; overlap reduced | contacts 1; Δp 1.7e-18; ΔL 3.2e-16; KE 444.1 → 381.6 kJ; overlap 17.4 → 1.0 cm | Impulses that create or destroy momentum, or inject energy |
 | PASS | Car contact: side-by-side squeeze at 50 m/s stays stable (no tunnelling, no spin-out) | contact occurs; overlap < 15 cm; yaw rate < 2 rad/s; both cars keep > 35 m/s; no NaN | contact steps 54; max overlap 1.0 cm; max yaw rate 0.98 rad/s; speeds 49.6 / 49.6 m/s | Contact jitter, interpenetration or explosive separation |
 | PASS | Slipstream: following 12 m behind cuts drag and gains speed (wake model, estimated) | drag multiplier < 0.85 at 12 m (model: up to −35% at 0 m, fading to 0 at 45 m); faster and further after 15 s of full throttle | drag ×0.766; speed after 15 s 296.9 → 319.1 km/h; +52.0 m covered | Slipstream missing, reversed, or applied to the wrong car |

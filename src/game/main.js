@@ -21,6 +21,7 @@ import { HubShell } from './hub.js';
 import { LobbyMotion } from './lobby.js';
 import { AppNavigation } from './navigation.js';
 import { downloadBlob } from './platform.js';
+import { OpenlineCampaign } from './openline.js';
 
 const SIM_DT = 1 / 120, MAX_STEPS = 8;
 const $ = (id) => document.getElementById(id);
@@ -117,6 +118,7 @@ class Game {
     this.buildMinimap();
     this.applySettings();
     this.app = new AppFeatures(this); this.hub = new HubShell(this);
+    this.campaign = new OpenlineCampaign(this);
     this.navigation = new AppNavigation(this); this.navigation.wire();
     this.nativeSaveResult = (success,message) => {
       const note=message || (success ? 'File saved.' : 'File could not be saved.');
@@ -125,7 +127,7 @@ class Game {
     document.body.classList.toggle('native-android', !!window.NativeBridge);
     this.lobby = new LobbyMotion(this);
     this.wireUi();
-    this.app.wire(); this.hub.wire();
+    this.app.wire(); this.hub.wire(); this.campaign.wire();
     this.show(window.NativeBridge ? 'hub' : 'title');
     document.addEventListener('visibilitychange', () => { if (document.hidden && this.mode === 'race' && !this.paused) this.pause(); });
     window.addEventListener('resize', () => this.layoutCheck());
@@ -145,6 +147,7 @@ class Game {
     if (this.mode === 'race' && !this.paused) this.simulate(dtReal, raw);
     else { this.simMs = 0; this.steps = 0; }
     if (this.pendingLessonResult) this.completeLesson();
+    this.campaign.flush();
     const t0 = performance.now();
     this.draw(dtReal);
     this.renderMs = performance.now() - t0;
@@ -199,7 +202,8 @@ class Game {
     if (this.rivals.length) { const all = [veh, ...this.rivals.map((r) => r.veh)]; resolveCarContacts(all); applySlipstream(all); }
     for (const r of this.rivals) this.collectHits(r.id, r.veh);
     if (this.field) this.field.update(SIM_DT, veh.time);
-    race.update(SIM_DT, veh.time, veh, assistClass(a));
+    race.update(SIM_DT, veh.time, veh, this.campaign.active && this.campaign.supported ? 'story-supported' : assistClass(a));
+    this.campaign.observe(SIM_DT);
     if (this.school) {
       this.school.update(SIM_DT, veh, raw, this.track);
       for (const ev of this.school.events.splice(0)) {
@@ -239,7 +243,7 @@ class Game {
   draw(dt) {
     if (!this.renderer) return;
     // Opaque app pages need no 3D frames. Resume rendering for the showroom and racing.
-    if (this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard'].includes(this.screen)) return;
+    if (this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard','story','universe'].includes(this.screen)) return;
     if (this.mode === 'menu' && this.screen === 'hub') {
       this.lobbyFrameAge=(this.lobbyFrameAge||0)+dt;
       if(this.lobbyFrameAge<1/30)return;
@@ -274,7 +278,7 @@ class Game {
     R.updateFx(racing && !this.paused ? dt : 0, fxCars, simT, { active: racing, player: { pose, speed: u }, streaks: motion });
     this.fxHits.forEach((l) => { l.length = 0; }); this.gearEvents.clear();
     const trailCols = (id) => { const r = this.rivals.find((x) => x.id === id); return r ? R.carModel(r.livery).trail : playerModel.trail; };
-    R.render({ cam, cars, lobby: this.screen==='hub', focus: pose, showLine: racing && this.assists().showLine && !this.autopilot, time: this.time, fxTime: simT,
+    R.render({ cam, cars, lobby: this.screen==='hub', beacon: this.save.data.openline.completed, focus: pose, showLine: racing && this.assists().showLine && !this.autopilot, time: this.time, fxTime: simT,
       speed: racing ? clamp((u - 40) / 50, 0, 1) : 0, showroom: !racing, motion, startLights: this.startLightsLit(),
       fxOpts: { streakK: racing && motion ? clamp((u - 30) / 40, 0, 1) : 0, speed: u, fwd: [Math.sin(pose.yaw), Math.cos(pose.yaw)], trailCols } });
     if(this.capturePhoto){this.capturePhoto=false;R.canvas.toBlob(blob=>{if(!blob){this.toast('Photo could not be saved.');return;}const target=downloadBlob(blob,'VelocityVerse-'+Date.now()+'.png');this.toast(target==='native'?'Saving photo…':'Photo saved.');},'image/png');}
@@ -353,7 +357,7 @@ class Game {
     this.navigation.onScreen(id, previous);
     this.lobby?.sync();
     window.NativeBridge?.setKeepScreenOn?.(this.mode === 'race' && !this.paused);
-    document.body.classList.toggle('app-art', this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard'].includes(id));
+    document.body.classList.toggle('app-art', this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard','story','universe'].includes(id));
     const inRace = this.mode === 'race' && !this.paused;
     $('hud').hidden = this.mode !== 'race';
     $('touch').hidden = !(this.mode === 'race' && isTouch && this.S.layout !== 'keyboard') || this.paused;
@@ -370,10 +374,13 @@ class Game {
     if (id === 'academy') this.renderAcademy();
     if (id === 'customize') this.renderCustomize();
     this.app.render(id); this.hub.render(id);
+    this.campaign.render(id);
     $('academy-hud').hidden = !(this.school && this.mode === 'race' && !this.paused);
     if (this.school && this.mode === 'race' && !this.paused) $('hud-coach').classList.remove('on');
     const first = document.querySelector('.screen.active .btn.primary, .screen.active button');
-    if (first && !isTouch) setTimeout(() => first.focus({ preventScroll: true }), 0);
+    if (first && !isTouch) setTimeout(() => {
+      if(this.screen===id && !document.activeElement?.closest('.screen.active'))first.focus({preventScroll:true});
+    }, 0);
     this.layoutCheck();
   }
   toast(msg, ms = 2600) {
@@ -438,6 +445,10 @@ class Game {
     $('dialog-ok').addEventListener('click', () => { $('dialog').hidden = true; this.save.reset(); this.S = this.save.data.settings; this.input.bindings = { ...DEFAULT_KEYS }; this.applySettings(); this.renderSettings(); this.toast('Saved data cleared.'); });
   }
   navTo(where) {
+    if (this.mode === 'race' && ['hub','story','universe','garage','event','team','academy','lab','explorer','records'].includes(where)) {
+      this.campaign.leaveDrive(); this.input.reset(); this.mode='menu'; this.paused=false; this.school=null;
+      this.clearRivals(); this.audio.mute(true); this.acc=0; this.cam.snap();
+    }
     if (where === 'settings') { this.settingsReturn = this.screen; this.show('settings'); return; }
     if (where === 'event' && !this.save.data.firstRunDone) { this.show('onboard'); return; }
     this.show(where);
@@ -604,7 +615,8 @@ class Game {
       this.field.add(this.veh, { id: 'player', code: 'YOU', name: 'You', team: 'VX-1 · ' + this.livery().name, color: this.livery().secondary, player: true });
       const base = AI_LEVELS[this.S.aiLevel || 'medium'];
       let slot = 0;
-      RIVALS.forEach((rv, k) => {
+      RIVALS.forEach((original, k) => {
+        const rv=this.campaign.launching && k===0 ? { ...original, code:'SOL',name:'Sola Kest',team:'Crownline',livery:{id:'sola',primary:[.92,.91,.87],secondary:[.92,.28,.1],accent:[.22,.1,.28],stripe:[.92,.28,.1]} } : original;
         if (slot === PLAYER_GRID) slot++;
         const veh = new Vehicle(CAR_VX1, this.world, this.track); const [gs, go] = grid(slot++); veh.reset(gs, go);
         const r = { id: rv.code, ...rv, veh, ai: new AIDriver({ pace: base + PACE_SPREAD[k], seed: 1000 + k * 77 }), prev: snapshot(veh, {}), curr: snapshot(veh, {}) };
@@ -655,6 +667,7 @@ class Game {
   }
 
   onRaceEvent(ev) {
+    this.campaign.onRaceEvent(ev);
     const race = this.race;
     if (ev.type === 'start') { if (!this.isRace()) this.coach('Timing started.', 2, 'start'); return; }
     if (ev.type === 'invalid') { const f = $('hud-flag'); f.hidden = false; f.textContent = `✕ Lap invalid: ${ev.reason}`; this.coach(ev.reason === 'track limits' ? 'Keep at least one wheel on the asphalt or curb.' : 'This lap will not count.', 3, 'inv-' + ev.reason); return; }
@@ -689,6 +702,7 @@ class Game {
   }
 
   recover() {
+    this.campaign.invalidate('Car reset. Start another clean lap for homologation.');
     const p = this.track.project(this.veh.x, this.veh.z, -1, {});
     this.veh.reset(p.s - 2, 0);
     this.race.invalidate('car reset to track');
@@ -703,11 +717,12 @@ class Game {
     this.paused = true; this.audio.mute(true);
     this.show('pause');
     const me = this.field ? this.field.entries[0] : null;
-    $('pause-sub').textContent = this.isRace() ? `Race · lap ${clamp(me.lap + 1, 1, this.race.targetLaps)} of ${this.race.targetLaps} · P${me.pos} of ${this.field.entries.length}` : `${this.race.mode === 'practice' ? 'Practice' : 'Time trial'} · lap ${this.race.laps.length + (this.race.lapStart !== null ? 1 : 0)} · ${this.race.laps.filter((l) => l.valid).length} valid`;
+    $('pause-sub').textContent = this.campaign.active ? 'Light the Beacon · Return to the crew at any time' : this.isRace() ? `Race · lap ${clamp(me.lap + 1, 1, this.race.targetLaps)} of ${this.race.targetLaps} · P${me.pos} of ${this.field.entries.length}` : `${this.race.mode === 'practice' ? 'Practice' : 'Time trial'} · lap ${this.race.laps.length + (this.race.lapStart !== null ? 1 : 0)} · ${this.race.laps.filter((l) => l.valid).length} valid`;
   }
   resume() { this.input.buildTouch(this.S.layout === 'keyboard' ? 'buttons' : this.S.layout, this.assists().autoThrottle, !this.assists().autoGears); this.paused = false; this.last = performance.now(); this.acc = 0; this.audio.mute(false); this.show('none'); }
 
   finishSession() {
+    if (this.campaign.active) { this.campaign.returnToStory(); return; }
     const race = this.race; if (!race) return;
     this.mode = 'menu'; this.paused = false; this.finishT = null;
     const lapRows = race.laps.map((l) => {
@@ -781,6 +796,7 @@ class Game {
   }
   completeLesson() {
     const ev=this.pendingLessonResult;this.pendingLessonResult=null;
+    if (this.campaign.onLesson(ev)) return;
     this.input.reset();this.paused=true;this.acc=0;this.audio.mute(true);
     const d=ACADEMY_DRILLS.find(d=>d.id===ev.drillId);
     $('lesson-title').textContent=d.title+' · passed';$('lesson-feedback').textContent=d.lesson;
@@ -837,7 +853,7 @@ class Game {
     // lap, position, tower
     if (racing) {
       const me = this.field.entries[0], lapN = clamp(me.lap + 1, 1, race.targetLaps);
-      $('hud-lap').textContent = me.finished ? 'FINISHED' : `LAP ${lapN}/${race.targetLaps}`;
+      $('hud-lap').textContent = this.campaign.active ? (race.lapStart===null?'REACH THE START LINE':`CLEAN LAP · ATTEMPT ${race.laps.length+1}`) : me.finished ? 'FINISHED' : `LAP ${lapN}/${race.targetLaps}`;
       $('hud-pos').innerHTML = `P${me.pos}<span>/${this.field.entries.length}</span>`;
       if (this.lastPos && this.countdown <= 0 && !me.finished && me.pos !== this.lastPos) this.flashPos(me.pos < this.lastPos ? 'up' : 'down');
       this.lastPos = me.pos;
@@ -918,4 +934,13 @@ class Game {
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => { new Game(); });
+window.addEventListener('DOMContentLoaded', async () => {
+  if (!$('scr-story')) {
+    try {
+      const response=await fetch('./openline.html');
+      if(!response.ok)throw new Error('Chapter interface could not load.');
+      document.body.insertAdjacentHTML('beforeend',await response.text());
+    } catch(e) { $('title-error').textContent=e.message; $('title-error').hidden=false; return; }
+  }
+  new Game();
+});

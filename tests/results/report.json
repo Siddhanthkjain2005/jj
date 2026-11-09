@@ -1,12 +1,12 @@
 {
   "summary": {
-    "date": "2026-11-09T12:13:47.646Z",
+    "date": "2026-11-09T16:55:41.077Z",
     "node": "v18.20.8",
     "platform": "darwin arm64",
     "dt": 0.008333333333333333,
     "passed": 34,
     "total": 34,
-    "seconds": 6.065,
+    "seconds": 6.077,
     "goldenRows": 161
   },
   "results": [
@@ -210,7 +210,7 @@
       "name": "CPU cost per step (darwin/arm64, Node v18.20.8 — not a phone measurement)",
       "pass": true,
       "expected": "< 50 µs per car-step here; device budget is 1.5 ms per frame for 8 cars at 120 Hz (measure in M1)",
-      "measured": "full stack 5.39 µs/step (vehicle only 8.28 µs) → 0.086 ms per 60 FPS frame for 8 cars",
+      "measured": "full stack 5.46 µs/step (vehicle only 8.39 µs) → 0.087 ms per 60 FPS frame for 8 cars",
       "detects": "Simulation too expensive for the frame budget"
     },
     {
@@ -449,9 +449,9 @@
       }
     },
     "perf": {
-      "usFull": 5.391235555418664,
-      "usVeh": 8.283194444245762,
-      "perFrame8": 0.08625976888669862
+      "usFull": 5.459363471923603,
+      "usVeh": 8.387690972433322,
+      "perFrame8": 0.08734981555077764
     },
     "carContacts": {
       "dP": 1.6997532612877547e-18,
@@ -507,7 +507,7 @@
         "nan": 0,
         "simTime": 117.90833333337324
       },
-      "ms": 853.2572499960661,
+      "ms": 846.369957998395,
       "deterministic": true
     }
   }

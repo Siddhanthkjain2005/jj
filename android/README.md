@@ -33,7 +33,9 @@ System Back calls `window.__vv.androidBack()`; returning `true` handles the navi
 
 ## Verification boundary
 
-Build/lint/package evidence is recorded after the local build. There is no attached physical Android device or installed emulator in this workspace. Building an APK does not verify WebGL support, touch latency, motion sensors, audio focus, safe-area behavior, export behavior or sustained performance on an actual phone. Those remain required device checks.
+Android 0.6.0-debug (versionCode 6) assembles and passes Android lint. The packaged HTML is byte-identical to the artifact exercised by `tests/app_flow.mjs` (35/35) and `tests/openline_flow.mjs` (11/11), including actual simulated chapter driving, manual braking, offline operation, saves and touch-emulated layouts. The simulation validation suite passes 34/34 with additional campaign/input/academy tests.
+
+The prior 0.5 APK was installed on a physical Oppo during project work. ADB lists no attached phone for the 0.6 release, so this version has no fresh physical-device acceptance, sustained thermal/battery result, tilt/controller or native export proof. Desktop Chrome/WebGL/touch emulation and an APK build do not close those gates. This is an offline WebView debug test build, not the planned Unity port or a Play production release.
 
 ## Official tooling references (checked 9 November 2026)
 

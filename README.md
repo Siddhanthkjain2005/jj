@@ -1,6 +1,17 @@
-# VELOCITYVERSE — Milestone 0: Android Lobby 0.4
+# VELOCITYVERSE — The Openline 0.6
 
 *Working title, not yet cleared for trademarks or store names.*
+
+## New in Android 0.6
+
+Open **Light the Beacon** from the paddock to join Neri, Tavi, Maela and Sola. Choose a guide, predict a grip tradeoff, run actual vehicle-model comparisons (or drive a measured braking trial), publish or repeat the evidence, and complete one clean homologation lap against the AI field. An optional supported exhibition uses the same physical simulation and stays separate from competitive records. Saved choices, a physical showroom beacon and a cosmetic livery persist through reload/replay.
+
+The Universe archive contains 18 original character profiles, 10 city histories and 12 circuit concepts. **Harbor Loop remains the one playable circuit**; other locations are explicitly lore. NPC crew is local story, not online multiplayer.
+
+[0.6 implementation and acceptance](docs/OPENLINE_06.md) · [Full long-term universe bible](reports/Project%20Apex%20universe%20strategy.md)
+
+The current Android debug APK is generated at `android/app/build/outputs/apk/debug/app-debug.apk`. Build with `npm run build:android`; test the chapter with `npm run test:story` after `npm run build`.
+
 
 Milestone 0 is the smallest runnable slice of the studio plan. It includes:
 

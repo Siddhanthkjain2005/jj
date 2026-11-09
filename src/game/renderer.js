@@ -792,7 +792,16 @@ export class Renderer {
       base.box(x,.2,-3.6,.25,.6,.42,[.10,.13,.18],14);
       lights.box(x,.48,-3.6,.13,.03,.22,cyan,5);
     }
-    this.lobbyStage={base:upload(gl,base),floor:upload(gl,floor),lights:upload(gl,lights)};
+    // The chapter leaves a physical exhibit in the showroom, persisted by the save.
+    const beacon=new MeshBuilder();
+    base.box(2.65,.12,-2.5,.72,.24,.72,metal,14);
+    base.box(2.65,1.05,-2.5,.16,1.9,.16,[.21,.24,.30],14);
+    for(let i=0;i<4;i++){
+      base.box(2.65,.55+i*.35,-2.5,.36,.26,.36,[.09,.10,.13],14);
+      beacon.box(2.65,.55+i*.35,-2.5,.38,.20,.38,[1,.53,.10,.65],5);
+    }
+    base.box(2.65,.38,-2.18,.56,.25,.025,[.76,.79,.73],14);
+    this.lobbyStage={base:upload(gl,base),floor:upload(gl,floor),lights:upload(gl,lights),beacon:upload(gl,beacon)};
   }
 
   _lobbyUniforms(cam,time,vp,reflPass,w,h) {
@@ -842,6 +851,7 @@ export class Renderer {
     this._lobbyBackground(time);gl.depthFunc(gl.LEQUAL);
     this._lobbyUniforms(cam,time,this.vp,0,S.w,S.h);
     this._draw(this.main,stage.base);this._draw(this.main,stage.floor);this._draw(this.main,stage.lights);
+    if(scene.beacon)this._draw(this.main,stage.beacon);
     if(car)this._drawCar(this.main,car,cam.eye,false);
     gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);
     this._fxProg(cam,1,.7,time);gl.uniform1f(this.fx.u.uFogD,0);

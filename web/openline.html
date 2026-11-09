@@ -1,0 +1,125 @@
+<section class="screen openline-page" id="scr-story" aria-labelledby="story-h">
+  <div class="ol-shell">
+    <header class="ol-topbar">
+      <button class="ol-back" type="button" data-nav="hub" data-back><span aria-hidden="true">←</span> Paddock</button>
+      <span class="ol-wordmark">VELOCITY<span>VERSE</span><i aria-hidden="true"></i></span>
+      <button class="ol-quiet" id="btn-story-universe" type="button" data-nav="universe">Universe <span aria-hidden="true">↗</span></button>
+    </header>
+
+    <div class="ol-story-grid">
+      <div class="ol-cover">
+        <div class="ol-cover-image" aria-hidden="true"></div>
+        <div class="ol-cover-shade" aria-hidden="true"></div>
+        <div class="ol-cover-topline"><span class="ol-live-dot" aria-hidden="true"></span> YOUR FIRST CHAPTER <span>01 / LUMEN HARBOR</span></div>
+        <div class="ol-cover-copy">
+          <span class="ol-eyebrow">A place. A crew. A mark that stays.</span>
+          <h2 id="story-h">THE <span>OPENLINE</span></h2>
+          <p>Your best lap matters to someone.</p>
+          <button id="btn-story-continue" class="ol-button ol-primary" type="button"><span>Continue the chapter</span><b aria-hidden="true">↗</b></button>
+        </div>
+        <div class="ol-cover-foot"><span>LIGHT THE BEACON</span><span>Saved on this device <i aria-hidden="true">◆</i></span></div>
+        <div class="ol-beacon" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      </div>
+
+      <div class="ol-mission-column">
+        <div class="ol-mission-heading"><span class="ol-eyebrow">THE LIGHT WE LEAVE ON</span><span class="ol-chapter-badge">CHAPTER 01</span></div>
+        <ol class="ol-phase-rail" id="story-phase-rail" aria-label="Chapter progress">
+          <li data-story-step="intro" aria-current="step"><i>01</i><span>Meet</span></li>
+          <li data-story-step="prediction"><i>02</i><span>Predict</span></li>
+          <li data-story-step="evidence"><i>03</i><span>Measure</span></li>
+          <li data-story-step="choice"><i>04</i><span>Choose</span></li>
+          <li data-story-step="drive"><i>05</i><span>Drive</span></li>
+          <li data-story-step="complete"><i>06</i><span>Remember</span></li>
+        </ol>
+
+        <div class="ol-stage" id="story-stage" tabindex="-1">
+          <span class="ol-eyebrow ol-stage-kicker">ONE CREW. ONE SHARED PROJECT.</span>
+          <h3 id="story-stage-title">Light the Beacon</h3>
+          <p id="story-stage-copy">Help the crew earn a public teaching-room permit. Make a prediction, test it, then bring the car home clean.</p>
+
+          <div class="ol-stage-panel" id="story-panel-intro">
+            <div class="ol-project"><span class="ol-project-symbol" aria-hidden="true">⌁</span><div><strong>A light for the next driver.</strong><p>The old timing beacon has been dark for years. Your evidence can help reopen the garage's teaching room.</p></div></div>
+            <p class="ol-smallprint">One original chapter. Retry any driving stage freely. Your guide changes the perspective, never the car's performance.</p>
+          </div>
+
+          <div class="ol-stage-panel" id="story-panel-prediction" hidden>
+            <div class="ol-prediction-symbol" aria-hidden="true"><span>?</span><svg viewBox="0 0 200 45"><path d="M0 38H38L59 10L80 37H110L132 23L157 37H200"/></svg></div>
+            <h4>Before the test, what do you expect?</h4>
+            <p>More tire grip, the same car and the same entry speed. How will the stopping distance change?</p>
+            <div class="ol-choice-stack">
+              <button id="btn-story-predict-shorter" class="ol-choice" type="button"><span><strong>Shorter distance</strong><small>More grip can support stronger braking.</small></span><b aria-hidden="true">↗</b></button>
+              <button id="btn-story-predict-longer" class="ol-choice" type="button"><span><strong>Longer distance</strong><small>Let's check this against the measured result.</small></span><b aria-hidden="true">↗</b></button>
+              <button id="btn-story-predict-unsure" class="ol-choice" type="button"><span><strong>I'm not sure yet</strong><small>A good experiment starts with a question.</small></span><b aria-hidden="true">↗</b></button>
+            </div>
+          </div>
+
+          <div class="ol-stage-panel" id="story-panel-evidence" hidden>
+            <div class="ol-test-label"><i aria-hidden="true"></i> SAME CAR · SAME CONDITIONS · ONE CHANGE</div>
+            <div class="ol-action-stack">
+              <button id="btn-story-supported" class="ol-button ol-primary" type="button"><span>Run the supported comparison</span><b aria-hidden="true">↗</b></button>
+              <button id="btn-story-braking" class="ol-button ol-secondary" type="button"><span>Drive a measured braking trial</span><b aria-hidden="true">→</b></button>
+            </div>
+            <p class="ol-smallprint">The supported route runs the actual vehicle simulation. It teaches the comparison without requiring manual pedal control.</p>
+          </div>
+
+          <div class="ol-stage-panel" id="story-panel-choice" hidden>
+            <div id="story-evidence" class="ol-evidence" aria-label="Measured engineering evidence"></div>
+            <p id="story-evidence-note" class="ol-evidence-note"></p>
+            <div class="ol-choice-stack">
+              <button id="btn-story-publish" class="ol-choice" type="button"><span><strong>Publish with its limits</strong><small>Credit the crew and explain the conditions.</small></span><b aria-hidden="true">↗</b></button>
+              <button id="btn-story-repeat" class="ol-choice" type="button"><span><strong>Repeat before submitting</strong><small>Check whether the same conditions agree.</small></span><b aria-hidden="true">↻</b></button>
+            </div>
+          </div>
+
+          <div class="ol-stage-panel" id="story-panel-drive" hidden>
+            <div class="ol-project"><span class="ol-project-symbol" aria-hidden="true">⚑</span><div><strong>Bring the evidence home.</strong><p>Take the fixed-spec car onto Harbor Loop. Clean progress matters more than beating Sola.</p></div></div>
+            <div class="ol-action-stack">
+              <button id="btn-story-drive" class="ol-button ol-primary" type="button"><span>Drive the homologation</span><b aria-hidden="true">↗</b></button>
+              <button id="btn-story-supported-drive" class="ol-button ol-secondary" type="button"><span>Watch a supported exhibition</span><b aria-hidden="true">→</b></button>
+            </div>
+            <p class="ol-smallprint">The supported exhibition drives the same car with an AI driver. Its evidence is recorded as supported, separate from manual mastery.</p>
+          </div>
+
+          <div class="ol-stage-panel" id="story-panel-complete" hidden>
+            <div class="ol-memory-mark" aria-hidden="true"><span>✦</span><i></i><i></i><i></i></div>
+            <h4>The light is yours to leave on.</h4>
+            <p id="story-complete-copy">A teaching room opens. A test card stays on the wall. The garage remembers what your crew made possible.</p>
+            <div id="story-memory" class="ol-memory-card" aria-label="Your saved chapter memory"></div>
+            <div class="ol-action-stack">
+              <button id="btn-story-livery" class="ol-button ol-primary" type="button"><span>Wear the Beacon livery</span><b aria-hidden="true">↗</b></button>
+              <button id="btn-story-replay" class="ol-button ol-secondary" type="button"><span>Revisit the chapter</span><b aria-hidden="true">↻</b></button>
+            </div>
+          </div>
+
+          <p id="story-status" class="ol-status" role="status" aria-live="polite"></p>
+        </div>
+
+        <aside class="ol-dialogue" aria-label="Crew conversation">
+          <div id="story-speaker-portrait" class="ol-dialogue-portrait ol-portrait ol-portrait-maela" role="img" aria-label="Maela Rook"></div>
+          <div class="ol-dialogue-copy"><span id="story-dialogue-name">MAELA ROOK</span><p id="story-dialogue-line">A good lap tells us what happened. A good crew asks why.</p><button id="btn-story-dialogue-next" class="ol-dialogue-next" type="button">Next line <span aria-hidden="true">→</span></button></div>
+        </aside>
+      </div>
+    </div>
+
+    <section class="ol-crew-strip" aria-labelledby="story-crew-h"><div class="ol-section-heading"><div><span class="ol-eyebrow">FOUR PEOPLE. FOUR REASONS TO RACE.</span><h3 id="story-crew-h">Choose your guide</h3></div><span id="story-guide-name" class="ol-guide-name">Your crew is here.</span></div><div id="story-guide-cards" class="ol-guide-cards" role="group" aria-label="Choose a story guide"></div></section>
+    <footer class="ol-footer"><span><i aria-hidden="true"></i> OFFLINE STORY · LOCAL SAVE</span><button type="button" class="ol-quiet" data-nav="hub">Back to your paddock <span aria-hidden="true">→</span></button></footer>
+  </div>
+</section>
+
+<section class="screen openline-page" id="scr-universe" aria-labelledby="universe-h">
+  <div class="ol-shell ol-atlas-shell">
+    <header class="ol-topbar"><button class="ol-back" type="button" data-nav="story" data-back><span aria-hidden="true">←</span> Your chapter</button><span class="ol-wordmark">THE <span>OPENLINE</span><i aria-hidden="true"></i></span><button type="button" class="ol-quiet" data-nav="hub">Paddock <span aria-hidden="true">↗</span></button></header>
+    <header class="ol-atlas-heading"><div><span class="ol-eyebrow">ORIGINAL PEOPLE. CONNECTED PLACES.</span><h2 id="universe-h">BEYOND <span>THE GRID.</span></h2><p id="universe-description">Meet the crew and discover the places behind their stories.</p></div><span class="ol-atlas-number" aria-hidden="true">VV / 01</span></header>
+    <div class="ol-atlas-tabs" role="group" aria-label="Universe collection"><button type="button" data-universe-tab="crew" aria-pressed="true">The people <span>18</span></button><button type="button" data-universe-tab="world" aria-pressed="false">The places <span>10</span></button></div>
+    <div class="ol-atlas-layout"><section class="ol-atlas-index" aria-labelledby="universe-heading"><h3 id="universe-heading">The people of the Openline</h3><div id="universe-list" class="ol-universe-list"></div></section><article id="universe-detail" class="ol-universe-detail" tabindex="-1" aria-label="Selected universe entry"><div class="ol-empty-archive"><span aria-hidden="true">⌁</span><h3>Every line has a story.</h3><p>Choose a person or place to open their record.</p></div></article></div>
+    <footer class="ol-footer"><span><i aria-hidden="true"></i> WORLD ARCHIVE · ADDITIONAL LOCATIONS ARE LORE</span><button type="button" class="ol-quiet" data-nav="story">Continue your chapter <span aria-hidden="true">→</span></button></footer>
+  </div>
+</section>
+
+<aside id="openline-hud" hidden aria-label="Openline mission objective">
+  <div class="ol-hud-top"><span>LIGHT THE BEACON</span><button type="button" id="btn-openline-pause" aria-label="Pause mission">Ⅱ</button></div>
+  <strong id="openline-hud-goal">Bring the car home clean</strong>
+  <p id="openline-hud-detail">Your crew is watching the same measured run.</p>
+  <progress id="openline-hud-progress" max="1" value="0" aria-label="Mission driving progress"></progress>
+  <button type="button" id="btn-openline-return">Return to the crew <span aria-hidden="true">↗</span></button>
+</aside>

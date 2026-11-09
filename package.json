@@ -1,11 +1,11 @@
 {
   "name": "velocityverse-m0",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "VELOCITYVERSE Milestone 0: engine-agnostic vehicle simulation, validation suite and browser driving lab.",
   "type": "module",
   "scripts": {
-    "test": "node tests/input_regression.mjs && node tests/assist_regression.mjs && node tests/career.mjs && node tests/academy.mjs && node tests/lab.mjs && node tests/lobby.mjs && node tests/validate.mjs",
+    "test": "node tests/input_regression.mjs && node tests/assist_regression.mjs && node tests/career.mjs && node tests/academy.mjs && node tests/lab.mjs && node tests/lobby.mjs && node tests/openline.mjs && node tests/validate.mjs",
     "build": "node tools/build.mjs",
     "smoke": "node tests/browser_smoke.mjs",
     "serve": "python3 -m http.server 8080",
@@ -19,7 +19,8 @@
     "test:photo": "node tests/photo_flow.mjs",
     "test:responsive": "node tests/responsive_review.mjs",
     "test:app": "node tests/app_flow.mjs",
-    "build:android": "bash tools/android-build.sh"
+    "build:android": "bash tools/android-build.sh",
+    "test:story": "node tests/openline.mjs && node tests/openline_flow.mjs"
   },
   "license": "UNLICENSED",
   "devDependencies": {

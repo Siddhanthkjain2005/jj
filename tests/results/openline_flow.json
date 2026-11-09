@@ -1,0 +1,314 @@
+{
+  "checks": [
+    {
+      "name": "Hub entry opens chapter with four distinct guides and crew dialogue",
+      "pass": true
+    },
+    {
+      "name": "Universe offers eighteen people and ten cities with only Harbor playable",
+      "pass": true
+    },
+    {
+      "name": "Prediction and repeat use real comparable Vehicle traces without changing race car",
+      "pass": true
+    },
+    {
+      "name": "Android Back pauses actual story race and return releases race state",
+      "pass": true
+    },
+    {
+      "name": "Supported exhibition earns chapter through an actual clean simulated lap",
+      "pass": true
+    },
+    {
+      "name": "Completed memory persists across reload and cosmetic reward leaves physics unchanged",
+      "pass": true
+    },
+    {
+      "name": "Replay keeps earned memories and manual brake trial uses real inputs",
+      "pass": true
+    },
+    {
+      "name": "Returning to a normal race does not retain a chapter autopilot",
+      "pass": true
+    },
+    {
+      "name": "Story 360x792: targets and 200% text stay reachable",
+      "pass": true
+    },
+    {
+      "name": "Story 792x360: targets and 200% text stay reachable",
+      "pass": true
+    },
+    {
+      "name": "No JavaScript errors or external network dependency",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "measurements": {
+    "evidence": {
+      "baseline": {
+        "setupId": "baseline",
+        "valid": true,
+        "contacts": 0,
+        "guardTrips": 0,
+        "metrics": {
+          "accelerationSeconds": 3.2077245040447684,
+          "brakingMetres": 24.902238329228084,
+          "brakingSeconds": 1.8666666666667173,
+          "brakingEntryKmh": 100.02298016070743,
+          "coastSeconds": 13.56666666666625,
+          "coastMetres": 460.4195397281264,
+          "coastEntryKmh": 150.2221476872626
+        },
+        "samples": {
+          "braking": [
+            {
+              "time": 0,
+              "distance": 0,
+              "speedKmh": 100.02298016070743
+            },
+            {
+              "time": 0.09999999999999964,
+              "distance": 2.6975534556576264,
+              "speedKmh": 94.41064944445775
+            },
+            {
+              "time": 0.1999999999999993,
+              "distance": 5.226741348177939,
+              "speedKmh": 88.226479266375
+            },
+            {
+              "time": 0.29999999999999893,
+              "distance": 7.59078295660774,
+              "speedKmh": 82.35207445012324
+            },
+            {
+              "time": 0.3999999999999986,
+              "distance": 9.790362386191632,
+              "speedKmh": 76.55673221916507
+            },
+            {
+              "time": 0.4999999999999982,
+              "distance": 11.826849138805017,
+              "speedKmh": 70.62069441267094
+            },
+            {
+              "time": 0.5999999999999979,
+              "distance": 13.702587205536219,
+              "speedKmh": 64.8464540810138
+            },
+            {
+              "time": 0.6999999999999975,
+              "distance": 15.422360282272834,
+              "speedKmh": 59.516871939892276
+            },
+            {
+              "time": 0.7999999999999976,
+              "distance": 16.988912346140864,
+              "speedKmh": 53.953614491215134
+            },
+            {
+              "time": 0.9000000000000026,
+              "distance": 18.400709413045178,
+              "speedKmh": 48.40360861811601
+            },
+            {
+              "time": 1.0000000000000075,
+              "distance": 19.665256980680482,
+              "speedKmh": 43.22791994720464
+            },
+            {
+              "time": 1.1000000000000125,
+              "distance": 20.786852184400246,
+              "speedKmh": 38.113019027837595
+            },
+            {
+              "time": 1.2000000000000175,
+              "distance": 21.765148294252967,
+              "speedKmh": 32.91176256485021
+            },
+            {
+              "time": 1.3000000000000225,
+              "distance": 22.60238996034434,
+              "speedKmh": 27.97655876480436
+            },
+            {
+              "time": 1.4000000000000274,
+              "distance": 23.31034088232856,
+              "speedKmh": 23.464309224758093
+            },
+            {
+              "time": 1.5000000000000324,
+              "distance": 23.892026522829255,
+              "speedKmh": 18.993453717098458
+            },
+            {
+              "time": 1.6000000000000374,
+              "distance": 24.35090973884465,
+              "speedKmh": 14.700378193361543
+            },
+            {
+              "time": 1.7000000000000424,
+              "distance": 24.687004557655243,
+              "speedKmh": 9.8577702695439
+            },
+            {
+              "time": 1.8000000000000473,
+              "distance": 24.87129874444375,
+              "speedKmh": 3.9029641581085817
+            },
+            {
+              "time": 1.8666666666667173,
+              "distance": 24.902238329228084,
+              "speedKmh": -0.06481545089945903
+            }
+          ]
+        }
+      },
+      "study": {
+        "setupId": "grip",
+        "valid": true,
+        "contacts": 0,
+        "guardTrips": 0,
+        "metrics": {
+          "accelerationSeconds": 2.6745036548492993,
+          "brakingMetres": 22.146431656882584,
+          "brakingSeconds": 1.6416666666666777,
+          "brakingEntryKmh": 100.02273957439718,
+          "coastSeconds": 13.541666666666323,
+          "coastMetres": 459.3891972301481,
+          "coastEntryKmh": 150.14737833089205
+        },
+        "samples": {
+          "braking": [
+            {
+              "time": 0,
+              "distance": 0,
+              "speedKmh": 100.02273957439718
+            },
+            {
+              "time": 0.09999999999999964,
+              "distance": 2.6922676838048005,
+              "speedKmh": 94.08530721392715
+            },
+            {
+              "time": 0.1999999999999993,
+              "distance": 5.196561754391055,
+              "speedKmh": 87.16253220301999
+            },
+            {
+              "time": 0.29999999999999893,
+              "distance": 7.515478878107288,
+              "speedKmh": 80.364822143006
+            },
+            {
+              "time": 0.3999999999999986,
+              "distance": 9.65283232504953,
+              "speedKmh": 74.06060652712182
+            },
+            {
+              "time": 0.4999999999999982,
+              "distance": 11.609845299331198,
+              "speedKmh": 67.43004671693575
+            },
+            {
+              "time": 0.5999999999999979,
+              "distance": 13.389188634289027,
+              "speedKmh": 61.24342719483125
+            },
+            {
+              "time": 0.6999999999999975,
+              "distance": 14.992625580806674,
+              "speedKmh": 54.7926888598474
+            },
+            {
+              "time": 0.7999999999999972,
+              "distance": 16.422094551221036,
+              "speedKmh": 48.667941920926246
+            },
+            {
+              "time": 0.8999999999999968,
+              "distance": 17.686612963264608,
+              "speedKmh": 42.6889047001143
+            },
+            {
+              "time": 0.9999999999999964,
+              "distance": 18.78310072178374,
+              "speedKmh": 36.69956532558512
+            },
+            {
+              "time": 1.099999999999996,
+              "distance": 19.7129145775681,
+              "speedKmh": 30.792316928795763
+            },
+            {
+              "time": 1.1999999999999957,
+              "distance": 20.489750052032917,
+              "speedKmh": 25.577129253274403
+            },
+            {
+              "time": 1.2999999999999954,
+              "distance": 21.123453095661716,
+              "speedKmh": 20.44985601007514
+            },
+            {
+              "time": 1.399999999999999,
+              "distance": 21.613894614064975,
+              "speedKmh": 15.315054150243473
+            },
+            {
+              "time": 1.500000000000004,
+              "distance": 21.96097957072675,
+              "speedKmh": 9.791101263431091
+            },
+            {
+              "time": 1.600000000000009,
+              "distance": 22.131432070836055,
+              "speedKmh": 3.003553693762949
+            },
+            {
+              "time": 1.6416666666666777,
+              "distance": 22.146431656882584,
+              "speedKmh": 0.1578896868161118
+            }
+          ]
+        }
+      }
+    },
+    "exhibition": {
+      "phase": "complete",
+      "active": false,
+      "vehicleTime": 141.85000000003532,
+      "laps": [
+        {
+          "valid": true,
+          "time": 66.38381181997693,
+          "reason": ""
+        },
+        {
+          "valid": true,
+          "time": 65.5492205439974,
+          "reason": ""
+        }
+      ],
+      "contacts": 0,
+      "carContacts": 228
+    },
+    "manual": {
+      "phase": "evidence",
+      "manual": {
+        "drillId": "braking",
+        "entryKmh": 70.14151885108016,
+        "brakingDistance": 13.304676223275173,
+        "elapsed": 4.058333333333325,
+        "stoppingBudget": 36.0585273813486
+      }
+    }
+  },
+  "artifactSHA256": "984a1a9c5670daf21661cf2326dd1d6e246532dd21c10c456a24127cfe348243",
+  "passed": 11,
+  "total": 11
+}
