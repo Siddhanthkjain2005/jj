@@ -1,6 +1,6 @@
 {
   "name": "velocityverse-m0",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "VELOCITYVERSE Milestone 0: engine-agnostic vehicle simulation, validation suite and browser driving lab.",
   "type": "module",

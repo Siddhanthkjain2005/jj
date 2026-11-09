@@ -239,19 +239,25 @@ class Game {
   draw(dt) {
     if (!this.renderer) return;
     // Opaque app pages need no 3D frames. Resume rendering for the showroom and racing.
-    if (this.mode === 'menu' && ['hub','lab','explorer','records','team','academy','event','onboard'].includes(this.screen)) return;
+    if (this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard'].includes(this.screen)) return;
+    if (this.mode === 'menu' && this.screen === 'hub') {
+      this.lobbyFrameAge=(this.lobbyFrameAge||0)+dt;
+      if(this.lobbyFrameAge<1/30)return;
+      dt=this.lobbyFrameAge;this.lobbyFrameAge=0;
+    }
     const R = this.renderer;
     R.resize(Math.min(window.devicePixelRatio || 1, 2) * this.renderScale());
     const racing = this.mode === 'race', alpha = this.paused ? 1 : Math.min(1, this.acc / SIM_DT);
     const pose = racing ? lerpPose(this.prev, this.curr, alpha, this.pose) : snapshot(this.veh, this.pose);
     let camMode = racing ? this.S.camera : (this.screen === 'title' || this.screen === 'onboard' ? 'title' : 'orbit');
+    if(this.screen==='hub')camMode='lobby';
     if (racing && this.isRace() && this.countdown > 1.3) camMode = 'grid';
     if (racing && this.autopilot) camMode = 'finish';
     if (this.screen === 'photo') camMode = 'photo';
     const info = { speed: this.veh.forwardSpeed, aLat: this.veh.aLat, aLong: this.veh.aLong, curb: this.veh.wheels.some((w) => w.surface === 'curb'), impact: this.lastImpact || 0 };
     this.lastImpact = 0;
     const motion = !this.S.reducedMotion && this.S.motion;
-    const cam = this.cam.update(dt, camMode, pose, info, { fov: this.S.fov, shake: this.S.shake, reducedMotion: !motion, aspect: R.canvas.clientWidth / Math.max(1, R.canvas.clientHeight), photo: this.photo });
+    const cam = this.cam.update(dt, camMode, pose, info, { fov: this.S.fov, shake: this.S.shake, reducedMotion: !motion, aspect: R.canvas.clientWidth / Math.max(1, R.canvas.clientHeight), photo: this.photo, lobbyAngle: this.lobbyAngle || 0 });
     const playerModel = R.carModel(this.livery());
     const cars = [{ id: 'player', pose, model: playerModel, brakes: brakeGlow(this.veh) }];
     for (const r of this.rivals) { r.pose = lerpPose(r.prev, r.curr, alpha, r.pose || {}); cars.push({ id: r.id, pose: r.pose, model: R.carModel(r.livery), brakes: brakeGlow(r.veh) }); }
@@ -268,7 +274,7 @@ class Game {
     R.updateFx(racing && !this.paused ? dt : 0, fxCars, simT, { active: racing, player: { pose, speed: u }, streaks: motion });
     this.fxHits.forEach((l) => { l.length = 0; }); this.gearEvents.clear();
     const trailCols = (id) => { const r = this.rivals.find((x) => x.id === id); return r ? R.carModel(r.livery).trail : playerModel.trail; };
-    R.render({ cam, cars, focus: pose, showLine: racing && this.assists().showLine && !this.autopilot, time: this.time, fxTime: simT,
+    R.render({ cam, cars, lobby: this.screen==='hub', focus: pose, showLine: racing && this.assists().showLine && !this.autopilot, time: this.time, fxTime: simT,
       speed: racing ? clamp((u - 40) / 50, 0, 1) : 0, showroom: !racing, motion, startLights: this.startLightsLit(),
       fxOpts: { streakK: racing && motion ? clamp((u - 30) / 40, 0, 1) : 0, speed: u, fwd: [Math.sin(pose.yaw), Math.cos(pose.yaw)], trailCols } });
     if(this.capturePhoto){this.capturePhoto=false;R.canvas.toBlob(blob=>{if(!blob){this.toast('Photo could not be saved.');return;}const target=downloadBlob(blob,'VelocityVerse-'+Date.now()+'.png');this.toast(target==='native'?'Saving photo…':'Photo saved.');},'image/png');}
@@ -347,7 +353,7 @@ class Game {
     this.navigation.onScreen(id, previous);
     this.lobby?.sync();
     window.NativeBridge?.setKeepScreenOn?.(this.mode === 'race' && !this.paused);
-    document.body.classList.toggle('app-art', this.mode === 'menu' && ['hub','lab','explorer','records','team','academy','event','onboard'].includes(id));
+    document.body.classList.toggle('app-art', this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard'].includes(id));
     const inRace = this.mode === 'race' && !this.paused;
     $('hud').hidden = this.mode !== 'race';
     $('touch').hidden = !(this.mode === 'race' && isTouch && this.S.layout !== 'keyboard') || this.paused;

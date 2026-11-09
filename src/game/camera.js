@@ -31,6 +31,19 @@ export class CameraRig {
     const fwd = [sy, 0, cy], rgt = [cy, 0, -sy];
     const u = Math.max(0, info.speed);
     let eye, tgt, fov;
+    if(mode==='lobby') {
+      // A dedicated local-space display camera, independent of the car's circuit position.
+      // Keep a front three-quarter view; the idle sweep never exposes the rear or becomes a spin.
+      this.lobbyTime=(this.lobbyTime || 0)+(reduced?0:Math.min(dt,.1));
+      const manual=Number.isFinite(s.lobbyAngle)?s.lobbyAngle:0;
+      const angle=.69+manual+(reduced?0:Math.sin(this.lobbyTime*.16)*.04),aspect=s.aspect || 1;
+      const portrait=aspect<.9,compact=aspect<1.35;
+      const distance=portrait?16.8:compact?10.5:9.8,side=compact?0:.95;
+      eye=[Math.sin(angle)*distance,portrait?5.3:3.0,Math.cos(angle)*distance];
+      tgt=[Math.cos(angle)*side,portrait?-1.7:-.45,-Math.sin(angle)*side];
+      fov=(portrait?45:compact?44:40)*DEG;
+      this.lastMode=mode;this.snapNext=true;this._set(eye,tgt,fov);return this.out;
+    }
     if (mode === 'photo') {
       const p=s.photo||{angle:2.4,distance:7,height:2,fov:45};
       this._set([pose.x+Math.sin(p.angle)*p.distance,p.height,pose.z+Math.cos(p.angle)*p.distance],[pose.x,0.52,pose.z],p.fov*DEG);

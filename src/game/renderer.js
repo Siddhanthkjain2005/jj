@@ -3,7 +3,7 @@
 //  frame) for car paint, glass and metal · optional planar reflections for the wet track and water · bloom
 //  (dual filter) + anamorphic streaks · ACES tone mapping, grading, chromatic aberration, speed lines, vignette.
 // Quality presets trade effects for speed: low · medium · high · ultra.
-import { M4, compile, upload, dynamicMesh } from './gfx.js';
+import { M4, MeshBuilder, compile, upload, dynamicMesh } from './gfx.js';
 import { buildWorld, buildRacingLine, buildSoftQuad, buildRing, NEON, LANES } from './world.js';
 import { buildCarLOD0, buildCarLOD1, buildWheel } from './carmodel.js';
 import { FX } from './fx.js';
@@ -39,7 +39,7 @@ precision highp float;
 ${SAFE_GLSL}
 in vec3 vW; in vec3 vN; in vec4 vC; in float vM; in vec2 vUV; in vec3 vO;
 uniform vec3 uCam, uMoon, uMoonCol, uSkyAmb, uGndAmb, uFog, uTint, uSunDir, uSunCol;
-uniform float uTime, uFogD, uReflOn, uPass, uTintK, uAlpha, uEnvOn, uBrake, uStart, uHW, uLane, uFlood;
+uniform float uTime, uFogD, uReflOn, uPass, uTintK, uAlpha, uEnvOn, uBrake, uStart, uHW, uLane, uFlood, uLobby;
 uniform sampler2D uSign, uRoad;
 uniform mat4 uShadowVP; uniform sampler2D uShadow; uniform float uShadowOn, uShadowSize;
 uniform vec2 uRes; uniform sampler2D uRefl; uniform samplerCube uEnv;
@@ -56,6 +56,13 @@ float shadowAt(vec3 pos, vec3 normal) {
   return mix(0.25 + 0.75 * vis / 9.0, 1.0, fade);
 }
 vec3 skyEnv(vec3 d){ // analytic environment (used while the probe itself is being rendered)
+  if(uLobby>0.5){
+    vec3 e=vec3(0.022,0.031,0.065);
+    e+=vec3(1.1,1.2,1.4)*pow(max(dot(d,safeNormalize(vec3(-0.4,0.85,0.3))),0.0),22.0)*2.2;
+    e+=vec3(0.03,0.65,1.0)*pow(max(dot(d,safeNormalize(vec3(0.9,0.2,-0.4))),0.0),10.0)*1.4;
+    e+=vec3(0.75,0.035,0.65)*pow(max(dot(d,safeNormalize(vec3(-0.8,0.25,-0.6))),0.0),12.0)*1.1;
+    return safeHDR(e);
+  }
   vec3 c = mix(vec3(0.05,0.11,0.22), vec3(0.004,0.008,0.03), smoothstep(-0.05, 0.6, d.y));
   vec3 hd = safeNormalize(vec3(d.x, 0.0, d.z) + 1e-5), sd = safeNormalize(vec3(uSunDir.x, 0.0, uSunDir.z));
   c += uSunCol * pow(max(dot(hd, sd), 0.0), 5.0) * exp(-max(d.y, 0.0) * 9.0);
@@ -206,6 +213,12 @@ void main(){
   } else if (m == 23) { // foliage: broadleaf color variation, soft sky transmission
     float mottled = vn(vW.xz*4.0+vW.y*2.0);
     col = base*(0.65+0.5*mottled)*(amb*2.0+uMoonCol*(0.2+0.6*NdL)) + vec3(0.008,0.018,0.009);
+  } else if (m == 25) { // Lobby-only polished display disc; no asphalt markings or road assumptions.
+    col=surface(base,0.55,0.38,0.08,n,v)*0.30;
+    if(uReflOn>0.5 && uPass<0.5)col+=planarRefl(0.0008,0.0)*0.24;
+    float machining=length(vO.xz)*80.0;
+    float detail=1.0-smoothstep(.2,1.2,fwidth(machining));
+    col+=vec3(.0004,.0006,.0009)*cos(machining)*detail;
   } else if (m == 22) { // car paint: clear-coated with fine metallic flake
     float flake = step(0.984, h2(floor(vO.xz * 700.0) + floor(vO.y * 700.0) * 3.1)) * (1.0-smoothstep(0.2,1.0,length(fwidth(vO*700.0))));
     col = surface(base, 0.3, 0.22, 0.75, n, v) + uMoonCol * flake * NdL * 0.25;
@@ -221,6 +234,10 @@ void main(){
     col = surface(base, 0.0, 0.5, 0.0, n, v);
     float t = uBrake; col += mix(vec3(0.5, 0.02, 0.0), vec3(1.0, 0.42, 0.06), smoothstep(0.45, 1.0, t)) * smoothstep(0.05, 0.6, t) * 7.0 * t; em = t;
   } else { col = base * (amb * 1.3 + uMoonCol * NdL) + envAt(reflect(-v, n), 5.0) * 0.03; }
+  if(uLobby>0.5 && (m==22 || m==12 || m==14)){
+    col+=base*vec3(0.025,0.22,0.30)*max(dot(n,safeNormalize(vec3(0.8,0.3,-0.6))),0.0);
+    col+=vec3(0.17,0.012,0.14)*pow(1.0-clamp(dot(n,v),0.0,1.0),3.0)*max(-n.x,0.0);
+  }
   if (uTintK > 0.0) { float scan = 0.65 + 0.35 * sin(vW.y * 70.0 - uTime * 12.0); col = mix(col, uTint * 1.6 * scan, uTintK); em = 1.0; }
   float dist = length(vW - uCam), hf = exp(-max(vW.y, 0.0) / 140.0);
   float fog = 1.0 - exp(-uFogD * dist * (0.35 + 0.65 * hf));
@@ -264,6 +281,25 @@ void main(){ int m=int(vM+0.5); if(m==3 || m==5 || m==6 || m==8 || m==17) discar
 const VS_QUAD = `#version 300 es
 layout(location=0) in vec2 aP; out vec2 vUV; out vec2 vP;
 void main(){ vP = aP; vUV = aP * 0.5 + 0.5; gl_Position = vec4(aP, 0.9999, 1.0); }`;
+
+// An opaque, procedural showroom backdrop. The car, display disc and light arches are 3D geometry.
+const FS_LOBBY = `#version 300 es
+precision highp float;
+${SAFE_GLSL}
+in vec2 vUV; uniform float uTime,uAspect; out vec4 o;
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+void main(){
+  vec2 q=(vUV-vec2(0.64,0.48))*vec2(uAspect,1.0);
+  vec3 col=vec3(0.002,0.004,0.012);
+  col+=vec3(0.002,0.012,0.025)*exp(-dot(q*vec2(0.75,1.3),q*vec2(0.75,1.3))*3.0);
+  vec2 p=(vUV-vec2(0.18,0.49))*vec2(uAspect,1.0);
+  col+=vec3(0.016,0.001,0.018)*exp(-dot(p,p)*5.0);
+  col+=vec3(0.002,0.007,0.012)*exp(-abs(vUV.y-0.28)*18.0);
+  vec2 cell=floor(vUV*vec2(180.0*uAspect,110.0)),f=fract(vUV*vec2(180.0*uAspect,110.0))-.5;
+  float star=step(.9975,hash(cell))*(1.0-smoothstep(.03,.15,length(f)))*smoothstep(.32,.9,vUV.y);
+  col+=vec3(.14,.21,.28)*star*(.8+.2*sin(uTime*.12+hash(cell)*6.28));
+  o=vec4(safeHDR(col),1.0);
+}`;
 
 const FS_SKY = `#version 300 es
 precision highp float;
@@ -406,6 +442,7 @@ export class Renderer {
     this.main = compile(gl, VS, FS_MAIN); this.fx = compile(gl, VS, FS_FX); this.sky = compile(gl, VS_QUAD, FS_SKY);
     this.pre = compile(gl, VS_QUAD, FS_PRE); this.down = compile(gl, VS_QUAD, FS_DOWN); this.up = compile(gl, VS_QUAD, FS_UP);
     this.streakP = compile(gl, VS_QUAD, FS_STREAK); this.comp = compile(gl, VS_QUAD, FS_COMP);
+    this.lobbyBg = compile(gl, VS_QUAD, FS_LOBBY);
     const t0 = performance.now();
     const { world, water, fence, artStats } = buildWorld(track);
     this.artStats = artStats;
@@ -535,7 +572,7 @@ export class Renderer {
   }
   _freeTargets() {
     const gl = this.gl; if (!this.targets) return;
-    const all = [this.targets.scene, this.targets.refl, this.targets.streak, ...this.targets.bloom].filter(Boolean);
+    const all = [this.targets.scene, this.targets.refl, this.targets.streak, this.targets.lobby, ...this.targets.bloom].filter(Boolean);
     for (const T of all) { gl.deleteTexture(T.tex); gl.deleteFramebuffer(T.fb); if (T.depth) gl.deleteRenderbuffer(T.depth); if (T.msFb) { gl.deleteFramebuffer(T.msFb); gl.deleteRenderbuffer(T.msColor); gl.deleteRenderbuffer(T.msDepth); } }
     this.targets = null;
   }
@@ -653,6 +690,7 @@ export class Renderer {
     gl.uniform1f(u.uShadowOn,this.shadowMap ? 1 : 0);gl.uniform1f(u.uShadowSize,this.shadowMap ? this.shadowMap.size : 1);
     gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,this.shadowMap ? this.shadowMap.tex : this.black2D);gl.uniform1i(u.uShadow,2);
     gl.uniform1f(u.uTime, time); gl.uniform1f(u.uPass, reflPass ? 1 : 0); gl.uniform1f(u.uTintK, 0); gl.uniform1f(u.uAlpha, 1);
+    gl.uniform1f(u.uLobby,0);
     gl.uniform1f(u.uBrake, 0); gl.uniform1f(u.uStart, this.startLights || 0); gl.uniform1f(u.uHW, this.track.halfWidth); gl.uniform1f(u.uLane, Math.abs(LANES[0])); gl.uniform1f(u.uFlood, L.flood);
     gl.uniform2f(u.uRes, w, h);
     const useRefl = !reflPass && this.targets && this.targets.refl && this.drawingMain;
@@ -709,9 +747,117 @@ export class Renderer {
     gl.bindVertexArray(this.quadVao); gl.drawArrays(gl.TRIANGLES, 0, 3); this.drawCalls++;
   }
 
+  _ensureLobbyStage() {
+    if(this.lobbyStage)return;
+    const gl=this.gl,base=new MeshBuilder(),floor=new MeshBuilder(),lights=new MeshBuilder(),n=128;
+    const metal=[.075,.095,.145],cyan=[.08,.75,.94,.8],magenta=[.76,.10,.68,.65];
+    const center=floor.vert(0,-.014,0,0,1,0,[.055,.072,.11],25);
+    for(let i=0;i<=n;i++) {
+      const a=i/n*Math.PI*2;
+      floor.vert(Math.cos(a)*4.65,-.014,Math.sin(a)*4.65,0,1,0,[.055,.072,.11],25);
+      if(i)floor.i.push(center,center+i,center+i+1);
+    }
+    const horizontalRing=(r0,r1,y,col,mat=5,start=0,end=Math.PI*2) => {
+      const count=Math.ceil(n*(end-start)/(Math.PI*2));
+      for(let i=0;i<count;i++) {
+        const a=start+(end-start)*i/count,b=start+(end-start)*(i+1)/count;
+        const pt=(r,t)=>[Math.cos(t)*r,y,Math.sin(t)*r];
+        (mat===5?lights:base).quad(pt(r0,a),pt(r0,b),pt(r1,b),pt(r1,a),col,mat,[0,1,0]);
+      }
+    };
+    for(let i=0;i<n;i++) {
+      const a=i/n*Math.PI*2,b=(i+1)/n*Math.PI*2;
+      const pt=(r,y,t)=>[Math.cos(t)*r,y,Math.sin(t)*r];
+      base.quad(pt(4.65,-.27,a),pt(4.65,-.27,b),pt(4.65,-.015,b),pt(4.65,-.015,a),metal,14);
+      base.quad(pt(4.85,-.34,a),pt(4.85,-.34,b),pt(4.65,-.27,b),pt(4.65,-.27,a),[.045,.06,.095],14);
+    }
+    horizontalRing(4.60,4.64,-.008,cyan);
+    horizontalRing(4.72,4.75,-.30,magenta);
+    horizontalRing(3.73,3.745,-.007,[.10,.25,.37,.22]);
+    // Machined inset segments rather than a flat featureless disc.
+    for(let i=0;i<24;i++) {
+      const a=i/24*Math.PI*2;
+      horizontalRing(4.27,4.43,-.006,i%4===0?[.48,.55,.70]:[.09,.14,.22],14,a,a+.04);
+    }
+    // Two architectural light arches sit behind the car, built as actual narrow 3D strips.
+    for(let side=0;side<2;side++) {
+      const r=side?4.14:3.94,z=-3.55-side*.14,col=side?magenta:cyan;
+      for(let i=0;i<72;i++) {
+        const a=Math.PI*.06+i/72*Math.PI*.88,b=Math.PI*.06+(i+1)/72*Math.PI*.88;
+        const pt=(rr,t)=>[Math.cos(t)*rr,.10+Math.sin(t)*rr,z];
+        lights.quad(pt(r,a),pt(r,b),pt(r+.035,b),pt(r+.035,a),col,5,[0,0,1]);
+      }
+    }
+    for(const x of [-4.1,4.1]) {
+      base.box(x,.2,-3.6,.25,.6,.42,[.10,.13,.18],14);
+      lights.box(x,.48,-3.6,.13,.03,.22,cyan,5);
+    }
+    this.lobbyStage={base:upload(gl,base),floor:upload(gl,floor),lights:upload(gl,lights)};
+  }
+
+  _lobbyUniforms(cam,time,vp,reflPass,w,h) {
+    this._uniformsMain(cam,time,vp,reflPass,w,h,false);
+    const gl=this.gl,u=this.main.u;
+    gl.uniform1f(u.uLobby,1);gl.uniform1f(u.uShadowOn,0);gl.uniform1f(u.uEnvOn,0);
+    gl.uniform3fv(u.uMoon,norm([.3,.78,.65]));gl.uniform3f(u.uMoonCol,1.0,1.02,1.10);
+    gl.uniform3f(u.uSkyAmb,.13,.17,.25);gl.uniform3f(u.uGndAmb,.035,.045,.075);
+    gl.uniform3f(u.uFog,.003,.006,.016);gl.uniform1f(u.uFogD,.0015);gl.uniform1f(u.uFlood,.6);
+    gl.uniform3f(u.uSunCol,0,0,0);
+    const reflection=!reflPass && this.targets.lobby;
+    gl.uniform1f(u.uReflOn,reflection?1:0);
+    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,reflection?reflection.tex:this.black2D);
+  }
+
+  _lobbyBackground(time) {
+    const gl=this.gl,u=this.lobbyBg.u;
+    gl.disable(gl.DEPTH_TEST);gl.depthMask(false);gl.useProgram(this.lobbyBg.p);
+    gl.uniform1f(u.uTime,time);gl.uniform1f(u.uAspect,this.canvas.width/this.canvas.height);
+    gl.bindVertexArray(this.quadVao);gl.drawArrays(gl.TRIANGLES,0,3);this.drawCalls++;
+    gl.enable(gl.DEPTH_TEST);gl.depthMask(true);
+  }
+
+  _renderLobby(scene) {
+    const gl=this.gl,c=this.canvas,cam=scene.cam,time=scene.motion?scene.time:0;
+    this.drawCalls=0;this.startLights=0;this._ensureTargets();this._ensureLobbyStage();
+    const T=this.targets,S=T.scene,stage=this.lobbyStage,selected=(scene.cars||[]).find(c=>!c.ghost);
+    const car=selected?{...selected,ghost:false,brakes:[0,0,0,0],pose:{x:0,z:0,yaw:0,h:0,pitch:0,roll:0,steer:0,spin:[0,0,0,0],road:[0,0,0,0]}}:null;
+    gl.disable(gl.CULL_FACE);gl.disable(gl.BLEND);gl.enable(gl.DEPTH_TEST);gl.depthMask(true);
+    M4.perspectiveLH(this.proj,cam.fov,c.width/c.height,.1,100);
+    M4.lookAtLH(this.view,...cam.eye,...cam.target);M4.mul(this.vp,this.proj,this.view);
+    // A bounded car-only planar pass. No city geometry, cube probe or shadow-map work in this scene.
+    if(this.qName!=='low' && car) {
+      if(!T.lobby) {
+        const scale=Math.min(.5,512/c.width,512/c.height);
+        T.lobby=this._target(Math.max(1,Math.round(c.width*scale)),Math.max(1,Math.round(c.height*scale)),true,0);
+      }
+      const R=T.lobby;M4.mul(this.viewR,this.view,this.mirror);M4.mul(this.vpR,this.proj,this.viewR);
+      gl.bindFramebuffer(gl.FRAMEBUFFER,R.fb);gl.viewport(0,0,R.w,R.h);
+      gl.clearColor(.003,.006,.016,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+      this._lobbyBackground(time);this._lobbyUniforms(cam,time,this.vpR,1,R.w,R.h);
+      this._drawCar(this.main,car,cam.eye,false);
+    }
+    this.drawingMain=false;
+    gl.bindFramebuffer(gl.FRAMEBUFFER,S.ms?S.msFb:S.fb);gl.viewport(0,0,S.w,S.h);
+    gl.clearColor(.003,.006,.016,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+    this._lobbyBackground(time);gl.depthFunc(gl.LEQUAL);
+    this._lobbyUniforms(cam,time,this.vp,0,S.w,S.h);
+    this._draw(this.main,stage.base);this._draw(this.main,stage.floor);this._draw(this.main,stage.lights);
+    if(car)this._drawCar(this.main,car,cam.eye,false);
+    gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);
+    this._fxProg(cam,1,.7,time);gl.uniform1f(this.fx.u.uFogD,0);
+    if(car)this._draw(this.fx,this.shadow,M4.fromPose(this.model,0,.005,0,0,0,0));
+    gl.blendFunc(gl.ONE,gl.ONE);this._fxProg(cam,0,.45,time);gl.uniform1f(this.fx.u.uFogD,0);
+    if(car)this._draw(this.fx,car.model.glow,this.ident);
+    gl.depthMask(true);gl.disable(gl.BLEND);
+    this._finishFrame({...scene,motion:false,lobby:true},time);
+    this.lobbyStats={drawCalls:this.drawCalls,stageTriangles:stage.base.tris+stage.floor.tris+stage.lights.tris,
+      worldDraws:0,reflectionSize:T.lobby?[T.lobby.w,T.lobby.h]:null,shadowUpdates:0,probeUpdates:0};
+  }
+
   // scene: { cam:{eye,target,fov}, cars:[{pose, model, brakes, ghost}], focus (pose for the probe and showroom),
   //          showLine, time, fxTime, speed (0..1), showroom, motion, startLights (0..5), fxOpts }
   render(scene) {
+    if(scene.lobby){this._renderLobby(scene);return;}
     const gl = this.gl, c = this.canvas, cam = scene.cam, q = this.q, time = scene.time;
     this.drawCalls = 0; this.startLights = scene.startLights || 0;
     this._ensureTargets();
@@ -766,18 +912,23 @@ export class Renderer {
       for (const g of ghosts) this._drawCar(this.main, g, cam.eye, false);
     }
     gl.depthMask(true); gl.disable(gl.BLEND);
+    this._finishFrame(scene,time);
+  }
+
+  _finishFrame(scene,time) {
+    const gl=this.gl,c=this.canvas,q=this.q,T=this.targets,S=T.scene;
     if (S.ms) {
       gl.bindFramebuffer(gl.READ_FRAMEBUFFER, S.msFb); gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, S.fb);
       gl.blitFramebuffer(0, 0, S.w, S.h, 0, 0, S.w, S.h, gl.COLOR_BUFFER_BIT, gl.NEAREST);
       gl.bindFramebuffer(gl.READ_FRAMEBUFFER, null); gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
     }
     // bloom: bright pass → downsample chain → weighted additive upsample; anamorphic streaks from level 1
-    const B = T.bloom;
+    const B = scene.lobby?T.bloom.slice(0,3):T.bloom;
     gl.disable(gl.DEPTH_TEST);
     if (B.length) {
       this._pass(this.pre, B[0], S, (u) => gl.uniform1f(u.uThresh, this.hdr ? 1.25 : 0.7));
       for (let k = 1; k < B.length; k++) this._pass(this.down, B[k], B[k - 1]);
-      if (T.streak) this._pass(this.streakP, T.streak, B[1]);
+      if (T.streak && !scene.lobby) this._pass(this.streakP, T.streak, B[1]);
       gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);
       for (let k = B.length - 1; k > 0; k--) this._pass(this.up, B[k - 1], B[k], (u) => gl.uniform1f(u.uGain, 0.62));
       gl.disable(gl.BLEND);
@@ -787,9 +938,9 @@ export class Renderer {
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, S.tex); gl.uniform1i(cp.u.uScene, 0);
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, B.length ? B[0].tex : this.black2D); gl.uniform1i(cp.u.uBloom, 1);
     gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, T.streak ? T.streak.tex : this.black2D); gl.uniform1i(cp.u.uStreak, 2);
-    gl.uniform1f(cp.u.uBloomK, B.length ? (this.hdr ? 0.30 : 0.25) : 0); gl.uniform1f(cp.u.uStreakK, T.streak ? 0.12 : 0);
+    gl.uniform1f(cp.u.uBloomK, B.length ? (scene.lobby?0.19:this.hdr?0.30:0.25) : 0); gl.uniform1f(cp.u.uStreakK, T.streak && !scene.lobby ? 0.12 : 0);
     gl.uniform1f(cp.u.uExposure, 1.2); gl.uniform1f(cp.u.uSpeed, scene.motion ? scene.speed : 0); gl.uniform1f(cp.u.uTime, time);
-    gl.uniform1f(cp.u.uLines, q.lines && scene.motion ? 1 : 0); gl.uniform1f(cp.u.uRadial, q.radial && scene.motion ? 1 : 0); gl.uniform1f(cp.u.uAberr, scene.motion ? 1 : 0.3);
+    gl.uniform1f(cp.u.uLines, q.lines && scene.motion ? 1 : 0); gl.uniform1f(cp.u.uRadial, q.radial && scene.motion ? 1 : 0); gl.uniform1f(cp.u.uAberr, scene.lobby?0:scene.motion?1:0.3);
     gl.uniform2f(cp.u.uRes, c.width, c.height);
     gl.bindVertexArray(this.quadVao); gl.drawArrays(gl.TRIANGLES, 0, 3); this.drawCalls++;
     gl.activeTexture(gl.TEXTURE0);

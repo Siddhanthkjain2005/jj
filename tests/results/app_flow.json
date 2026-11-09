@@ -251,29 +251,29 @@
       }
     }
   },
-  "artifactSHA256": "35ba5a5e96fee8dafcea91959f9fe1cda121611bcaf47acd595964b3e4dda9b1",
+  "artifactSHA256": "463fbcfa9aa29a0cf60afe81830e7ab80a94908e6d7946deda92e3a74e5df01d",
   "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
   "explorerBounds": {
     "host": {
-      "top": 181.890625,
-      "bottom": 541.890625,
-      "height": 360
+      "top": 198.140625,
+      "bottom": 548.140625,
+      "height": 350
     },
     "svg": {
-      "top": 181.890625,
-      "bottom": 540.890625,
-      "height": 359
+      "top": 198.140625,
+      "bottom": 547.140625,
+      "height": 349
     }
   },
   "lobbyMotion": {
     "before": {
-      "hash": 948691619,
-      "elapsed": 0.15000000000000002,
+      "hash": 3456192807,
+      "elapsed": 0.2,
       "pixels": 329160
     },
     "after": {
-      "hash": 2276956980,
-      "elapsed": 0.40010000000000007,
+      "hash": 2446986251,
+      "elapsed": 0.49999999999999994,
       "pixels": 329160
     }
   },
@@ -283,9 +283,9 @@
     "base64Length": 2000
   },
   "nativePhoto": {
-    "filename": "VelocityVerse-1794220728429.png",
+    "filename": "VelocityVerse-1794226444733.png",
     "mime": "image/png",
-    "base64Length": 188916
+    "base64Length": 188776
   },
   "nativeBridgeMock": true,
   "passed": 35,

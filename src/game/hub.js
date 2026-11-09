@@ -1,4 +1,5 @@
 // Real app navigation/progress and an isolated engineering experiment viewer.
+import { CAR_VX1 } from '../sim/data.js';
 import { licenceFor, LICENCES } from './career.js';
 import { LAB_SETUPS, runLabExperiment } from '../sim/lab.js';
 
@@ -8,6 +9,7 @@ const PROTOCOLS = [['acceleration','0–100 km/h'],['braking','100–0 km/h'],['
 export class HubShell {
   constructor(game){this.game=game;this.setup='grip';this.chart='braking';this.cache=new Map();this.busy=false;this.study=null;}
   wire(){
+    this.wireCarPreview();
     $('hub-next').addEventListener('click',()=>this.game.navTo(this.nextDestination||'academy'));
     $('btn-lab-run').addEventListener('click',()=>this.run());
     const list=$('lab-setups');
@@ -16,7 +18,18 @@ export class HubShell {
     $('lab-protocol').textContent='Three controlled runs on a flat straight: full-throttle acceleration, full braking with ABS, and neutral coast-down. Same mass, world and fixed simulation step for every comparison.';
   }
   render(screen){if(screen==='hub')this.renderHome();if(screen==='lab'){this.renderSetups();if(this.study)this.renderResults();else this.renderEmpty();}}
+  wireCarPreview(){
+    const zone=$('car-rotate-zone');let pointer=null,lastX=0;
+    zone.addEventListener('pointerdown',e=>{if(pointer!==null)return;pointer=e.pointerId;lastX=e.clientX;zone.setPointerCapture(pointer);e.preventDefault();});
+    zone.addEventListener('pointermove',e=>{if(e.pointerId!==pointer)return;this.game.lobbyAngle=(this.game.lobbyAngle||0)+(e.clientX-lastX)*.008;lastX=e.clientX;e.preventDefault();});
+    const release=e=>{if(e.pointerId===pointer)pointer=null;};zone.addEventListener('pointerup',release);zone.addEventListener('pointercancel',release);zone.addEventListener('lostpointercapture',()=>pointer=null);
+  }
+  renderPaints(){
+    const host=$('lobby-paints');host.replaceChildren();
+    for(const l of CAR_VX1.liveries){const b=node('button','','');b.type='button';b.setAttribute('aria-label',l.name+' livery');b.setAttribute('aria-pressed',String(this.game.save.data.livery===l.id));const sw=node('span','','');sw.style.background='linear-gradient(135deg,rgb('+l.primary.map(n=>Math.round(n*255)).join(',')+'),rgb('+l.secondary.map(n=>Math.round(n*255)).join(',')+'))';b.append(sw);b.addEventListener('click',()=>{this.game.save.data.livery=l.id;this.game.save.save();this.game.renderer.carModel(l);this.renderPaints();});host.append(b);}
+  }
   renderHome(){
+    this.renderPaints();
     const g=this.game,c=g.save.data.career,l=licenceFor(c.xp),next=LICENCES.find(x=>x.xp>c.xp),team=g.app.team();
     $('hub-tag').textContent=team.tag;$('hub-profile-name').textContent=g.save.data.team?team.name:'Independent driver';
     $('hub-profile-xp').textContent=`${c.xp} XP · ${Object.keys(c.school).length}/3 academy medals`;

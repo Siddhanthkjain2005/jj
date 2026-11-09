@@ -23,11 +23,11 @@ for (const mod of ORDER) {
 const html = fs.readFileSync(path.join(ROOT, 'web', 'index.html'), 'utf8');
 const stamp = new Date().toISOString();
 let out = html
-  .replace('<link rel="stylesheet" href="./app.css">', '<style>\n'+fs.readFileSync(path.join(ROOT,'web/app.css'),'utf8')+'\n</style>')
+  .replace(/<link rel="stylesheet" href="\.\/(app|neon-panels)\.css">/g,(_,name)=>'<style>\n'+fs.readFileSync(path.join(ROOT,'web',name+'.css'),'utf8')+'\n</style>')
   .replace(/<script type="module" src="[^"]+"><\/script>\n?/, '')
   .replace('<!--APP-->', `<script>\n"use strict";\n// VELOCITYVERSE Milestone 0 bundle, built ${stamp}. Source: src/ (see README).\n${bundle}\n</script>`);
 // Embed the exact source assets so the distributable works offline as a single file.
-const embedded = [['assets/textures/asphalt-albedo.jpg','image/jpeg'],['assets/art/archipelago.jpg','image/jpeg']];
+const embedded = [['assets/textures/asphalt-albedo.jpg','image/jpeg'],['assets/art/neon-destinations.jpg','image/jpeg']];
 for(const name of fs.readdirSync(path.join(ROOT,'assets/fonts')))if(/\.(ttf|woff2)$/.test(name))embedded.push(['assets/fonts/'+name,name.endsWith('woff2')?'font/woff2':'font/ttf']);
 for(const [file,mime] of embedded)out=out.replaceAll('../'+file,'data:'+mime+';base64,'+fs.readFileSync(path.join(ROOT,file)).toString('base64'));
 fs.mkdirSync(path.join(ROOT, 'dist'), { recursive: true });

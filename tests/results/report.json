@@ -1,12 +1,12 @@
 {
   "summary": {
-    "date": "2026-11-09T10:36:26.276Z",
+    "date": "2026-11-09T12:13:47.646Z",
     "node": "v18.20.8",
     "platform": "darwin arm64",
     "dt": 0.008333333333333333,
     "passed": 34,
     "total": 34,
-    "seconds": 12.101,
+    "seconds": 6.065,
     "goldenRows": 161
   },
   "results": [
@@ -210,7 +210,7 @@
       "name": "CPU cost per step (darwin/arm64, Node v18.20.8 — not a phone measurement)",
       "pass": true,
       "expected": "< 50 µs per car-step here; device budget is 1.5 ms per frame for 8 cars at 120 Hz (measure in M1)",
-      "measured": "full stack 7.26 µs/step (vehicle only 14.15 µs) → 0.116 ms per 60 FPS frame for 8 cars",
+      "measured": "full stack 5.39 µs/step (vehicle only 8.28 µs) → 0.086 ms per 60 FPS frame for 8 cars",
       "detects": "Simulation too expensive for the frame budget"
     },
     {
@@ -238,7 +238,7 @@
       "name": "AI field: 8 AI cars race 2 laps from a standing grid start (Harbor Loop, medium pace)",
       "pass": true,
       "expected": "all 8 finish; no NaN; field spread < 30 s; ≤ 1 race-control reset; ≤ 2 car impacts above 6 m/s (reference lap 47.12 s)",
-      "measured": "finished 8/8; winner 108.53 s, last 117.90 s; best lap 51.69 s; car-contact steps 1859 (impacts > 6 m/s: 0, hardest 4.7 m/s); barrier impacts 0; resets 0; order 0-1-2-3-4-5-6-7; 1.70 s CPU for 117.9 s simulated",
+      "measured": "finished 8/8; winner 108.53 s, last 117.90 s; best lap 51.69 s; car-contact steps 1859 (impacts > 6 m/s: 0, hardest 4.7 m/s); barrier impacts 0; resets 0; order 0-1-2-3-4-5-6-7; 0.85 s CPU for 117.9 s simulated",
       "detects": "AI that cannot complete laps, piles up, or destabilises the field"
     },
     {
@@ -449,9 +449,9 @@
       }
     },
     "perf": {
-      "usFull": 7.258721041596598,
-      "usVeh": 14.146848958399561,
-      "perFrame8": 0.11613953666554556
+      "usFull": 5.391235555418664,
+      "usVeh": 8.283194444245762,
+      "perFrame8": 0.08625976888669862
     },
     "carContacts": {
       "dP": 1.6997532612877547e-18,
@@ -507,7 +507,7 @@
         "nan": 0,
         "simTime": 117.90833333337324
       },
-      "ms": 1699.3251670002937,
+      "ms": 853.2572499960661,
       "deterministic": true
     }
   }

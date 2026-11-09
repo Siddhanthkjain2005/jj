@@ -6,3 +6,6 @@ node_modules/
 npm-debug.log*
 playwright-report/
 test-results/
+# Intermediate QA recordings; final compressed clips are kept.
+tests/results/video-raw/
+tests/results/*_raw.webm
