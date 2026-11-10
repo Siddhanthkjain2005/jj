@@ -4,6 +4,7 @@ import { updateOpenline } from './openline-state.js';
 import { STORY_CHARACTERS, STORY_CITIES, STORY_CIRCUITS } from './openline-data.js';
 import { runLabExperiment } from '../sim/lab.js';
 import { AIDriver } from '../sim/ai.js';
+import { CIRCUITS } from '../sim/circuits.js';
 
 const $=id=>document.getElementById(id);
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
@@ -170,7 +171,7 @@ export class OpenlineCampaign {
  renderUniverse(){
   document.querySelectorAll('[data-universe-tab]').forEach(b=>b.setAttribute('aria-pressed',String(this.tab===b.dataset.universeTab)));
   $('universe-heading').textContent=this.tab==='crew'?'People worth coming back for':'An archive of places';
-  $('universe-description').textContent=this.tab==='crew'?'Meet your four chapter companions and discover fourteen voices from the wider Openline.':'Harbor Loop is ready to drive. The other places are stories and future circuit concepts.';
+  $('universe-description').textContent=this.tab==='crew'?'Meet your four chapter companions and discover fourteen voices from the wider Openline.':'Three closed circuits in Lumen Harbor are ready to drive. Other cities remain world lore.';
   const list=$('universe-list');list.replaceChildren();const data=this.tab==='crew'?STORY_CHARACTERS:STORY_CITIES;
   if(!data.some(x=>x.id===this.selected))this.selected=data[0].id;
   for(const item of data){const b=el('button','ol-index-item');b.type='button';b.setAttribute('aria-pressed',String(item.id===this.selected));b.append(el('strong','',item.name),el('small','',this.tab==='crew'?(item.active?'YOUR CHAPTER CREW':'ARCHIVE PROFILE'):(item.playable?'HARBOR LOOP · PLAYABLE':'WORLD LORE')));b.addEventListener('click',()=>{this.selected=item.id;this.renderUniverse();});list.append(b);}
@@ -181,7 +182,7 @@ export class OpenlineCampaign {
   } else {
    detail.append(el('p','',item.geography),el('h4','','The city remembers'),el('p','',item.history),el('h4','','Discoveries'),el('p','',item.opportunities));
    for(const c of STORY_CIRCUITS.filter(c=>c.city===item.name)){const card=el('div','ol-circuit');card.append(el('h4','',c.name),el('p','',c.layout),el('p','',c.category),el('small','',c.playable?'Available now · Harbor Loop':'Circuit concept · World lore'));detail.append(card);}
-   if(item.playable){const b=el('button','ol-button','Drive Harbor Loop');b.type='button';b.dataset.nav='event';detail.append(b);}
+   if(item.playable){for(const circuit of CIRCUITS){const b=el('button','ol-button','Drive '+circuit.name);b.type='button';b.dataset.circuit=circuit.id;b.addEventListener('click',()=>{if(this.game.configureDrive(this.game.baseRideId,circuit.id))this.game.navTo('event');});detail.append(b);}}
   }
  }
 }

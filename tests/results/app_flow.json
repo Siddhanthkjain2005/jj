@@ -251,7 +251,7 @@
       }
     }
   },
-  "artifactSHA256": "984a1a9c5670daf21661cf2326dd1d6e246532dd21c10c456a24127cfe348243",
+  "artifactSHA256": "99b44a2014ef3223df26edd5e248767c86b3d9108aad6c510e36e4a43929c22e",
   "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
   "explorerBounds": {
     "host": {
@@ -267,13 +267,13 @@
   },
   "lobbyMotion": {
     "before": {
-      "hash": 948691619,
-      "elapsed": 0.14989999999999998,
+      "hash": 3860351056,
+      "elapsed": 0.3000999999999999,
       "pixels": 329160
     },
     "after": {
-      "hash": 603628889,
-      "elapsed": 0.4498999999999999,
+      "hash": 732080921,
+      "elapsed": 0.6001,
       "pixels": 329160
     }
   },
@@ -283,9 +283,9 @@
     "base64Length": 2000
   },
   "nativePhoto": {
-    "filename": "VelocityVerse-1794243470512.png",
+    "filename": "VelocityVerse-1794291111602.png",
     "mime": "image/png",
-    "base64Length": 188616
+    "base64Length": 188648
   },
   "nativeBridgeMock": true,
   "passed": 35,

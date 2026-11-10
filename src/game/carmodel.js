@@ -52,8 +52,74 @@ function body(mb, cx, sections, seg, col, mat = 0) {
 // Every material-0 vertex in a car mesh is paint: switch it to the clear-coat paint material (22).
 function paint(mb) { for (let k = 0; k < mb.n; k++) if (mb.v[k * 13 + 10] === 0) mb.v[k * 13 + 10] = 22; return mb; }
 
-export function buildCarLOD0(car, livery) { return paint(carLOD0(car, livery)); }
-export function buildCarLOD1(car, livery) { return paint(carLOD1(car, livery)); }
+export function buildCarLOD0(car, livery) { return paint(car.bodyStyle==='gt'?clubGT(car,livery,false):car.bodyStyle==='sprint'?clubSprint(car,livery,false):carLOD0(car, livery)); }
+export function buildCarLOD1(car, livery) { return paint(car.bodyStyle==='gt'?clubGT(car,livery,true):car.bodyStyle==='sprint'?clubSprint(car,livery,true):carLOD1(car, livery)); }
+
+
+// The club rides have their own body construction, not a livery on the VX-1.
+function clubSprint(car,livery,lod) {
+  const mb=new MeshBuilder(),P=[...livery.primary,0],S=[...livery.secondary,0],A=[...livery.accent,0],n=lod?10:22;
+  const zf=car.wheelbase*(1-car.frontWeight),zr=-car.wheelbase*car.frontWeight;
+  body(mb,0,[[-1.88,.07,.06,.25,2],[-1.45,.25,.16,.35,2.4],[-.82,.37,.22,.40,3],[-.12,.39,.22,.40,3],[.60,.29,.17,.35,2.7],[1.15,.18,.11,.27,2.4],[1.86,.07,.06,.20,2]],n,P);
+  for(const side of [-1,1]) {
+    body(mb,side*.43,[[-1.35,.08,.07,.27,2],[-.9,.17,.13,.30,3],[.25,.17,.13,.30,3],[.55,.08,.07,.28,2]],n,S);
+    mb.box(side*.63,.08,-.1,.12,.07,2.7,CARBON,12);
+    for(const [z,track] of [[zf,car.trackFront],[zr,car.trackRear]]){
+      tube(mb,[[side*.27,.22,z-.2],[side*track*.5,.33,z]],.018,TI,14,lod?5:8);
+      tube(mb,[[side*.27,.22,z+.2],[side*track*.5,.33,z]],.018,TI,14,lod?5:8);
+    }
+    mb.box(side*.40,.57,-1.72,.25,.045,.025,RED,5);
+  }
+  // Open cockpit, driver and a low rounded rollover hoop define the short silhouette.
+  body(mb,0,[[-.55,.23,.05,.65,2.2],[-.20,.28,.05,.65,2.4],[.30,.23,.04,.57,2.4],[.52,.08,.03,.50,2]],n,DARK,12);
+  mb.sphere(0,.72,-.03,.13,lod?5:9,lod?8:14,A,0);
+  body(mb,0,[[.025,.11,.035,.74,2],[.14,.12,.035,.73,2],[.18,.08,.03,.72,2]],lod?8:14,DARK,15);
+  tube(mb,[[-.23,.58,-.48],[-.23,.88,-.48],[0,.98,-.48],[.23,.88,-.48],[.23,.58,-.48]],.028,TI,14,lod?5:8);
+  mb.box(0,.57,.20,.24,.045,.035,CARBON,12);
+  wing(mb,.82,.28,.12,.02,7,()=>({y:.15,z:1.77}),S,0,lod?5:10);
+  wing(mb,.64,.30,.12,.03,12,()=>({y:.68,z:-1.77}),P,0,lod?5:10);
+  mb.box(0,.08,0,1.24,.05,3.5,CARBON,12);
+  mb.box(0,.43,-1.90,.14,.10,.04,RED,5);
+  return mb;
+}
+
+function clubGT(car,livery,lod) {
+  const mb=new MeshBuilder(),P=[...livery.primary,0],S=[...livery.secondary,0],A=[...livery.accent,0],n=lod?10:26;
+  const zf=car.wheelbase*(1-car.frontWeight),zr=-car.wheelbase*car.frontWeight;
+  // Wide continuous coupe volume, front splitter and a clear enclosed greenhouse.
+  body(mb,0,[[-2.12,.64,.14,.36,3],[-1.72,.90,.23,.39,4],[-.85,.91,.24,.40,4],[.30,.87,.23,.40,4],[1.28,.88,.21,.37,4],[1.98,.74,.15,.31,3],[2.22,.45,.07,.27,2.5]],n,P);
+  mb.taper(0,-2.08,2.17,1.78,1.65,.07,.12,.07,.12,CARBON,12);
+  body(mb,0,[[-1.09,.49,.035,.70,3],[-.66,.62,.27,.89,3],[-.10,.64,.29,.91,3],[.51,.52,.19,.83,3],[.91,.39,.025,.64,3]],n,[.10,.18,.24,0],15);
+  body(mb,0,[[-.64,.60,.025,1.155,3],[-.12,.62,.024,1.19,3],[.31,.57,.021,1.13,3]],n,P);
+  // Roof pillars are visible from the chase camera and stop it reading as a formula car.
+  for(const side of [-1,1]) {
+    tube(mb,[[side*.49,.67,-1.05],[side*.60,1.11,-.61]],.037,S,0,lod?5:8);
+    tube(mb,[[side*.52,1.11,.29],[side*.44,.65,.88]],.035,P,0,lod?5:8);
+    mb.box(side*.63,.73,-.32,.035,.38,.05,P);
+    mb.box(side*.79,.22,-.03,.14,.09,2.52,S);
+    // Wheel-arch brows and vents; the separate wheels remain fully animated.
+    for(const [z,track] of [[zf,car.trackFront],[zr,car.trackRear]]){
+      const x=side*track*.5;
+      const count=lod?8:18;
+      for(let i=0;i<count;i++){
+        const a=-1.25+i/count*2.5,b=-1.25+(i+1)/count*2.5;
+        const pt=(xx,t)=>[xx,.33+Math.cos(t)*.405,z+Math.sin(t)*.405];
+        mb.quad(pt(x-side*.10,a),pt(x+side*.16,a),pt(x+side*.16,b),pt(x-side*.10,b),P,0);
+      }
+    }
+    for(let i=0;i<4;i++)mb.box(side*.67,.64,-1.20+i*.105,.19,.015,.045,DARK,12);
+    // Distinctive slim white front lamps and full-width double rear lamps.
+    mb.box(side*.55,.47,2.08,.38,.055,.035,[.72,.94,1,.18],5);
+    mb.box(side*.51,.49,-2.09,.65,.065,.035,RED,5);
+    mb.box(side*.53,.79,-1.80,.035,.39,.055,CARBON,12);
+    mb.box(side*.90,.68,.62,.11,.07,.22,P);
+  }
+  mb.box(0,.40,2.16,.80,.15,.035,DARK,12);
+  mb.box(0,.39,2.185,.28,.055,.008,A);
+  wing(mb,.94,.38,.10,.03,9,()=>({y:.98,z:-1.83}),S,0,lod?6:14);
+  mb.box(0,.20,-2.14,.67,.08,.035,CARBON,12);
+  return mb;
+}
 
 function carLOD0(car, livery) {
   const mb = new MeshBuilder();

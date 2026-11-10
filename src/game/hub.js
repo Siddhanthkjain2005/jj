@@ -26,10 +26,13 @@ export class HubShell {
   }
   renderPaints(){
     const host=$('lobby-paints');host.replaceChildren();
-    for(const l of CAR_VX1.liveries){const b=node('button','','');b.type='button';b.setAttribute('aria-label',l.name+' livery');b.setAttribute('aria-pressed',String(this.game.save.data.livery===l.id));const sw=node('span','','');sw.style.background='linear-gradient(135deg,rgb('+l.primary.map(n=>Math.round(n*255)).join(',')+'),rgb('+l.secondary.map(n=>Math.round(n*255)).join(',')+'))';b.append(sw);b.addEventListener('click',()=>{this.game.save.data.livery=l.id;this.game.save.save();this.game.renderer.carModel(l);this.renderPaints();});host.append(b);}
+    for(const l of this.game.veh.car.liveries){const b=node('button','','');b.type='button';b.setAttribute('aria-label',l.name+' livery');b.setAttribute('aria-pressed',String(this.game.livery().id===l.id));const sw=node('span','','');sw.style.background='linear-gradient(135deg,rgb('+l.primary.map(n=>Math.round(n*255)).join(',')+'),rgb('+l.secondary.map(n=>Math.round(n*255)).join(',')+'))';b.append(sw);b.addEventListener('click',()=>{this.game.save.data.livery=l.id;this.game.save.save();this.game.renderer.carModel(l);this.renderPaints();});host.append(b);}
   }
   renderHome(){
     this.renderPaints();
+    const name=document.querySelector('.paddock-title h3'),id=this.game.baseRideId;
+    if(name){name.firstChild.textContent=id==='vanta_gt'?'VANTA':'KESTREL';name.querySelector('span').textContent=id==='vanta_gt'?'GT':id==='sprint'?'SPRINT':'VX–1';}
+    document.querySelector('.gate-garage small').textContent='Paint · Photography · '+this.game.veh.car.name;
     const g=this.game,c=g.save.data.career,l=licenceFor(c.xp),next=LICENCES.find(x=>x.xp>c.xp),team=g.app.team();
     $('hub-tag').textContent=team.tag;$('hub-profile-name').textContent=g.save.data.team?team.name:'Independent driver';
     $('hub-profile-xp').textContent=`${c.xp} XP · ${Object.keys(c.school).length}/3 academy medals`;

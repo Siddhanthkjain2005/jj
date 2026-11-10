@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0A1117">
-<title>VELOCITYVERSE · The Openline 0.6</title>
+<title>VELOCITYVERSE · The Openline 0.7</title>
 <style>
 @font-face {
   font-family: 'Barlow Condensed';
@@ -992,6 +992,27 @@ body.reduced-motion .openline-page,body.motion-off .openline-page{scroll-behavio
 }
 
 </style>
+<style>
+/* Story Tour: playable events first; compact, thumb-driven Android game shell. */
+:root{--sc-ink:#080d18;--sc-panel:#111d2d;--sc-cyan:#52e3df;--sc-gold:#ffdc72;--sc-coral:#ff805e;--sc-muted:#a8bac9;--sc-edge:#8ba6bd32}
+.sc-page{padding:0!important;overflow:auto;background:radial-gradient(ellipse at 10% 10%,#17364a 0,transparent 45%),#080d18!important;color:#edf3f3;isolation:isolate}.sc-page.active{display:block!important}.sc-page,.sc-page *, .sc-workshop,.sc-workshop *{box-sizing:border-box}.sc-page [hidden],.sc-workshop [hidden],#career-hud[hidden]{display:none!important}.sc-shell{width:min(1480px,100%);min-height:100%;margin:auto;padding:max(12px,env(safe-area-inset-top)) max(24px,env(safe-area-inset-right)) max(92px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left))}.sc-top{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:58px;border-bottom:1px solid var(--sc-edge);margin-bottom:26px}.sc-top button,.sc-quiet{font:700 .8rem var(--font-ui);color:#dce6ec;background:transparent;border:0;min-height:48px;min-width:48px;cursor:pointer}.sc-back{display:flex;align-items:center;gap:10px;padding:0 4px;text-align:left;color:var(--sc-cyan)!important}.sc-back span{color:#edf3f3}.sc-brand{display:flex;align-items:center;font:800 1.3rem var(--font-display);font-style:italic;letter-spacing:-.01em;white-space:nowrap}.sc-brand>span{color:var(--sc-cyan)}.sc-brand i{display:block;width:12px;height:18px;transform:skew(-20deg);background:linear-gradient(90deg,var(--sc-cyan) 50%,var(--sc-coral) 50%);margin-left:7px}.sc-wallet{display:flex;gap:9px;align-items:center}.sc-wallet>span{border:1px solid var(--sc-edge);background:#0a1625;padding:9px 12px;min-height:38px;font:700 .8rem var(--font-ui);white-space:nowrap;color:var(--sc-gold)}.sc-wallet small{font-size:.6rem;color:#a6b7c8}.sc-titlebar{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:24px}.sc-kicker{font:700 .58rem/1.5 var(--font-ui);letter-spacing:.16em;color:var(--sc-cyan)}.sc-titlebar h2{font:800 clamp(2.4rem,4vw,4.2rem)/.85 var(--font-display);font-style:italic;margin:10px 0 0;letter-spacing:.01em;background:none;color:white}.sc-titlebar h2>span{font-size:.45em;color:var(--sc-gold);letter-spacing:.08em;display:block;margin-top:9px}.sc-quiet{display:flex;align-items:center;gap:15px;padding:0 8px;white-space:nowrap}.sc-quiet span{color:var(--sc-cyan)}.sc-chapters{display:flex;gap:8px;margin-bottom:20px}.sc-chapters button{flex:1;display:flex;align-items:center;gap:12px;background:#101b2a;border:1px solid var(--sc-edge);border-bottom:2px solid #30495b;color:#95aabd;text-align:left;min-height:56px;padding:12px 16px;cursor:pointer;font:700 .8rem/1.3 var(--font-ui)}.sc-chapters button small{display:block;color:#738da3;font-size:.56rem;letter-spacing:.1em;margin-bottom:3px}.sc-chapters button b{font:700 1.6rem var(--font-display);color:#547082}.sc-chapters button[aria-pressed=true]{background:#18343d;border-color:#52e3df6b;border-bottom-color:var(--sc-cyan);color:white}.sc-chapters button[aria-pressed=true] b{color:var(--sc-cyan)}.sc-layout{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(330px,.92fr);gap:24px;align-items:start}.sc-map{position:relative;min-height:610px;overflow:hidden;border:1px solid var(--sc-edge);background:#0c1828;border-radius:2px 22px 2px 2px;isolation:isolate}.sc-map-art{position:absolute;inset:0;z-index:-2;background:linear-gradient(180deg,#08132255,#081322ee),var(--feature-atlas) 50% 0/300% 200%;filter:saturate(.7)}.sc-map::after{content:"";position:absolute;inset:0;z-index:-1;background-image:linear-gradient(#51c9cc0c 1px,transparent 1px),linear-gradient(90deg,#51c9cc0c 1px,transparent 1px);background-size:38px 38px;pointer-events:none}.sc-map-top,.sc-map-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 22px;font:700 .57rem/1.5 var(--font-ui);letter-spacing:.11em;color:#b6d2df}.sc-map-top>span:last-child{color:#7596ad;font-size:.49rem}.sc-map-foot{font-weight:500;letter-spacing:.03em;color:#8faec0;position:absolute;bottom:0;left:0;right:0}.sc-map-foot i{height:6px;width:6px;flex-shrink:0;border-radius:50%;background:var(--sc-cyan);box-shadow:0 0 12px var(--sc-cyan)}.sc-missions{padding:15px 24px 70px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:23px 25px;position:relative}.sc-missions::before{content:"";position:absolute;top:42px;bottom:95px;left:50%;border-left:2px dashed #5aa3ab4d;pointer-events:none}.sc-mission{position:relative;min-height:105px;border:1px solid #6f98af40;background:linear-gradient(135deg,#122c3aee,#0a1929f2);padding:14px 14px 12px;color:white;text-align:left;border-radius:2px 12px 2px 2px;cursor:pointer;transition:border-color .15s,transform .15s;overflow:hidden}.sc-mission:nth-child(4n+2),.sc-mission:nth-child(4n+3){transform:translateY(20px)}.sc-mission>small{display:block;font:700 .5rem/1.4 var(--font-ui);color:#8ab5c9;letter-spacing:.1em;margin-bottom:7px}.sc-mission>strong{display:block;font:700 1.45rem/.95 var(--font-display);text-transform:uppercase;letter-spacing:.02em;max-width:12ch}.sc-mission .sc-node-number{position:absolute;right:10px;top:9px;color:#7eafc64d;font:800 2.5rem var(--font-display);font-style:italic;line-height:1}.sc-mission .sc-node-stars{display:block;margin-top:12px;color:var(--sc-gold);font:700 .72rem var(--font-ui);letter-spacing:3px;min-height:16px}.sc-mission.is-locked{filter:saturate(.2);opacity:.55}.sc-mission[aria-pressed=true]{border-color:var(--sc-gold);box-shadow:0 0 0 1px #ffdc7240,inset 3px 0 var(--sc-gold);background:linear-gradient(135deg,#35423a,#142535)}.sc-mission:hover{border-color:var(--sc-cyan)}.sc-event,.sc-result{background:linear-gradient(145deg,#142b3c,#0c1726);border:1px solid var(--sc-edge);border-top:3px solid var(--sc-gold);border-radius:2px 16px 2px 2px;padding:24px;min-width:0}.sc-event-tags{display:flex;justify-content:space-between;gap:10px;font:700 .57rem/1.5 var(--font-ui);letter-spacing:.12em;color:var(--sc-gold)}.sc-event-tags>span:last-child{color:#83a2b8;white-space:nowrap}.sc-event h3,.sc-result h3{font:800 clamp(2rem,3.2vw,3.6rem)/.9 var(--font-display);font-style:italic;text-transform:uppercase;letter-spacing:.02em;margin:16px 0 13px;color:#fff;background:none;overflow-wrap:anywhere}.sc-event>p{font:400 .95rem/1.5 var(--font-ui);color:#b7cbd8;margin:0 0 17px}.sc-venue{display:flex;flex-wrap:wrap;gap:6px 12px;font:700 .58rem/1.5 var(--font-ui);letter-spacing:.08em;color:var(--sc-cyan);border-top:1px solid var(--sc-edge);border-bottom:1px solid var(--sc-edge);padding:10px 0}.sc-goals{display:grid;gap:9px;margin:17px 0}.sc-goal{display:flex;gap:9px;align-items:start;font:500 .8rem/1.4 var(--font-ui);color:#c4d6df}.sc-goal>span{color:var(--sc-gold);font-size:.7rem;min-width:15px}.sc-brief{display:flex;align-items:center;gap:13px;background:#060e1880;padding:13px;border-left:2px solid var(--sc-cyan);margin:18px 0}.sc-portrait{display:block;width:58px;height:70px;flex-shrink:0;border-radius:2px 8px 2px 2px;background-image:var(--ol-art);background-size:620% auto;background-repeat:no-repeat}.sc-brief strong{font:700 .58rem var(--font-ui);color:var(--sc-cyan);letter-spacing:.09em}.sc-brief p{font:500 .82rem/1.4 var(--font-ui);color:#e2ecef;margin:6px 0 0}.sc-label-row{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin:15px 0 8px}.sc-label-row h4{font:700 .7rem var(--font-ui);color:#c2d4de;margin:0}.sc-label-row small{font:400 .55rem var(--font-ui);color:#7595ab}.sc-segments{display:flex;gap:6px}.sc-segments button{flex:1;min-height:48px;min-width:0;padding:8px 6px;background:#0a1623;border:1px solid var(--sc-edge);color:#9fb7c7;font:700 .65rem/1.2 var(--font-ui);cursor:pointer}.sc-segments button[aria-pressed=true]{border-color:var(--sc-cyan);color:var(--sc-cyan);background:#52e3df10}.sc-strategy-note{font:400 .67rem/1.45 var(--font-ui);color:#89a8ba;min-height:2.9em;margin:10px 0 14px}.sc-play{display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;min-height:76px;padding:16px 20px;background:var(--sc-gold);color:#09121c;border:0;border-radius:2px 14px 2px 2px;cursor:pointer;text-align:left;box-shadow:0 8px 25px #0003}.sc-play span{display:block}.sc-play small{display:block;font:700 .5rem/1.3 var(--font-ui);letter-spacing:.11em;margin-bottom:6px}.sc-play strong{font:800 2.2rem/.9 var(--font-display);font-style:italic}.sc-play>b{font:700 1.8rem var(--font-ui)}.sc-play:disabled{background:#304453;color:#88a1b2;cursor:default;box-shadow:none}.sc-status{font:500 .7rem/1.5 var(--font-ui);color:#a2c8cf;margin:12px 0 0;min-height:1.5em}.sc-result{border-top-color:var(--sc-cyan);min-height:450px}.sc-result-stars{font:700 2.3rem var(--font-ui);letter-spacing:12px;color:var(--sc-gold);margin:20px 0}.sc-result-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:20px 0}.sc-result-metrics>div{background:#07121e;border:1px solid var(--sc-edge);padding:13px}.sc-result-metrics small{font:500 .56rem var(--font-ui);color:#87a4b9;display:block;margin-bottom:6px}.sc-result-metrics strong{font:700 1.5rem var(--font-display);color:white}.sc-result-story{font:500 .95rem/1.55 var(--font-ui);color:#c6d9e3}.sc-unlock{font:700 .72rem/1.5 var(--font-ui);color:var(--sc-cyan);border-left:2px solid var(--sc-cyan);padding:10px 12px;background:#52e3df0a;margin:18px 0}.sc-unlock:empty{display:none}.sc-result-actions{display:grid;gap:9px}.sc-secondary{min-height:48px;border:1px solid var(--sc-edge);background:#0c1d2c;color:#c4d5df;font:700 .75rem var(--font-ui);cursor:pointer;padding:10px 12px}.sc-dock{display:flex;position:fixed;z-index:30;bottom:max(10px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);gap:4px;padding:5px;border:1px solid #a4b6ce32;background:#0a1424f5;box-shadow:0 7px 25px #0007;width:max-content;max-width:calc(100% - 24px);border-radius:2px 14px 2px 2px}.sc-dock button{min-height:48px;min-width:100px;border:0;background:transparent;color:#a8becd;font:700 .68rem/1.2 var(--font-ui);padding:8px 14px;cursor:pointer}.sc-dock button span{font-size:1rem;margin-right:8px;color:#72a9ba}.sc-dock button[aria-current=page]{background:#52e3df15;color:var(--sc-cyan);box-shadow:inset 0 -2px var(--sc-cyan)}.sc-page button:focus-visible,.sc-workshop button:focus-visible{outline:3px solid var(--sc-cyan);outline-offset:3px}
+.sc-workshop{padding:0!important;background:linear-gradient(90deg,#07101de8,transparent 60%)!important;color:white;overflow:auto;pointer-events:none}.sc-workshop.active{display:block!important}.sc-workshop-shell{min-height:100%;width:min(1480px,100%);padding:12px 24px 100px;margin:auto}.sc-workshop .sc-top,.sc-workshop .sc-build-panel,.sc-workshop .sc-ride-strip,.sc-workshop .sc-dock{pointer-events:auto}.sc-workshop-grid{display:grid;grid-template-columns:350px minmax(0,1fr);gap:25px;min-height:460px}.sc-build-panel{background:#071322c9;border:1px solid var(--sc-edge);border-top:2px solid var(--sc-cyan);padding:20px;min-width:0}.sc-build-panel h2{font:800 2.8rem/.9 var(--font-display);font-style:italic;color:white;background:none;margin:15px 0}.sc-build-panel h2 span{color:var(--sc-cyan)}.sc-build-panel>p{font:400 .8rem/1.5 var(--font-ui);color:#b0c9d6}.sc-build-panel h3{font:700 1.35rem var(--font-display);color:var(--sc-gold);margin:25px 0 7px}.sc-small{font:400 .68rem/1.5 var(--font-ui)!important;color:#8ca8ba!important}.sc-build-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:18px 0}.sc-build-stats>div{background:#09131f;padding:10px 7px;border:1px solid var(--sc-edge)}.sc-build-stats small{display:block;font:500 .5rem var(--font-ui);color:#7f9dae;margin-bottom:5px}.sc-build-stats strong{display:block;font:700 1.2rem var(--font-display);color:#d9eef1}.sc-car-window{position:relative;min-height:300px;pointer-events:none}.sc-car-window span{position:absolute;right:15%;top:15px;font:700 .55rem var(--font-ui);letter-spacing:.2em;color:#71a4b4}.sc-car-window i{position:absolute;width:60px;height:2px;background:var(--sc-cyan);right:15%;top:38px;box-shadow:0 0 12px var(--sc-cyan)}.sc-ride-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-top:20px}.sc-ride{padding:15px 18px;background:#0a1827e8;border:1px solid var(--sc-edge);color:white;text-align:left;min-height:95px;cursor:pointer;border-radius:2px 12px 2px 2px}.sc-ride[aria-pressed=true]{border-color:var(--sc-cyan);box-shadow:inset 3px 0 var(--sc-cyan)}.sc-ride>small{display:block;font:700 .52rem var(--font-ui);letter-spacing:.1em;color:var(--sc-cyan)}.sc-ride>strong{display:block;font:800 1.6rem var(--font-display);margin:7px 0}.sc-ride>span{font:500 .67rem var(--font-ui);color:#95b1c4}.sc-ride.is-locked{opacity:.6}.sc-parts{display:grid;gap:8px}.sc-part{border:1px solid var(--sc-edge);background:#0b1d2d;padding:12px}.sc-part-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.sc-part strong{font:700 .76rem var(--font-ui);color:#e2edf0}.sc-part small{font:500 .6rem var(--font-ui);color:var(--sc-gold)}.sc-part p{font:400 .66rem/1.4 var(--font-ui);color:#9ab7c7;margin:8px 0}.sc-part button{min-height:48px;min-width:100%;background:#52e3df16;border:1px solid #52e3df50;color:var(--sc-cyan);font:700 .7rem var(--font-ui);cursor:pointer;padding:9px}.sc-part button:disabled{opacity:.55;cursor:default}
+#career-hud{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 10px);transform:translateX(-50%);width:min(360px,46vw);z-index:25;display:grid;grid-template-columns:minmax(0,1fr) 55px;gap:10px;padding:9px 12px;border:1px solid #52e3df50;border-left:3px solid var(--sc-gold);border-radius:2px 10px 2px 2px;background:#071321ec;color:white;font-family:var(--font-ui);pointer-events:none}#career-hud strong{display:block;font:700 .8rem/1.2 var(--font-ui);overflow-wrap:anywhere}#career-hud span{display:block;font:500 .57rem/1.3 var(--font-ui);color:#8aafc1;margin-top:5px}#career-hud progress{display:block;width:100%;height:3px;accent-color:var(--sc-cyan);margin-top:7px}#career-hud button{pointer-events:auto;min-height:48px;min-width:48px;border:0;background:transparent;color:var(--sc-cyan);font:700 1rem var(--font-ui);padding:0}#career-hud button span{font-size:.5rem;color:var(--sc-cyan)}
+@media(max-width:1050px){.sc-layout{grid-template-columns:minmax(0,1fr) minmax(320px,1fr);gap:16px}.sc-titlebar h2{font-size:3rem}.sc-event,.sc-result{padding:20px}.sc-map{min-height:590px}.sc-missions{padding:10px 16px 70px;gap:18px 13px}.sc-mission{padding:13px 11px;min-height:102px}.sc-mission>strong{font-size:1.2rem}.sc-map-top{padding:16px;font-size:.49rem}.sc-map-top>span:last-child{display:none}.sc-workshop-grid{grid-template-columns:310px minmax(0,1fr)}}
+@media(max-width:640px){.sc-shell{padding:8px 14px 90px}.sc-top{gap:6px;min-height:54px;flex-wrap:wrap;margin-bottom:22px}.sc-brand{font-size:min(1.12rem,7vw);order:-1;flex-basis:100%;justify-content:center;padding-top:7px}.sc-wallet{gap:5px}.sc-wallet>span{padding:8px 10px;font-size:.72rem}.sc-titlebar{align-items:center;margin-bottom:20px}.sc-titlebar h2{font-size:2.8rem}.sc-titlebar .sc-kicker{font-size:.46rem;max-width:28ch;display:block}.sc-titlebar .sc-quiet{font-size:.68rem;white-space:normal;max-width:80px;gap:7px}.sc-chapters{gap:6px}.sc-chapters button{padding:10px 8px;min-height:58px;gap:7px;font-size:.66rem}.sc-chapters button small{font-size:.45rem}.sc-chapters button b{font-size:1.25rem}.sc-layout{display:flex;flex-direction:column;gap:18px}.sc-map{width:100%;min-height:0}.sc-map-top{padding:15px}.sc-missions{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 14px 55px}.sc-mission{min-height:94px;padding:12px}.sc-mission:nth-child(n){transform:none}.sc-mission>strong{font-size:1.18rem;max-width:11ch}.sc-mission .sc-node-number{font-size:2rem;right:7px}.sc-mission>small{font-size:.43rem}.sc-mission .sc-node-stars{font-size:.65rem;margin-top:11px}.sc-map-foot{position:relative;padding:0 14px 15px;font-size:.49rem}.sc-side{width:100%}.sc-event,.sc-result{padding:21px 18px}.sc-event h3,.sc-result h3{font-size:2.7rem}.sc-event>p{font-size:.9rem}.sc-event-tags{font-size:.52rem}.sc-venue{font-size:.54rem}.sc-goal{font-size:.8rem}.sc-brief p{font-size:.81rem}.sc-label-row small{font-size:.5rem}.sc-segments button{font-size:.64rem}.sc-play{min-height:74px}.sc-play strong{font-size:2.15rem}.sc-dock{width:calc(100% - 22px);max-width:none;gap:2px;padding:4px}.sc-dock button{flex:1;min-width:0;padding:7px 6px;font-size:.61rem;overflow-wrap:anywhere}.sc-dock button span{font-size:.9rem;display:block;margin:0 0 4px}.sc-workshop-shell{padding:8px 14px 90px}.sc-workshop-grid{display:flex;flex-direction:column-reverse;gap:15px}.sc-car-window{min-height:225px}.sc-car-window span,.sc-car-window i{right:10%}.sc-build-panel{width:100%;background:#071322eb}.sc-build-panel h2{font-size:2.5rem}.sc-ride-strip{grid-template-columns:1fr;gap:8px}.sc-ride{min-height:76px;padding:12px 15px}.sc-ride>strong{font-size:1.5rem;margin:5px 0}.sc-build-panel h3{font-size:1.3rem}#career-hud{width:46vw;min-width:155px;left:auto;right:8px;transform:none;top:145px;bottom:auto;grid-template-columns:minmax(0,1fr);padding:9px}#career-hud button{display:none}#career-hud strong{font-size:.67rem}#career-hud span{font-size:.5rem}}
+@media(orientation:landscape) and (max-height:600px){.sc-shell{padding-top:6px;padding-bottom:85px}.sc-top{margin-bottom:16px;min-height:48px}.sc-titlebar{margin-bottom:16px}.sc-titlebar h2{font-size:2.5rem}.sc-titlebar .sc-kicker{font-size:.49rem}.sc-chapters{margin-bottom:16px}.sc-chapters button{min-height:48px;padding:8px 11px}.sc-layout{gap:14px}.sc-map{min-height:535px}.sc-event,.sc-result{padding:18px}.sc-workshop-shell{padding-top:6px}.sc-workshop-grid{grid-template-columns:285px minmax(0,1fr)}.sc-build-panel{padding:17px}.sc-build-panel h2{font-size:2.1rem}.sc-ride-strip{gap:8px}.sc-ride{padding:12px;min-height:83px}.sc-ride>strong{font-size:1.3rem}#career-hud{width:min(330px,43vw);grid-template-columns:minmax(0,1fr) 50px;padding:8px 10px}#career-hud strong{font-size:.72rem}#career-hud span{font-size:.52rem}}
+@media(prefers-reduced-motion:reduce){.sc-page *,.sc-workshop *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+body.reduced-motion .sc-page *,body.reduced-motion .sc-workshop *,body.motion-off .sc-page *,body.motion-off .sc-workshop *{animation:none!important;transition:none!important}
+.sc-portrait.ol-portrait-veska{background-image:none;display:grid;place-items:center;background:linear-gradient(135deg,#2e2642,#101c2b);color:#d3b9df;font:700 1.3rem var(--font-display);border:1px solid #a699e84d}
+.sc-quick-play{min-height:66px;min-width:175px;max-width:270px;padding:11px 17px;background:var(--sc-gold);color:#08121c;border:0;border-radius:2px 12px 2px 2px;cursor:pointer;text-align:left}.sc-quick-play small{display:block;font:700 .5rem/1.3 var(--font-ui);letter-spacing:.06em;margin-bottom:7px}.sc-quick-play strong{display:block;font:800 1.7rem/.9 var(--font-display);font-style:italic;white-space:nowrap}.sc-quick-play b{font:700 1rem var(--font-ui);margin-left:12px}.sc-quick-play:disabled{background:#304453;color:#8ca4b6;cursor:default}
+.sc-chapters button,.sc-chapters button>span{min-width:0;overflow-wrap:anywhere}.sc-wallet{flex-wrap:wrap;min-width:0}.sc-top>button{flex-shrink:0}.sc-segments{flex-wrap:wrap}.sc-segments button{flex-basis:70px;overflow-wrap:anywhere}.sc-label-row{flex-wrap:wrap}.sc-venue>span,.sc-map-top>span{min-width:0;overflow-wrap:anywhere}.sc-titlebar>div{min-width:0}.sc-brief>div{min-width:0}.sc-brief p{overflow-wrap:anywhere}
+@media(max-width:640px){.sc-titlebar{gap:12px;align-items:stretch}.sc-titlebar h2{font-size:min(2.8rem,10vw)}.sc-titlebar .sc-kicker{font-size:min(.46rem,2.1vw)}.sc-quick-play{min-width:115px;max-width:42%;padding:13px 11px;min-height:78px;align-self:end}.sc-quick-play small{font-size:min(.5rem,2.3vw);max-width:15ch;overflow-wrap:anywhere}.sc-quick-play strong{font-size:min(1.6rem,5vw);white-space:normal}.sc-quick-play b{display:none}.sc-chapters{flex-wrap:wrap}.sc-chapters button{flex:1 1 95px}.sc-map-foot{overflow-wrap:anywhere}.sc-map-top{flex-wrap:wrap}.sc-event-tags{flex-wrap:wrap}.sc-mission>strong{font-size:min(1.18rem,5.5vw)}.sc-node-stars{letter-spacing:1px!important}.sc-result-stars{font-size:min(2.3rem,8vw);letter-spacing:6px}}
+@media(orientation:landscape) and (max-height:600px){.sc-quick-play{min-height:58px;min-width:175px}.sc-quick-play strong{font-size:1.6rem}.sc-titlebar h2{font-size:2.35rem}.sc-titlebar{align-items:center}}
+.sc-chapters button b{flex-shrink:0;white-space:nowrap;overflow-wrap:normal}
+@media(max-width:640px){.sc-chapters button{flex-basis:6rem}}
+.sc-car-window{pointer-events:auto;touch-action:pan-y;cursor:grab}.sc-car-window:active{cursor:grabbing}.sc-car-window>span,.sc-car-window>i{pointer-events:none}
+
+</style>
 </head>
 <body>
 <canvas id="gl" aria-label="3D view of the car and circuit"></canvas>
@@ -1043,7 +1064,7 @@ body.reduced-motion .openline-page,body.motion-off .openline-page{scroll-behavio
     <p class="tagline">Master the car. Build your team. Race across worlds.</p>
     <div class="row"><button id="btn-start" class="btn primary" type="button">Enter the grid</button><button id="btn-fullscreen" class="btn" type="button">Fullscreen</button><span class="press" aria-hidden="true">PRESS START</span></div>
     <p id="title-error" class="error" hidden></p>
-    <p class="fineprint">Offline adventure 0.6 · Racing, engineering, discovery and your own team identity.</p>
+    <p class="fineprint">Offline career 0.7 · Racing, engineering, discovery and your own team identity.</p>
   </div>
   <div class="title-destination" aria-hidden="true"><span class="destination-label">THE FIRST DESTINATION</span><strong>LUMEN HARBOR</strong><small>Harbor Loop · 2.10 km · Blue hour</small></div>
 </section>
@@ -1055,7 +1076,7 @@ body.reduced-motion .openline-page,body.motion-off .openline-page{scroll-behavio
 <div class="paddock-stage"><div class="paddock-title"><div class="paddock-kicker"><i></i>YOUR PADDOCK / 01</div><div class="machine-number" aria-hidden="true">01</div><h3>KESTREL<span>VX–1</span></h3><p>OWN THE MOMENT.</p><div id="lobby-paints" class="lobby-paints" role="group" aria-label="Quick livery selection"></div></div>
 <div id="car-rotate-zone" class="car-rotate-zone" aria-label="Drag horizontally to rotate your 3D car"></div><div class="rotate-hint" aria-hidden="true">↔ <span>DRAG TO ROTATE</span></div>
 <button class="world-gate gate-garage" data-nav="garage" type="button"><svg class="app-icon" aria-hidden="true"><use href="#i-car"></use></svg><span><strong>YOUR GARAGE</strong><small>Paint · Photography · VX-1</small></span><b>↗</b></button>
-<button type="button" class="openline-entry" data-nav="story"><small>THE OPENLINE / CHAPTER 01</small><strong>LIGHT THE BEACON</strong><span>Meet your crew →</span></button>
+<button type="button" class="openline-entry" data-nav="career"><small>STORY CAREER / SEASON ONE</small><strong>THE OPENLINE</strong><span>Race. Build. Take the crown →</span></button>
 <div class="paddock-side-mark" aria-hidden="true">ORIGINAL MACHINES / LIMITLESS INTENT</div></div>
 <div class="hub-bottom"><div class="hub-feature-deck" aria-label="Choose your next destination"><button class="world-gate feature-tile gate-lab" type="button" data-nav="lab"><span class="tile-art" aria-hidden="true"></span><span class="tile-index" aria-hidden="true">02</span><span class="tile-icon"><svg class="app-icon" aria-hidden="true"><use href="#i-lab"></use></svg></span><span class="tile-copy"><strong>Engineering</strong><small>TUNE YOUR KNOWLEDGE</small></span><span class="tile-arrow" aria-hidden="true">↗</span></button><button class="world-gate feature-tile gate-explorer" type="button" data-nav="explorer"><span class="tile-art" aria-hidden="true"></span><span class="tile-index" aria-hidden="true">03</span><span class="tile-icon"><svg class="app-icon" aria-hidden="true"><use href="#i-globe"></use></svg></span><span class="tile-copy"><strong>Circuit intel</strong><small>KNOW EVERY CORNER</small></span><span class="tile-arrow" aria-hidden="true">↗</span></button><button class="world-gate feature-tile gate-academy" type="button" data-nav="academy"><span class="tile-art" aria-hidden="true"></span><span class="tile-index" aria-hidden="true">04</span><span class="tile-icon"><svg class="app-icon" aria-hidden="true"><use href="#i-helmet"></use></svg></span><span class="tile-copy"><strong>Academy</strong><small>DRIVE. LEARN. MASTER.</small></span><span class="tile-arrow" aria-hidden="true">↗</span></button><button class="world-gate feature-tile gate-team" type="button" data-nav="team"><span class="tile-art" aria-hidden="true"></span><span class="tile-index" aria-hidden="true">05</span><span class="tile-icon"><svg class="app-icon" aria-hidden="true"><use href="#i-team"></use></svg></span><span class="tile-copy"><strong>Your team</strong><small>MAKE YOUR MARK</small></span><span class="tile-arrow" aria-hidden="true">↗</span></button><button class="world-gate feature-tile gate-records" type="button" data-nav="records"><span class="tile-art" aria-hidden="true"></span><span class="tile-index" aria-hidden="true">06</span><span class="tile-icon"><svg class="app-icon" aria-hidden="true"><use href="#i-trophy"></use></svg></span><span class="tile-copy"><strong>Driver archive</strong><small>BUILD YOUR LEGACY</small></span><span class="tile-arrow" aria-hidden="true">↗</span></button>
 <button type="button" class="hub-next" id="hub-next"><span class="mission-icon">✦</span><span class="mission-kicker">NEXT UP</span><strong id="hub-next-title"></strong><small id="hub-next-detail"></small><b>↗</b></button></div>
@@ -1317,9 +1338,38 @@ body.reduced-motion .openline-page,body.motion-off .openline-page{scroll-behavio
   <button type="button" id="btn-openline-return">Return to the crew <span aria-hidden="true">↗</span></button>
 </aside>
 
+<section class="screen sc-page" id="scr-career" aria-labelledby="career-h">
+ <div class="sc-shell">
+  <header class="sc-top"><button class="sc-back" type="button" data-nav="hub" data-back aria-label="Back to paddock">← <span>Paddock</span></button><div class="sc-brand">VELOCITY<span>VERSE</span><i></i></div><div class="sc-wallet"><span><b id="career-stars">0</b> ★</span><span><b id="career-credits">0</b> <small>CR</small></span></div></header>
+  <div class="sc-titlebar"><div><span class="sc-kicker">YOUR CREW. YOUR LINE. YOUR LEGACY.</span><h2 id="career-h">THE OPENLINE<span>STORY TOUR</span></h2></div><button class="sc-quick-play" id="career-quick-start" type="button"><small id="career-quick-event">YOUR NEXT EVENT</small><strong>RIDE NOW <b aria-hidden="true">↗</b></strong></button></div>
+  <nav id="career-chapter-tabs" class="sc-chapters" aria-label="Story acts"></nav>
+  <div class="sc-layout">
+   <section class="sc-map" aria-label="Playable story events"><div class="sc-map-art" aria-hidden="true"></div><div class="sc-map-top"><span id="career-act-name">ACT 01 · THE FIRST LIGHT</span><span>8 EVENTS / 3 CIRCUITS</span></div><div id="career-mission-list" class="sc-missions"></div><div class="sc-map-foot"><i></i> Every event is a drive. Every result leaves a mark.</div></section>
+   <div class="sc-side">
+    <section id="career-event" class="sc-event" aria-labelledby="career-event-title">
+     <div class="sc-event-tags"><span id="career-event-type">CHECKPOINT RUN</span><span id="career-event-number">01 / 08</span></div><h3 id="career-event-title">Your first line</h3><p id="career-event-copy">Get the car moving. Bring it back with a story to tell.</p>
+     <div class="sc-venue"><span id="career-event-track">BEACON SHORT</span><span id="career-event-ride">KESTREL SPRINT</span></div><div id="career-event-goals" class="sc-goals" aria-label="Medal objectives"></div>
+     <div class="sc-brief"><span id="career-brief-portrait" class="sc-portrait ol-portrait ol-portrait-neri" role="img" aria-label="Neri Vale"></span><div><strong id="career-brief-name">NERI VALE</strong><p id="career-brief-line">Meet me at the line. We’ll figure out the rest at speed.</p></div></div>
+     <div class="sc-strategy"><div class="sc-label-row"><h4>Your crew chief</h4><small>Changes race support</small></div><div id="career-crew-options" class="sc-segments" role="group" aria-label="Crew strategy"></div><div class="sc-label-row"><h4>Set the car up</h4><small>Real handling tradeoffs</small></div><div id="career-setup-options" class="sc-segments" role="group" aria-label="Car setup"></div><p id="career-strategy-note" class="sc-strategy-note"></p></div>
+     <button id="career-start" class="sc-play" type="button"><span><small id="career-start-kicker">READY WHEN YOU ARE</small><strong>LET’S RIDE</strong></span><b aria-hidden="true">❯</b></button><p id="career-status" class="sc-status" role="status" aria-live="polite"></p>
+    </section>
+    <section id="career-result" class="sc-result" hidden aria-labelledby="career-result-title"><span class="sc-kicker" id="career-result-kicker">EVENT COMPLETE</span><h3 id="career-result-title">You made your mark.</h3><div id="career-result-stars" class="sc-result-stars" aria-label="Medals earned"></div><div id="career-result-metrics" class="sc-result-metrics"></div><p id="career-result-story" class="sc-result-story"></p><div id="career-result-unlock" class="sc-unlock"></div><div class="sc-result-actions"><button class="sc-play" id="career-result-next" type="button"><strong>NEXT RIDE</strong><b>❯</b></button><button class="sc-secondary" id="career-retry" type="button">Ride again ↻</button><button class="sc-secondary" id="career-result-map" type="button">Event map ↗</button></div></section>
+   </div>
+  </div>
+  <footer class="sc-dock"><button type="button" data-nav="career" aria-current="page"><span aria-hidden="true">⌁</span> Story tour</button><button type="button" data-nav="workshop"><span aria-hidden="true">◇</span> Rides & workshop</button><button type="button" data-nav="event"><span aria-hidden="true">⚑</span> Quick race</button></footer>
+ </div>
+</section>
+<section class="screen sc-workshop" id="scr-workshop" aria-labelledby="career-workshop-h">
+ <div class="sc-workshop-shell"><header class="sc-top"><button class="sc-back" type="button" data-nav="career" data-back>← <span>Story tour</span></button><div class="sc-brand">YOUR<span>WORKSHOP</span><i></i></div><div class="sc-wallet"><span><b id="career-workshop-credits">0</b> <small>CR</small></span></div></header>
+  <div class="sc-workshop-grid"><section class="sc-build-panel"><span class="sc-kicker">BUILT FOR YOUR NEXT RIDE</span><h2 id="career-workshop-h">KESTREL <span>SPRINT</span></h2><p id="career-ride-description">Light, nimble, ready to learn your line.</p><div id="career-workshop-stats" class="sc-build-stats"></div><h3>Build your advantage</h3><p class="sc-small">Earn credits on the story tour. Parts change real grip, drag and gearing. Every build has a tradeoff.</p><div id="career-parts" class="sc-parts"></div><p id="career-workshop-status" class="sc-status" role="status" aria-live="polite"></p></section><div class="sc-car-window" id="career-car-rotate" aria-label="Drag horizontally to rotate your ride"><span>DRAG TO ROTATE YOUR RIDE</span><i></i></div></div>
+  <div class="sc-ride-strip" id="career-rides" role="group" aria-label="Choose a ride"></div><footer class="sc-dock"><button type="button" data-nav="career">⌁ Story tour</button><button type="button" data-nav="workshop" aria-current="page">◇ Workshop</button><button id="career-workshop-return" type="button" data-nav="career">Ready to ride ❯</button></footer>
+ </div>
+</section>
+<aside id="career-hud" hidden aria-label="Story event objective"><div><strong id="career-hud-goal">Reach the next checkpoint</strong><span id="career-hud-detail">Your crew is on the radio.</span><progress id="career-hud-progress" max="1" value="0" aria-label="Event progress"></progress></div><button id="career-hud-exit" type="button" aria-label="Pause or leave story event">Ⅱ <span>Pause</span></button></aside>
+
 <script>
 "use strict";
-// VELOCITYVERSE Milestone 0 bundle, built 0.6.0. Source: src/ (see README).
+// VELOCITYVERSE Milestone 0 bundle, built 0.7.0. Source: src/ (see README).
 
 // ---- sim/units.js ----
 const __m_sim_units = (() => {
@@ -1520,6 +1570,60 @@ const TRACK_HARBOR = {
 };
 
 return { PROVENANCE_LABEL, CAR_VX1, WORLDS, TRACK_HARBOR };
+})();
+
+// ---- sim/rides.js ----
+const __m_sim_rides = (() => {
+// Original club-class rides. Every ride uses Vehicle; no scripted speed or purchase modifier.
+const { CAR_VX1 } = __m_sim_data;
+const { DEG } = __m_sim_units;
+const copy = value => JSON.parse(JSON.stringify(value));
+const freeze = value => { if(value && typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value; };
+const sprint=copy(CAR_VX1);
+Object.assign(sprint,{id:'sprint',name:'Kestrel Sprint',summary:'Compact club racer. Light, progressive and forgiving, with a lower power ceiling.',bodyStyle:'sprint',mass:620,cgHeight:.29,wheelbase:2.50,frontWeight:.46,trackFront:1.48,trackRear:1.46,yawInertia:680,pitchInertia:660,rollInertia:230,steerLock:26*DEG});
+sprint.tire.mu=1.78;sprint.tire.falloff=.88;sprint.tire.nominalLoad=1600;
+sprint.engine.curve=sprint.engine.curve.map(([rpm,torque])=>[rpm,torque*.58]);
+sprint.aero={cdA:.74,clA:1.45,balance:.44};sprint.brakes={maxTorque:8200,bias:.59};
+sprint.susp={...sprint.susp,kF:98000,kR:107000,arbF:33000,arbR:22000};
+sprint.liveries=[{id:'sprint_teal',name:'Workshop Teal',primary:[.04,.32,.37],secondary:[.16,.92,.80],accent:[1,.64,.24]},{id:'sprint_sun',name:'Apricot',primary:[.95,.35,.13],secondary:[.96,.86,.65],accent:[.15,.27,.32]}];
+const gt=copy(CAR_VX1);
+Object.assign(gt,{id:'vanta_gt',name:'Vanta GT',summary:'Enclosed endurance coupe. Strong straight-line power, heavier braking and deliberate turn-in.',bodyStyle:'gt',mass:1120,cgHeight:.38,wheelbase:2.80,frontWeight:.47,trackFront:1.66,trackRear:1.64,yawInertia:1620,pitchInertia:1420,rollInertia:410,steerLock:22*DEG});
+gt.tire.mu=1.52;gt.tire.nominalLoad=2900;gt.tire.falloff=.84;
+gt.engine={...gt.engine,idleRpm:2200,launchRpm:6200,limiterRpm:8850,maxRpm:9000,curve:gt.engine.curve.map(([rpm,torque])=>[rpm*.72,torque*2.2]),frictionBase:35,frictionPerRpm:.005};
+gt.gearbox={...gt.gearbox,ratios:[4.1,3.08,2.34,1.8,1.4,1.08],final:3.2,reverse:3.5,shiftTime:.08,autoUpRpm:8500,autoDownRpm:5400};
+gt.brakes={maxTorque:14200,bias:.60};gt.aero={cdA:.90,clA:1.75,balance:.44};
+gt.susp={...gt.susp,kF:155000,kR:165000,cBumpF:6500,cRebF:8000,cBumpR:7200,cRebR:8900,travel:.065,arbF:48000,arbR:30000};
+gt.liveries=[{id:'vanta_coral',name:'Crownline Coral',primary:[.24,.05,.09],secondary:[1,.30,.15],accent:[1,.79,.35]},{id:'vanta_ice',name:'Polar Night',primary:[.055,.08,.14],secondary:[.64,.84,.91],accent:[.56,.39,1]}];
+
+const RIDES=freeze([
+ {id:'vx1',name:'VX-1 Kestrel',tagline:'Aero precision',car:copy(CAR_VX1),body:'formula',unlock:0,stats:{power:'398 kW',mass:'760 kg',character:'Balanced high-downforce racer'}},
+ {id:'sprint',name:'Kestrel Sprint',tagline:'Light. Nimble. Yours.',car:sprint,body:'sprint',unlock:0,stats:{power:'231 kW',mass:'620 kg',character:'Forgiving grip, lower speed ceiling'}},
+ {id:'vanta_gt',name:'Vanta GT',tagline:'Power with a purpose',car:gt,body:'gt',unlock:3,stats:{power:'630 kW',mass:'1,120 kg',character:'Powerful coupe, longer braking approach'}}
+]);
+function getRide(id){return RIDES.find(r=>r.id===id)||RIDES[0];}
+
+return { RIDES, getRide };
+})();
+
+// ---- sim/circuits.js ----
+const __m_sim_circuits = (() => {
+// Three original closed venues in Lumen Harbor. These are playable geometry, not atlas cards.
+const { TRACK_HARBOR, WORLDS } = __m_sim_data;
+const copy=value=>JSON.parse(JSON.stringify(value));
+const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
+const venue=(id,name,width,segments,extra={})=>({...copy(TRACK_HARBOR),id,name,width,start:{x:0,z:-100,heading:0},segments,lineS:75,gridS:20,runoffStraight:9,runoffCorner:15,cornerNames:[],...extra});
+// Four changing-radius right turns plus opposed equal straights: analytically closed.
+const beacon=venue('beacon_short','Beacon Short',13,[['S',180],['R',42,90],['S',90],['R',42,90],['S',180],['R',42,90],['S',90],['R',42,90]],{curbMaxRadius:80,cornerNames:['Lantern','Schoolhouse','Slipway','Beacon Return']});
+// Long straight, fast sweep, short cross-link, fast sweep, mirrored return.
+const breakwater=venue('breakwater','Breakwater Speedway',15,[['S',440],['R',95,90],['S',100],['R',95,90],['S',440],['R',95,90],['S',100],['R',95,90]],{curbMaxRadius:110,lineS:140,gridS:65,cornerNames:['Outer Wall','Salt Sweep','Tide Turn','Dock Return']});
+const CIRCUITS=freeze([
+ {id:'harbor_loop',name:'Harbor Loop',tagline:'The full harbor challenge',track:copy(TRACK_HARBOR),world:copy(WORLDS.lumen_harbor),unlock:0,environment:'blue-hour harbor',category:'Technical Grand Prix',description:'A long waterfront straight, linked esses and the tight Customs Hairpin reward a complete driver.'},
+ {id:'beacon_short',name:'Beacon Short',tagline:'Find your rhythm',track:beacon,world:copy(WORLDS.lumen_harbor),unlock:0,environment:'community training apron',category:'Club Sprint',description:'Four compact bends and short links make this the crew’s quick, readable proving ground.'},
+ {id:'breakwater',name:'Breakwater Speedway',tagline:'Commit to the sweep',track:breakwater,world:copy(WORLDS.lumen_harbor),unlock:2,environment:'outer harbor speed course',category:'High-speed Cup',description:'Long straights and wide ninety-five-metre-radius turns put power, clean exits and braking commitment on display.'}
+]);
+function getCircuit(id){return CIRCUITS.find(c=>c.id===id)||CIRCUITS[0];}
+
+return { CIRCUITS, getCircuit };
 })();
 
 // ---- sim/track.js ----
@@ -4212,8 +4316,74 @@ function body(mb, cx, sections, seg, col, mat = 0) {
 // Every material-0 vertex in a car mesh is paint: switch it to the clear-coat paint material (22).
 function paint(mb) { for (let k = 0; k < mb.n; k++) if (mb.v[k * 13 + 10] === 0) mb.v[k * 13 + 10] = 22; return mb; }
 
-function buildCarLOD0(car, livery) { return paint(carLOD0(car, livery)); }
-function buildCarLOD1(car, livery) { return paint(carLOD1(car, livery)); }
+function buildCarLOD0(car, livery) { return paint(car.bodyStyle==='gt'?clubGT(car,livery,false):car.bodyStyle==='sprint'?clubSprint(car,livery,false):carLOD0(car, livery)); }
+function buildCarLOD1(car, livery) { return paint(car.bodyStyle==='gt'?clubGT(car,livery,true):car.bodyStyle==='sprint'?clubSprint(car,livery,true):carLOD1(car, livery)); }
+
+
+// The club rides have their own body construction, not a livery on the VX-1.
+function clubSprint(car,livery,lod) {
+  const mb=new MeshBuilder(),P=[...livery.primary,0],S=[...livery.secondary,0],A=[...livery.accent,0],n=lod?10:22;
+  const zf=car.wheelbase*(1-car.frontWeight),zr=-car.wheelbase*car.frontWeight;
+  body(mb,0,[[-1.88,.07,.06,.25,2],[-1.45,.25,.16,.35,2.4],[-.82,.37,.22,.40,3],[-.12,.39,.22,.40,3],[.60,.29,.17,.35,2.7],[1.15,.18,.11,.27,2.4],[1.86,.07,.06,.20,2]],n,P);
+  for(const side of [-1,1]) {
+    body(mb,side*.43,[[-1.35,.08,.07,.27,2],[-.9,.17,.13,.30,3],[.25,.17,.13,.30,3],[.55,.08,.07,.28,2]],n,S);
+    mb.box(side*.63,.08,-.1,.12,.07,2.7,CARBON,12);
+    for(const [z,track] of [[zf,car.trackFront],[zr,car.trackRear]]){
+      tube(mb,[[side*.27,.22,z-.2],[side*track*.5,.33,z]],.018,TI,14,lod?5:8);
+      tube(mb,[[side*.27,.22,z+.2],[side*track*.5,.33,z]],.018,TI,14,lod?5:8);
+    }
+    mb.box(side*.40,.57,-1.72,.25,.045,.025,RED,5);
+  }
+  // Open cockpit, driver and a low rounded rollover hoop define the short silhouette.
+  body(mb,0,[[-.55,.23,.05,.65,2.2],[-.20,.28,.05,.65,2.4],[.30,.23,.04,.57,2.4],[.52,.08,.03,.50,2]],n,DARK,12);
+  mb.sphere(0,.72,-.03,.13,lod?5:9,lod?8:14,A,0);
+  body(mb,0,[[.025,.11,.035,.74,2],[.14,.12,.035,.73,2],[.18,.08,.03,.72,2]],lod?8:14,DARK,15);
+  tube(mb,[[-.23,.58,-.48],[-.23,.88,-.48],[0,.98,-.48],[.23,.88,-.48],[.23,.58,-.48]],.028,TI,14,lod?5:8);
+  mb.box(0,.57,.20,.24,.045,.035,CARBON,12);
+  wing(mb,.82,.28,.12,.02,7,()=>({y:.15,z:1.77}),S,0,lod?5:10);
+  wing(mb,.64,.30,.12,.03,12,()=>({y:.68,z:-1.77}),P,0,lod?5:10);
+  mb.box(0,.08,0,1.24,.05,3.5,CARBON,12);
+  mb.box(0,.43,-1.90,.14,.10,.04,RED,5);
+  return mb;
+}
+
+function clubGT(car,livery,lod) {
+  const mb=new MeshBuilder(),P=[...livery.primary,0],S=[...livery.secondary,0],A=[...livery.accent,0],n=lod?10:26;
+  const zf=car.wheelbase*(1-car.frontWeight),zr=-car.wheelbase*car.frontWeight;
+  // Wide continuous coupe volume, front splitter and a clear enclosed greenhouse.
+  body(mb,0,[[-2.12,.64,.14,.36,3],[-1.72,.90,.23,.39,4],[-.85,.91,.24,.40,4],[.30,.87,.23,.40,4],[1.28,.88,.21,.37,4],[1.98,.74,.15,.31,3],[2.22,.45,.07,.27,2.5]],n,P);
+  mb.taper(0,-2.08,2.17,1.78,1.65,.07,.12,.07,.12,CARBON,12);
+  body(mb,0,[[-1.09,.49,.035,.70,3],[-.66,.62,.27,.89,3],[-.10,.64,.29,.91,3],[.51,.52,.19,.83,3],[.91,.39,.025,.64,3]],n,[.10,.18,.24,0],15);
+  body(mb,0,[[-.64,.60,.025,1.155,3],[-.12,.62,.024,1.19,3],[.31,.57,.021,1.13,3]],n,P);
+  // Roof pillars are visible from the chase camera and stop it reading as a formula car.
+  for(const side of [-1,1]) {
+    tube(mb,[[side*.49,.67,-1.05],[side*.60,1.11,-.61]],.037,S,0,lod?5:8);
+    tube(mb,[[side*.52,1.11,.29],[side*.44,.65,.88]],.035,P,0,lod?5:8);
+    mb.box(side*.63,.73,-.32,.035,.38,.05,P);
+    mb.box(side*.79,.22,-.03,.14,.09,2.52,S);
+    // Wheel-arch brows and vents; the separate wheels remain fully animated.
+    for(const [z,track] of [[zf,car.trackFront],[zr,car.trackRear]]){
+      const x=side*track*.5;
+      const count=lod?8:18;
+      for(let i=0;i<count;i++){
+        const a=-1.25+i/count*2.5,b=-1.25+(i+1)/count*2.5;
+        const pt=(xx,t)=>[xx,.33+Math.cos(t)*.405,z+Math.sin(t)*.405];
+        mb.quad(pt(x-side*.10,a),pt(x+side*.16,a),pt(x+side*.16,b),pt(x-side*.10,b),P,0);
+      }
+    }
+    for(let i=0;i<4;i++)mb.box(side*.67,.64,-1.20+i*.105,.19,.015,.045,DARK,12);
+    // Distinctive slim white front lamps and full-width double rear lamps.
+    mb.box(side*.55,.47,2.08,.38,.055,.035,[.72,.94,1,.18],5);
+    mb.box(side*.51,.49,-2.09,.65,.065,.035,RED,5);
+    mb.box(side*.53,.79,-1.80,.035,.39,.055,CARBON,12);
+    mb.box(side*.90,.68,.62,.11,.07,.22,P);
+  }
+  mb.box(0,.40,2.16,.80,.15,.035,DARK,12);
+  mb.box(0,.39,2.185,.28,.055,.008,A);
+  wing(mb,.94,.38,.10,.03,9,()=>({y:.98,z:-1.83}),S,0,lod?6:14);
+  mb.box(0,.20,-2.14,.67,.08,.035,CARBON,12);
+  return mb;
+}
 
 function carLOD0(car, livery) {
   const mb = new MeshBuilder();
@@ -5103,7 +5273,7 @@ class Renderer {
     this.buildMs = performance.now() - t0;
     this.models = new Map();
     this.quadVao = gl.createVertexArray(); gl.bindVertexArray(this.quadVao);
-    const qb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, qb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const qb = this.quadBuffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, qb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
     gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0); gl.bindVertexArray(null);
     this.fxAdd = dynamicMesh(gl, 30000); this.fxAlpha = dynamicMesh(gl, 14000);
     this.fxSys = new FX();
@@ -5123,12 +5293,62 @@ class Renderer {
     this.probe = null; this.probeFace = 0; this.probeFrame = 0; this.probePos = [1e9, 0, 0];
   }
 
+  // Track/ride changes rebuild this reference renderer. Release all owned GL
+  // objects without losing the shared canvas context; late image loads are ignored.
+  dispose() {
+    if(this.disposed)return;
+    this.disposed=true;
+    const gl=this.gl;
+    this._freeTargets();this._freeProbe();this._freeShadow();
+    const release=mesh=>{if(!mesh)return;if(mesh.vb)gl.deleteBuffer(mesh.vb);if(mesh.ib)gl.deleteBuffer(mesh.ib);if(mesh.vao)gl.deleteVertexArray(mesh.vao);};
+    for(const id of [...this.models.keys()])this.invalidateModel(id);
+    for(const mesh of [this.worldMesh,this.waterMesh,this.fenceMesh,this.lineMesh,this.shadow,this.ringA,this.ringB,this.fxAdd,this.fxAlpha])release(mesh);
+    if(this.lobbyStage)Object.values(this.lobbyStage).forEach(release);
+    if(this.careerGates)Object.values(this.careerGates).forEach(release);
+    gl.deleteBuffer(this.quadBuffer);gl.deleteVertexArray(this.quadVao);
+    for(const texture of [this.signTex,this.roadTex,this.black2D,this.blackCube])if(texture)gl.deleteTexture(texture);
+    for(const program of [this.depthP,this.main,this.fx,this.sky,this.pre,this.down,this.up,this.streakP,this.comp,this.lobbyBg]){
+      if(!program?.p)continue;
+      for(const shader of gl.getAttachedShaders(program.p)||[])gl.deleteShader(shader);
+      gl.deleteProgram(program.p);
+    }
+    this.models.clear();this.fxSys=null;this.lobbyStage=null;
+  }
+
+  _drawCareerGate(scene) {
+    const gate=scene.careerGate;
+    if(!gate || !Number.isFinite(gate.s))return;
+    if(!this.careerGates) {
+      const build=col=>{
+        const mb=new MeshBuilder(),w=this.track.halfWidth+.25;
+        // A road-width holographic portal: posts sit beyond the driving surface.
+        mb.box(-w,2.05,0,.13,4.1,.13,col,5);mb.box(w,2.05,0,.13,4.1,.13,col,5);
+        mb.box(0,4.1,0,w*2+.13,.13,.13,col,5);
+        mb.box(0,.045,0,w*2,.035,.16,col,5);
+        for(const side of [-1,1]) {
+          mb.box(side*w,.50,0,.32,.04,.32,col,5);
+          mb.box(side*w,3.5,0,.32,.04,.32,col,5);
+        }
+        // Forward chevrons remain readable on the road approaching the next gate.
+        for(const x of [-2,0,2])mb.quad([x-.5,.055,-2.4],[x,.055,-1.7],[x+.5,.055,-2.4],[x,.055,-2.1],col,5,[0,1,0]);
+        return upload(this.gl,mb);
+      };
+      this.careerGates={next:build([.10,.80,1,.54]),finish:build([1,.58,.13,.58])};
+      this.careerGatePoint={};this.careerGateModel=M4.create();
+    }
+    const p=this.track.pointAt(gate.s,0,this.careerGatePoint);
+    this._fxProg(scene.cam,0,.85,scene.motion?scene.time:0);
+    const finish=Number.isFinite(gate.next)&&Number.isFinite(gate.total)&&gate.next>=gate.total;
+    this._draw(this.fx,finish?this.careerGates.finish:this.careerGates.next,M4.fromPose(this.careerGateModel,p.x,0,p.z,p.heading,0,0));
+  }
+
   _makeRoadTexture() {
     const gl=this.gl,tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);
     gl.texImage2D(gl.TEXTURE_2D,0,gl.SRGB8_ALPHA8,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([75,75,75,255]));
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
     this.assetsReady=new Promise(resolve=>{
       const img=new Image();img.onload=()=>{
+        if(this.disposed){resolve(false);return;}
         gl.bindTexture(gl.TEXTURE_2D,tex);gl.texImage2D(gl.TEXTURE_2D,0,gl.SRGB8_ALPHA8,gl.RGBA,gl.UNSIGNED_BYTE,img);
         gl.generateMipmap(gl.TEXTURE_2D);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
         gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.REPEAT);
@@ -5554,6 +5774,7 @@ class Renderer {
     for (const car of cars) if (!car.ghost) this._draw(this.fx, this.shadow, M4.fromPose(this.model, car.pose.x, 0, car.pose.z, car.pose.yaw, 0, 0));
     this._fxProg(cam, 0, 0.7, time); gl.blendFunc(gl.ONE, gl.ONE);
     this._draw(this.fx, this.fenceMesh);
+    this._drawCareerGate(scene);
     if (scene.showLine) { this._fxProg(cam, 0, 0.42, time); gl.uniform1f(this.fx.u.uNear, 14); this._draw(this.fx, this.lineMesh); gl.uniform1f(this.fx.u.uNear, 0); }
     this._fxProg(cam, 0, 1.0, time);
     for (const car of cars) if (!car.ghost) this._draw(this.fx, car.model.glow, M4.fromPose(this.model, car.pose.x, 0, car.pose.z, car.pose.yaw, 0, 0));
@@ -6761,6 +6982,133 @@ function updateOpenline(value,action,payload={}) {
 return { OPENLINE_VERSION, OPENLINE_PHASES, OPENLINE_GUIDES, defaultOpenline, normalizeOpenline, updateOpenline };
 })();
 
+// ---- game/career-mode.js ----
+const __m_game_career_mode = (() => {
+// Local, gameplay-driven career. Results must be observed from the actual drive.
+// This is not an authoritative online economy: local saves remain user-editable.
+const CAREER_MODE_VERSION = 1;
+const carIds=['sprint','vx1','vanta_gt'];
+const partIds=['grip','aero','gearing'];
+const crewIds=['mentor','engineer'];
+const setupIds=['balanced','grip','speed'];
+const PART_PRICES=[100,180,280];
+const CAREER_PARTS=[
+ {id:'grip',name:'Tire compound',effect:'+1.8% peak grip per tier; +1.5% rolling loss',prices:PART_PRICES},
+ {id:'aero',name:'Aero package',effect:'+4% downforce per tier; +1.8% drag',prices:PART_PRICES},
+ {id:'gearing',name:'Short final drive',effect:'+1.5% final drive per tier; earlier shifts and reduced redline speed',prices:PART_PRICES}
+];
+const mission=(v)=>Object.freeze({...v,index:v.index,fieldSize:v.fieldSize||1,reward:80,starReward:50,maxContacts:v.maxContacts??(['race','duel'].includes(v.type)?20:4),raceMode:v.raceMode||'practice',raceLaps:v.laps||1});
+const MISSIONS=Object.freeze([
+ mission({id:'first-light',index:0,chapter:1,title:'Run the delivery',type:'sprint',trackId:'beacon_short',rideId:'sprint',laps:0,minDistance:650,checkpoints:6,timeLimit:60,targetTime:35,maxContacts:3,objective:'Reach six ordered gates and carry the timing relay 650 m before the workshop closes.',before:['Neri: The last timing relay is at the far end of the test course. We can still make tonight’s qualifier.','Maela: Follow the gates. Bring the car home; a scratch is better than a shortcut.'],after:['Neri: You brought it back! Now the workshop can time its own qualifying runs.','Maela: One delivery. One driver we can trust. Let’s earn a place on the grid.']}),
+ mission({id:'beacon-rush',index:1,chapter:1,title:'Beat the closing bell',type:'checkpoint',trackId:'beacon_short',rideId:'sprint',laps:0,minDistance:780,checkpoints:10,timeLimit:80,targetTime:48,maxContacts:3,objective:'Link ten ordered gates around Beacon Short before the clock expires.',unlockRide:'vx1',before:['Tavi: Crownline accepts one final qualifying trace. I’ve marked the full route.','Neri: Keep your momentum through the bends. The gates only count in order.'],after:['Tavi: A complete trace, no missing gates. The qualifier accepts us.','Neri: Maela’s unlocked the VX-1 for you. Time to meet me on the grid.']}),
+ mission({id:'neri-duel',index:2,chapter:1,title:'Neri’s wager',type:'duel',trackId:'beacon_short',rideId:'vx1',laps:1,minDistance:780,checkpoints:10,timeLimit:160,targetTime:60,requiredPosition:1,fieldSize:2,opponent:'neri',rival:'neri',raceMode:'race',pace:.78,objective:'Win a one-lap duel against Neri. Clean exits matter more than first-corner bravery.',before:['Neri: One lap. If you win, you lead the crew’s qualifying entry.','Maela: Give each other room. A rival who comes back is worth more than a broken trophy.'],after:['Neri: That exit! All right, you lead. I’ll watch your blind side.','Maela: You’ve won more than a lap. The crew can enter together now.']}),
+ mission({id:'tavi-test',index:3,chapter:2,title:'The part we can prove',type:'timetrial',trackId:'harbor_loop',rideId:'vx1',laps:1,minDistance:1900,checkpoints:12,timeLimit:180,targetTime:68,maxContacts:4,raceMode:'timetrial',objective:'Record one valid Harbor lap. Choose a real setup tradeoff in the workshop before driving.',before:['Tavi: We can improve turn-in or straight-line speed. We cannot get both for free.','Sola: Show me your complete lap, not a perfect graph from half the course.'],after:['Tavi: Now the setup has a whole lap behind it. We can decide what the car needs next.','Sola: You tested it on the road. That is worth listening to.']}),
+ mission({id:'safe-passage',index:4,chapter:2,title:'Keep the lights steady',type:'clean',trackId:'breakwater',rideId:'vx1',laps:1,minDistance:1550,checkpoints:12,timeLimit:150,targetTime:70,maxContacts:0,raceMode:'practice',unlockRide:'vanta_gt',objective:'Complete a Breakwater lap without touching another car or barrier. Preserve the beacon test equipment.',before:['Maela: The rebuilt beacon needs one uninterrupted vibration test. Give me a clean lap.','Neri: No medal for scaring the pit crew this time. Smooth hands.'],after:['Maela: Steady all the way. The teaching room’s equipment passes inspection.','Tavi: The Vanta GT is ready. Heavier, stronger, and a completely different braking rhythm.']}),
+ mission({id:'sola-trial',index:5,chapter:2,title:'Sola’s reference',type:'timetrial',trackId:'harbor_loop',rideId:'vanta_gt',laps:1,minDistance:1900,checkpoints:12,timeLimit:160,targetTime:62,maxContacts:4,raceMode:'timetrial',opponent:'sola',rival:'sola',objective:'Finish one valid lap; chase Sola’s 62-second reference for the time star.',before:['Sola: My reference is sixty-two seconds. You don’t have to copy my line to improve it.','Tavi: Review grip and gearing. What helped at Beacon may cost time here.'],after:['Sola: You’ve earned a comparison, not a copy. Let’s see what you do with it under pressure.','Neri: Crownline’s invitational has our name on the reserve list. Two races left.']}),
+ mission({id:'openline-semi',index:6,chapter:3,title:'A place on the grid',type:'race',trackId:'harbor_loop',rideId:'vx1',laps:3,minDistance:5800,checkpoints:36,timeLimit:480,targetTime:195,requiredPosition:3,fieldSize:8,opponent:'sola',rival:'sola',raceMode:'race',pace:.84,objective:'Finish in the top three over three laps. Manage traffic and keep enough grip for the final lap.',before:['Veska: Three laps. A complete classification. Earn the final on the same terms as everyone else.','Sola: I’ll race you properly. I expect you to do the same.'],after:['Neri: Podium! The Openline crew is in the final.','Veska: Your garage has earned its entry. Bring that discipline to Breakwater.']}),
+ mission({id:'crownline-final',index:7,chapter:3,title:'Leave the line open',type:'race',trackId:'breakwater',rideId:'vanta_gt',laps:2,minDistance:3100,checkpoints:24,timeLimit:300,targetTime:130,requiredPosition:2,fieldSize:8,opponent:'sola',rival:'sola',raceMode:'race',pace:.90,objective:'Finish first or second in the two-lap Crownline final and secure the garage’s independent season entry.',before:['Maela: That garage began as a place for people who had nowhere to start. Give the next driver a start.','Sola: Two laps. No speeches now. See you at the flag.'],after:['Neri: A season entry. Our name, our car, our crew. The garage stays open.','Sola: You made a place on this grid. Next season, I’m coming for your best lap.']})
+]);
+const byId=id=>MISSIONS.find(m=>m.id===id);
+const finite=(n,lo,hi)=>typeof n==='number'&&Number.isFinite(n)&&n>=lo&&n<=hi;
+const object=v=>v&&typeof v==='object'&&!Array.isArray(v)?v:{};
+const cap=(n,lo,hi)=>Number.isFinite(n)?Math.min(hi,Math.max(lo,Math.floor(n))):lo;
+const clone=v=>JSON.parse(JSON.stringify(v));
+function defaultStoryCareer(){return {version:CAREER_MODE_VERSION,credits:200,selectedMission:'first-light',selectedRide:'sprint',ownedRides:['sprint'],crew:'mentor',setup:'balanced',parts:{grip:0,aero:0,gearing:0},records:{},processedRuns:[],chapterChoices:{}};}
+function ownedFor(records){const ids=['sprint'];if(records['beacon-rush']?.completed)ids.push('vx1');if(records['safe-passage']?.completed)ids.push('vanta_gt');return ids;}
+function normalizeStoryCareer(value){
+ const v=object(value),d=defaultStoryCareer(),records=object(v.records);
+ d.credits=cap(v.credits,0,10000000);if(v.credits===undefined)d.credits=200;
+ d.crew=crewIds.includes(v.crew)?v.crew:'mentor';d.setup=setupIds.includes(v.setup)?v.setup:'balanced';
+ for(const p of partIds)d.parts[p]=cap(object(v.parts)[p],0,3);
+ // Only a contiguous completed campaign can unlock later races/cars.
+ let earlier=true;
+ for(const m of MISSIONS){const r=object(records[m.id]),stars=cap(r.stars,0,3),completed=earlier&&r.completed===true&&stars>0;
+  d.records[m.id]={completed,stars:completed?stars:0,bestTime:completed&&finite(r.bestTime,1,1800)?r.bestTime:null,attempts:cap(r.attempts,0,100000),lastOutcome:typeof r.lastOutcome==='string'?r.lastOutcome.slice(0,160):'',bestPosition:completed&&finite(r.bestPosition,1,8)?Math.floor(r.bestPosition):null};
+  earlier=completed;
+ }
+ d.ownedRides=ownedFor(d.records);d.selectedRide=d.ownedRides.includes(v.selectedRide)?v.selectedRide:'sprint';
+ d.selectedMission=byId(v.selectedMission)&&missionUnlocked(d,v.selectedMission)?v.selectedMission:MISSIONS.find(m=>!d.records[m.id].completed)?.id||MISSIONS[7].id;
+ d.processedRuns=Array.isArray(v.processedRuns)?[...new Set(v.processedRuns.filter(x=>typeof x==='string'&&x.length>0&&x.length<=100))].slice(-150):[];
+ for(const chapter of [1,2,3]){const choice=object(v.chapterChoices)[chapter];if(crewIds.includes(choice))d.chapterChoices[chapter]=choice;}
+ return d;
+}
+function missionUnlocked(state,id){const m=byId(id);if(!m)return false;if(m.index===0)return true;return object(state?.records)[MISSIONS[m.index-1].id]?.completed===true;}
+function rideUnlocked(state,id){return carIds.includes(id)&&ownedFor(object(state?.records)).includes(id);}
+function nextMission(state){return MISSIONS.find(m=>missionUnlocked(state,m.id)&&!state?.records?.[m.id]?.completed)||MISSIONS[7];}
+function careerBuildSignature(state){const s=normalizeStoryCareer(state);return [s.selectedRide,s.crew,s.setup,...partIds.map(p=>s.parts[p])].join(':');}
+function upgradePrice(state,part){if(!partIds.includes(part))return null;const tier=cap(state?.parts?.[part],0,3);return tier<3?PART_PRICES[tier]:null;}
+function proofError(p){
+ if(typeof p.attemptId!=='string'||!p.attemptId||p.attemptId.length>100)return 'This run has no valid attempt identifier.';
+ if(p.validated!==true||p.supported!==false||p.autonomous===true)return 'Drive this career event yourself. Supported exhibitions do not award career progress.';
+ for(const key of ['elapsed','distance','checkpoints','lapCount','contacts','resets'])if(!finite(p[key],0,key==='distance'?200000:10000))return 'The run contains incomplete or invalid driving measurements.';
+ if(!finite(p.inputTime,.3,p.elapsed))return 'Use the driving controls to complete this career event.';
+ if(p.validLaps!==undefined&&(!Number.isInteger(p.validLaps)||p.validLaps<0))return 'Timed lap counts must be complete integers.';
+ if(p.elapsed<1||p.distance<1||p.distance/p.elapsed>115)return 'The run moved too far for its measured driving time.';
+ if(!Number.isInteger(p.checkpoints)||!Number.isInteger(p.lapCount)||!Number.isInteger(p.contacts)||!Number.isInteger(p.resets))return 'Checkpoint, lap and incident counts must be complete integers.';
+ if(p.resets>0||p.wrongWay===true||p.nonfinite===true)return 'A reset or invalid vehicle state interrupted the event. Retry the drive.';
+ return null;
+}
+function evaluateCareerResult(m,p){
+ const reason=proofError(p);if(reason)return {valid:false,success:false,stars:0,reason};
+ let failed='';
+ if(p.distance<m.minDistance||p.checkpoints<m.checkpoints)failed='Reach every ordered route gate before returning to the crew.';
+ else if(p.elapsed>m.timeLimit)failed='The event clock expired. Retry with a different line or workshop setup.';
+ else if(p.contacts>m.maxContacts)failed=m.maxContacts===0?'The clean-run equipment test needs a contact-free lap.':'Too many contacts interrupted the run.';
+ else if(m.laps>0&&(p.lapCount<m.laps||!Number.isInteger(p.validLaps)||p.validLaps<m.laps))failed='Complete the required valid lap distance without cutting the course.';
+ else if(m.type==='timetrial'&&(!finite(p.validLaps,1,100)||!finite(p.lapTime,10,m.timeLimit)))failed='Record a valid timed lap without cutting the course.';
+ else if(['race','duel'].includes(m.type)&&(p.finished!==true||!Number.isInteger(p.position)||!Number.isInteger(p.fieldSize)||!finite(p.fieldSize,m.fieldSize,m.fieldSize)||!finite(p.position,1,m.requiredPosition)))failed=`Finish ${m.requiredPosition===1?'first':'in the top '+m.requiredPosition} in the complete race.`;
+ const clock=m.type==='timetrial'?p.lapTime:p.elapsed;
+ if(failed)return {valid:true,success:false,stars:0,reason:failed,clock};
+ return {valid:true,success:true,stars:1+(clock<=m.targetTime?1:0)+(p.contacts===0?1:0),reason:'Event complete. Your crew is ready for the next drive.',clock};
+}
+function applyCareerAction(value,action,payload={}){
+ const state=normalizeStoryCareer(value),p=object(payload),reject=reason=>({state,accepted:false,reason,earned:0});
+ if(action==='select'){
+  if(!missionUnlocked(state,p.missionId))return reject('Finish the previous event to earn this entry.');state.selectedMission=p.missionId;
+ }else if(action==='ride'){
+  if(!rideUnlocked(state,p.rideId))return reject('Earn this ride by completing its crew event.');state.selectedRide=p.rideId;
+ }else if(action==='crew'){
+  if(!crewIds.includes(p.choice))return reject('Choose Maela’s mentor setup or Tavi’s engineering setup.');state.crew=p.choice;state.chapterChoices[byId(state.selectedMission).chapter]=p.choice;
+ }else if(action==='setup'){
+  if(!setupIds.includes(p.setup))return reject('Choose a balanced, grip or speed setup.');state.setup=p.setup;
+ }else if(action==='buy'){
+  const cost=upgradePrice(state,p.part);if(cost===null)return reject('That workshop part is already at its final tier.');if(state.credits<cost)return reject('Earn more workshop credits by improving career medals.');state.credits-=cost;state.parts[p.part]++;
+ }else if(action==='result'){
+  const m=byId(p.missionId);if(!m||!missionUnlocked(state,m.id))return reject('This event is not unlocked.');
+  if(state.selectedMission!==m.id)return reject('Select this event before recording a result.');
+  if(state.processedRuns.includes(p.attemptId))return reject('This attempt has already been recorded.');
+  const result=evaluateCareerResult(m,p);if(!result.valid)return reject(result.reason);
+  const runBuild=careerBuildSignature(state);
+  const old=state.records[m.id],newStars=Math.max(old.stars,result.stars),first=!old.completed&&result.success;
+  const earned=(first?m.reward:0)+Math.max(0,newStars-old.stars)*m.starReward;
+  state.processedRuns.push(p.attemptId);state.processedRuns=state.processedRuns.slice(-150);state.credits+=earned;
+  state.records[m.id]={completed:old.completed||result.success,stars:newStars,bestTime:result.success?Math.min(old.bestTime||Infinity,result.clock):old.bestTime,attempts:old.attempts+1,lastOutcome:result.reason,bestPosition:result.success&&finite(p.position,1,8)?Math.min(old.bestPosition||8,p.position):old.bestPosition};
+  state.ownedRides=ownedFor(state.records);
+  if(first&&m.unlockRide)state.selectedRide=m.unlockRide;
+  return {state:clone(state),accepted:true,reason:result.reason,earned,success:result.success,stars:result.stars,unlockedRide:first?m.unlockRide||null:null,buildSignature:runBuild};
+ }else return reject('Unknown career action.');
+ return {state:clone(state),accepted:true,reason:'Workshop plan saved.',earned:0};
+}
+function buildCareerCar(baseCar,buildOrState={}){
+ if(!baseCar||!baseCar.tire||!baseCar.aero||!baseCar.gearbox)throw new Error('A complete base vehicle is required.');
+ const s=normalizeStoryCareer(buildOrState),t=s.parts,car=clone(baseCar);
+ car.tire.mu*=1+t.grip*.018;car.tire.rollRes*=1+t.grip*.015;
+ car.aero.clA*=1+t.aero*.04;car.aero.cdA*=1+t.aero*.018;
+ car.gearbox.final*=1+t.gearing*.015;
+ if(s.setup==='grip'){car.tire.mu*=1.035;car.aero.cdA*=1.025;}
+ if(s.setup==='speed'){car.aero.cdA*=.94;car.aero.clA*=.88;}
+ if(s.crew==='mentor'){car.steerRate*=.92;car.tire.falloff=Math.min(.96,car.tire.falloff+.035);}
+ else{car.aero.clA*=1.02;car.aero.cdA*=1.009;}
+ car.careerBuild={signature:[baseCar.id||s.selectedRide,s.crew,s.setup,...partIds.map(p=>s.parts[p])].join(':'),setup:s.setup,crew:s.crew,parts:{...t},rideId:s.selectedRide};
+ return car;
+}
+function careerCar(baseCar,state){return buildCareerCar(baseCar,state);}
+
+function careerDialogue(state,missionId,after=false){const m=byId(missionId);if(!m)return [];if(!after)return [...m.before];const crew=state?.chapterChoices?.[m.chapter]||state?.crew;const callback=crew==='engineer'?'Tavi: The setup you chose held up under a real drive. Keep the result; we can improve it.':'Maela: You kept your own rhythm under pressure. That is a skill you can bring to the next grid.';return [m.after[0],callback,m.after[1]];}
+
+return { CAREER_MODE_VERSION, PART_PRICES, CAREER_PARTS, MISSIONS, defaultStoryCareer, normalizeStoryCareer, missionUnlocked, rideUnlocked, nextMission, careerBuildSignature, upgradePrice, evaluateCareerResult, applyCareerAction, buildCareerCar, careerCar, careerDialogue };
+})();
+
 // ---- game/save.js ----
 const __m_game_save = (() => {
 // VELOCITYVERSE client: local saves (settings, personal bests, best-lap ghosts). Browser storage can be missing
@@ -6769,6 +7117,7 @@ const { ASSIST_PRESETS } = __m_sim_assists;
 const { DEFAULT_KEYS } = __m_game_input;
 const { defaultCareer, normalizeCareer } = __m_game_career;
 const { defaultOpenline, normalizeOpenline } = __m_game_openline_state;
+const { defaultStoryCareer, normalizeStoryCareer } = __m_game_career_mode;
 const SAVE_KEY = 'velocityverse.m0.save';
 const SAVE_VERSION = 1;
 
@@ -6784,7 +7133,7 @@ function defaultSave() {
       motion: true, reducedMotion: reduced, renderScale: 'auto', graphics: 'auto', units: 'kmh', textScale: 1, showTelemetry: false, showPerf: false,
       volMaster: 0.8, volEngine: 0.8, volFx: 0.8, keys: { ...DEFAULT_KEYS },
     },
-    pbs: {}, history: [], career: defaultCareer(), openline: defaultOpenline(), customLivery: { primary: '#c9d1d5', secondary: '#167c97', accent: '#d1a05b' },
+    pbs: {}, history: [], career: defaultCareer(), openline: defaultOpenline(), storyCareer: defaultStoryCareer(), customLivery: { primary: '#c9d1d5', secondary: '#167c97', accent: '#d1a05b' },
   };
 }
 
@@ -6805,6 +7154,7 @@ class SaveStore {
     } catch (e) { this.available = false; }
     this.data.career = normalizeCareer(this.data.career);
     this.data.openline = normalizeOpenline(this.data.openline);
+    this.data.storyCareer = normalizeStoryCareer(this.data.storyCareer);
     this.data.customLivery = { ...defaultSave().customLivery, ...(this.data.customLivery && typeof this.data.customLivery === 'object' ? this.data.customLivery : {}) };
   }
   save() {
@@ -7159,10 +7509,13 @@ class HubShell {
   }
   renderPaints(){
     const host=$('lobby-paints');host.replaceChildren();
-    for(const l of CAR_VX1.liveries){const b=node('button','','');b.type='button';b.setAttribute('aria-label',l.name+' livery');b.setAttribute('aria-pressed',String(this.game.save.data.livery===l.id));const sw=node('span','','');sw.style.background='linear-gradient(135deg,rgb('+l.primary.map(n=>Math.round(n*255)).join(',')+'),rgb('+l.secondary.map(n=>Math.round(n*255)).join(',')+'))';b.append(sw);b.addEventListener('click',()=>{this.game.save.data.livery=l.id;this.game.save.save();this.game.renderer.carModel(l);this.renderPaints();});host.append(b);}
+    for(const l of this.game.veh.car.liveries){const b=node('button','','');b.type='button';b.setAttribute('aria-label',l.name+' livery');b.setAttribute('aria-pressed',String(this.game.livery().id===l.id));const sw=node('span','','');sw.style.background='linear-gradient(135deg,rgb('+l.primary.map(n=>Math.round(n*255)).join(',')+'),rgb('+l.secondary.map(n=>Math.round(n*255)).join(',')+'))';b.append(sw);b.addEventListener('click',()=>{this.game.save.data.livery=l.id;this.game.save.save();this.game.renderer.carModel(l);this.renderPaints();});host.append(b);}
   }
   renderHome(){
     this.renderPaints();
+    const name=document.querySelector('.paddock-title h3'),id=this.game.baseRideId;
+    if(name){name.firstChild.textContent=id==='vanta_gt'?'VANTA':'KESTREL';name.querySelector('span').textContent=id==='vanta_gt'?'GT':id==='sprint'?'SPRINT':'VX–1';}
+    document.querySelector('.gate-garage small').textContent='Paint · Photography · '+this.game.veh.car.name;
     const g=this.game,c=g.save.data.career,l=licenceFor(c.xp),next=LICENCES.find(x=>x.xp>c.xp),team=g.app.team();
     $('hub-tag').textContent=team.tag;$('hub-profile-name').textContent=g.save.data.team?team.name:'Independent driver';
     $('hub-profile-xp').textContent=`${c.xp} XP · ${Object.keys(c.school).length}/3 academy medals`;
@@ -7361,7 +7714,7 @@ const __m_game_navigation = (() => {
 // Android/WebView back navigation. Returning false delegates root-exit policy to the native shell.
 // This module never exits the app, changes the vehicle, or inserts fake entries in browser history.
 const ROOTS = new Set(['title', 'hub']);
-const SAFE_HISTORY = new Set(['hub', 'garage', 'event', 'onboard', 'academy', 'customize', 'lab', 'explorer', 'team', 'records', 'story', 'universe']);
+const SAFE_HISTORY = new Set(['hub', 'garage', 'event', 'onboard', 'academy', 'customize', 'lab', 'explorer', 'team', 'records', 'story', 'universe', 'career', 'workshop']);
 const SESSION_BOUNDARIES = new Set(['none', 'pause', 'lesson', 'results']);
 
 function visible(element) {
@@ -7451,6 +7804,7 @@ const { updateOpenline } = __m_game_openline_state;
 const { STORY_CHARACTERS, STORY_CITIES, STORY_CIRCUITS } = __m_game_openline_data;
 const { runLabExperiment } = __m_sim_lab;
 const { AIDriver } = __m_sim_ai;
+const { CIRCUITS } = __m_sim_circuits;
 const $=id=>document.getElementById(id);
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const PHASES=['intro','prediction','evidence','choice','drive','complete'];
@@ -7616,7 +7970,7 @@ class OpenlineCampaign {
  renderUniverse(){
   document.querySelectorAll('[data-universe-tab]').forEach(b=>b.setAttribute('aria-pressed',String(this.tab===b.dataset.universeTab)));
   $('universe-heading').textContent=this.tab==='crew'?'People worth coming back for':'An archive of places';
-  $('universe-description').textContent=this.tab==='crew'?'Meet your four chapter companions and discover fourteen voices from the wider Openline.':'Harbor Loop is ready to drive. The other places are stories and future circuit concepts.';
+  $('universe-description').textContent=this.tab==='crew'?'Meet your four chapter companions and discover fourteen voices from the wider Openline.':'Three closed circuits in Lumen Harbor are ready to drive. Other cities remain world lore.';
   const list=$('universe-list');list.replaceChildren();const data=this.tab==='crew'?STORY_CHARACTERS:STORY_CITIES;
   if(!data.some(x=>x.id===this.selected))this.selected=data[0].id;
   for(const item of data){const b=el('button','ol-index-item');b.type='button';b.setAttribute('aria-pressed',String(item.id===this.selected));b.append(el('strong','',item.name),el('small','',this.tab==='crew'?(item.active?'YOUR CHAPTER CREW':'ARCHIVE PROFILE'):(item.playable?'HARBOR LOOP · PLAYABLE':'WORLD LORE')));b.addEventListener('click',()=>{this.selected=item.id;this.renderUniverse();});list.append(b);}
@@ -7627,12 +7981,195 @@ class OpenlineCampaign {
   } else {
    detail.append(el('p','',item.geography),el('h4','','The city remembers'),el('p','',item.history),el('h4','','Discoveries'),el('p','',item.opportunities));
    for(const c of STORY_CIRCUITS.filter(c=>c.city===item.name)){const card=el('div','ol-circuit');card.append(el('h4','',c.name),el('p','',c.layout),el('p','',c.category),el('small','',c.playable?'Available now · Harbor Loop':'Circuit concept · World lore'));detail.append(card);}
-   if(item.playable){const b=el('button','ol-button','Drive Harbor Loop');b.type='button';b.dataset.nav='event';detail.append(b);}
+   if(item.playable){for(const circuit of CIRCUITS){const b=el('button','ol-button','Drive '+circuit.name);b.type='button';b.dataset.circuit=circuit.id;b.addEventListener('click',()=>{if(this.game.configureDrive(this.game.baseRideId,circuit.id))this.game.navTo('event');});detail.append(b);}}
   }
  }
 }
 
 return { OpenlineCampaign };
+})();
+
+// ---- game/story-career.js ----
+const __m_game_story_career = (() => {
+// Story Tour client: short briefings lead directly to observed driving objectives.
+// Credits and medals come from completed physical runs, never from viewing a scene.
+const { MISSIONS, CAREER_PARTS, applyCareerAction, normalizeStoryCareer, missionUnlocked, rideUnlocked, nextMission, buildCareerCar, upgradePrice, careerDialogue } = __m_game_career_mode;
+const { RIDES, getRide } = __m_sim_rides;
+const { getCircuit } = __m_sim_circuits;
+const $=id=>document.getElementById(id);
+const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
+const TYPES={sprint:'DELIVERY SPRINT',checkpoint:'CHECKPOINT RUSH',duel:'HEAD-TO-HEAD',timetrial:'TIME ATTACK',clean:'PRECISION STINT',race:'GRID RACE'};
+const ACTS=['THE FIRST LIGHT','A CREW WORTH KEEPING','THE CROWNLINE INVITATIONAL'];
+const fmt=t=>Number.isFinite(t)?`${Math.floor(t/60)}:${(t%60).toFixed(2).padStart(5,'0')}`:'—';
+const cleanName=line=>{const i=line.indexOf(':');return i<0?['CREW',line]:[line.slice(0,i),line.slice(i+1).trim()];};
+const speakerId=name=>({Neri:'neri',Tavi:'tavi',Maela:'maela',Sola:'sola',Veska:'veska'}[name]||'neri');
+class StoryCareerClient {
+ constructor(game){this.game=game;this.active=false;this.launching=false;this.activeMission=null;this.run=null;this.pending=null;this.result=null;this.focusMission=null;this.chapter=1;this.hudAge=0;this._preview='';}
+ get state(){return this.game.save.data.storyCareer;}
+ get selected(){return MISSIONS.find(m=>m.id===(this.focusMission||this.state.selectedMission))||MISSIONS[0];}
+ wire(){
+  const on=(id,fn)=>$(id)?.addEventListener('click',fn);
+  on('career-start',()=>this.start());on('career-quick-start',()=>this.start(this.result?.success?nextMission(this.state).id:this.result?.mission?.id));on('career-retry',()=>this.start(this.result?.mission?.id));
+  on('career-result-next',()=>{this.result=null;const m=nextMission(this.state);this.change('select',{missionId:m.id});this.focusMission=m.id;this.chapter=m.chapter;this.renderCareer();this.scrollEvent();});
+  on('career-result-map',()=>{this.result=null;this.renderCareer();$('career-mission-list').scrollIntoView({block:'nearest',behavior:'instant'});});
+  on('career-hud-exit',()=>this.game.pause());
+  const preview=$('career-car-rotate');let pointer=null,lastX=0;
+  preview?.addEventListener('pointerdown',event=>{pointer=event.pointerId;lastX=event.clientX;preview.setPointerCapture(pointer);});
+  preview?.addEventListener('pointermove',event=>{if(event.pointerId!==pointer)return;this.game.lobbyAngle=(this.game.lobbyAngle||0)+(event.clientX-lastX)*.008;lastX=event.clientX;});
+  const release=event=>{if(event.pointerId===pointer)pointer=null;};preview?.addEventListener('pointerup',release);preview?.addEventListener('pointercancel',release);preview?.addEventListener('lostpointercapture',()=>pointer=null);
+ }
+ change(action,payload={},quiet=false){
+  const result=applyCareerAction(this.state,action,payload);
+  if(result.accepted){this.game.save.data.storyCareer=result.state;const saved=this.game.save.save();if(!quiet)this.status(saved?result.reason:'Device storage is unavailable. This progress lasts for this session.');}
+  else if(!quiet)this.status(result.reason);
+  return result;
+ }
+ status(message){for(const id of ['career-status','career-workshop-status'])if($(id))$(id).textContent=message;}
+ render(screen){
+  if(!$('career-hud'))return;
+  $('career-hud').hidden=!(this.active&&this.game.mode==='race'&&this.game.screen==='none'&&!this.game.paused);
+  if(screen==='career')this.renderCareer();
+  if(screen==='workshop')this.renderWorkshop();
+  if(screen==='hub'){const m=nextMission(this.state);this.game.hub.nextDestination='career';$('hub-next-title').textContent=m.title;$('hub-next-detail').textContent='Story Tour · '+Object.values(this.state.records).filter(r=>r.completed).length+'/8 events · '+this.state.credits+' CR';}
+ }
+ renderCareer(){
+  const state=this.state,m=this.selected;
+  if(!this.focusMission){this.focusMission=state.selectedMission;this.chapter=m.chapter;}
+  $('career-stars').textContent=Object.values(state.records).reduce((sum,r)=>sum+r.stars,0);$('career-credits').textContent=state.credits.toLocaleString();
+  const chapters=$('career-chapter-tabs');chapters.replaceChildren();
+  for(let c=1;c<=3;c++){const b=node('button');b.type='button';b.setAttribute('aria-pressed',String(c===this.chapter));const text=node('span');text.append(node('small','',`ACT 0${c}`),node('span','',ACTS[c-1]));b.append(node('b','',String(c).padStart(2,'0')),text);b.addEventListener('click',()=>{this.chapter=c;this.focusMission=MISSIONS.find(x=>x.chapter===c).id;this.result=null;this.renderCareer();});chapters.append(b);}
+  $('career-act-name').textContent=`ACT 0${this.chapter} · ${ACTS[this.chapter-1]}`;
+  const list=$('career-mission-list');list.replaceChildren();
+  for(const mission of MISSIONS.filter(x=>x.chapter===this.chapter)){
+   const unlocked=missionUnlocked(state,mission.id),record=state.records[mission.id],b=node('button','sc-mission'+(unlocked?'':' is-locked'));b.type='button';b.dataset.mission=mission.id;b.setAttribute('aria-pressed',String(mission.id===m.id));b.append(node('span','sc-node-number',String(mission.index+1).padStart(2,'0')),node('small','',unlocked?TYPES[mission.type]:'COMPLETE THE PREVIOUS EVENT'),node('strong','',mission.title),node('span','sc-node-stars',unlocked?record.stars+' / 3 ★':'⌁ LOCKED'));
+   b.addEventListener('click',()=>{this.focusMission=mission.id;this.result=null;if(unlocked)this.change('select',{missionId:mission.id},true);this.renderCareer();this.scrollEvent();});list.append(b);
+  }
+  $('career-event').hidden=!!this.result;$('career-result').hidden=!this.result;
+  if(this.result){this.renderResult();return;}
+  $('career-event-title').textContent=m.title;$('career-event-copy').textContent=m.objective;$('career-event-type').textContent=TYPES[m.type];$('career-event-number').textContent=String(m.index+1).padStart(2,'0')+' / 08';
+  $('career-event-track').textContent=getCircuit(m.trackId).name.toUpperCase();$('career-event-ride').textContent=getRide(state.selectedRide).name.toUpperCase();
+  const goals=$('career-event-goals');goals.replaceChildren();
+  for(const text of [this.completionGoal(m),`Time medal: ${fmt(m.targetTime)} or faster`,'Clean medal: zero car or barrier contacts']){const row=node('div','sc-goal');row.append(node('span','','★'),node('span','',text));goals.append(row);}
+  const [speaker,line]=cleanName(m.before[0]);$('career-brief-name').textContent=speaker.toUpperCase();$('career-brief-line').textContent=line;$('career-brief-portrait').className='sc-portrait ol-portrait ol-portrait-'+speakerId(speaker);$('career-brief-portrait').setAttribute('aria-label',speaker);$('career-brief-portrait').textContent=speaker==='Veska'?'VT':'';
+  this.renderOptions();const unlocked=missionUnlocked(state,m.id);$('career-start').disabled=!unlocked;$('career-start-kicker').textContent=unlocked?(state.records[m.id].completed?'REPLAY · IMPROVE YOUR MEDALS':'READY WHEN YOU ARE'):'EARN THIS GRID ENTRY';$('career-start').querySelector('strong').textContent=unlocked?'LET’S RIDE':'EVENT LOCKED';$('career-quick-start').disabled=!unlocked;$('career-quick-event').textContent=m.title;$('career-quick-start').querySelector('strong').textContent=unlocked?'RIDE NOW ↗':'EVENT LOCKED';
+ }
+ completionGoal(m){if(m.type==='race'||m.type==='duel')return `${m.laps} lap${m.laps>1?'s':''} · ${m.requiredPosition===1?'Win the duel':'Finish top '+m.requiredPosition}`;if(m.type==='timetrial')return 'Record one valid timed lap';if(m.type==='clean')return 'Complete one contact-free lap';return `${m.checkpoints} ordered gates · ${m.minDistance} m · ${fmt(m.timeLimit)} limit`;}
+ renderOptions(){
+  const s=this.state;
+  const render=(id,items,current,fn)=>{const host=$(id);host.replaceChildren();for(const [value,label] of items){const b=node('button','',label);b.type='button';b.dataset.option=value;b.setAttribute('aria-pressed',String(current===value));b.addEventListener('click',()=>{fn(value);this.renderCareer();});host.append(b);}};
+  render('career-crew-options',[['mentor','Maela · Control'],['engineer','Tavi · Aero']],s.crew,choice=>this.change('crew',{choice}));
+  render('career-setup-options',[['balanced','Balanced'],['grip','Grip'],['speed','Speed']],s.setup,setup=>this.change('setup',{setup}));
+  $('career-strategy-note').textContent=(s.crew==='mentor'?'Maela: gentler steering response and more progressive tire slip. ':'Tavi: more downforce with a small drag cost. ')+(s.setup==='grip'?'Grip setup: stronger tire grip, more drag.':s.setup==='speed'?'Speed setup: less drag, less cornering downforce.':'Balanced setup: preserve the ride’s original aero balance.');
+ }
+ start(id){
+  const mission=MISSIONS.find(m=>m.id===(id||this.selected.id))||this.selected;
+  if(!missionUnlocked(this.state,mission.id)){this.status('Finish the previous event to earn this entry.');return;}
+  this.change('select',{missionId:mission.id},true);this.focusMission=mission.id;this.result=null;
+  const ride=getRide(this.state.selectedRide),car=buildCareerCar(ride.car,this.state);
+  this.active=true;this.launching=true;this.activeMission=mission;this.pending=null;
+  try{if(this.game.launchCareerMission({...mission,rideId:ride.id,circuitId:mission.trackId},car,{crew:this.state.crew,setup:this.state.setup})===false)throw new Error('The selected circuit could not load.');}
+  catch(e){this.active=false;this.launching=false;this.status('This ride could not start. '+e.message);return;}
+  this.launching=false;
+  const v=this.game.veh,p=this.game.track.project(v.x,v.z,-1,{});
+  this.run={attemptId:`tour-${mission.id}-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,elapsed:0,distance:0,netProgress:0,checkpoints:0,lapCount:0,validLaps:0,lapTime:null,contacts:0,carContactEpisodes:0,carContactQuiet:.3,resets:0,wrongWay:false,nonfinite:false,autonomous:false,inputTime:0,startS:p.s,lastS:p.s,lastX:v.x,lastZ:v.z,lastTime:v.time,impact:v.impactCount||0,carImpact:v.carImpactCount||0,nan:v.nanResets||0,offTime:0,reverseTime:0,calls:{},lastPosition:this.game.field?.entries[0]?.pos||1,gateSpacing:['sprint','checkpoint'].includes(mission.type)?mission.minDistance/mission.checkpoints:this.game.track.length/12,nextGateS:0};
+  this.run.nextGateS=(p.s+this.run.gateSpacing)%this.game.track.length;this.hudAge=1;this.updateHud();this.game.show('none');
+ }
+ step(dt,raw={}){
+  if(!this.active||!this.run||this.pending)return;
+  const g=this.game,v=g.veh,r=this.run,m=this.activeMission;
+  if(!Number.isFinite(dt)||dt<=0||dt>.1)return;
+  r.elapsed+=dt;this.hudAge+=dt;
+  if(![v.x,v.z,v.time,v.forwardSpeed].every(Number.isFinite)){r.nonfinite=true;this.fail('The car data was interrupted. Retry this event.');return;}
+  const moved=Math.hypot(v.x-r.lastX,v.z-r.lastZ),speed=Math.hypot(v.vx,v.vz),p=g.track.project(v.x,v.z,-1,{});let ds=p.s-r.lastS;
+  if(ds>g.track.length/2)ds-=g.track.length;if(ds<-g.track.length/2)ds+=g.track.length;
+  if(v.time<r.lastTime||moved>Math.max(3,speed*dt*2+.5)||(v.nanResets||0)!==r.nan){r.resets++;this.fail('A reset interrupted the run. Your previous medals are safe.');return;}
+  const off=v.wheels.every(w=>w.offTrack)||Math.abs(p.d)>g.track.halfWidth+.3;
+  const along=v.vx*g.track.tx[p.i]+v.vz*g.track.tz[p.i];
+  r.offTime=off?r.offTime+dt:0;r.reverseTime=along<-2?r.reverseTime+dt:Math.max(0,r.reverseTime-dt);
+  const legitimate=!off&&Math.abs(ds)<=Math.max(.5,speed*dt*2+.1);
+  if(legitimate){r.netProgress+=ds;r.distance=Math.max(0,r.netProgress);const gates=Math.floor(r.distance/r.gateSpacing);if(gates>r.checkpoints){r.checkpoints=gates;r.nextGateS=(r.startS+(r.checkpoints+1)*r.gateSpacing)%g.track.length;}}
+  const touchingCar=!!v.carHits?.some(hit=>hit.impulse>0);
+  if(touchingCar){if(r.carContactQuiet>=.25)r.carContactEpisodes++;r.carContactQuiet=0;}else r.carContactQuiet+=dt;
+  r.contacts=Math.max(0,(v.impactCount||0)-r.impact)+r.carContactEpisodes;
+  if(g.autopilot&&!g.field?.entries[0]?.finished)r.autonomous=true;
+  if(Math.abs(raw.steer||0)>.05||(raw.throttle||0)>.1||(raw.brake||0)>.1)r.inputTime+=dt;
+  r.lastS=p.s;r.lastX=v.x;r.lastZ=v.z;r.lastTime=v.time;
+  if(r.reverseTime>.8){r.wrongWay=true;this.fail('Wrong direction. Follow the event gates and try again.');return;}
+  if(r.offTime>.35){this.fail('The route left the circuit. Follow the gates and retry.');return;}
+  if(r.contacts>m.maxContacts){this.fail(m.maxContacts===0?'The equipment test needs a contact-free run. Try a smoother line.':'Too many contacts. Try Maela’s control setup and another run.');return;}
+  if(r.elapsed>m.timeLimit){this.fail('The clock expired. Try a faster line or a different workshop setup.');return;}
+  if(['sprint','checkpoint'].includes(m.type)&&r.distance>=m.minDistance&&r.checkpoints>=m.checkpoints)this.queue();
+  this.radio();
+  if(this.hudAge>.08){this.hudAge=0;this.updateHud();}
+ }
+ radio(){
+  const r=this.run,m=this.activeMission,g=this.game,progress=r.distance/Math.max(m.minDistance,g.track.length*(m.laps||0));
+  const say=(key,text)=>{if(r.calls[key])return;r.calls[key]=true;g.coach(text,2.6,'career-'+m.id+'-'+key);};
+  if(r.contacts>0)say('contact','Maela: We’re still rolling. Give yourself room on the next exit.');
+  if(progress>.25)say('quarter',this.state.crew==='engineer'?'Tavi: The setup is holding. Keep the next braking point repeatable.':'Maela: You have a rhythm now. Look through the next bend.');
+  if(progress>.72)say('near',m.type==='race'||m.type==='duel'?'Neri: Final push. Clean exits—don’t hand the place back.':'Tavi: Nearly home. Finish the route; the last gate matters too.');
+  const position=g.field?.entries[0]?.pos;
+  if(position&&position<r.lastPosition&&r.elapsed>5)say('pass','Sola: That was a proper move. Now keep the place.');
+  if(position)r.lastPosition=position;
+ }
+ onRaceEvent(ev){
+  if(!this.active||!this.run||this.pending)return;
+  if(ev.type==='lap'){
+   const r=this.run;r.lapCount++;if(ev.lap.valid){r.validLaps++;r.lapTime=Math.min(r.lapTime||Infinity,ev.lap.time);}
+   if(['race','duel'].includes(this.activeMission.type)&&this.game.field?.entries[0]?.finished)this.queue();
+   else if(['timetrial','clean'].includes(this.activeMission.type)&&ev.lap.valid)this.queue();
+   else if(['timetrial','clean'].includes(this.activeMission.type))this.game.toast('Lap invalid. Start another clean lap; the event clock is still running.');
+  }
+ }
+ proof(){
+  const r=this.run,g=this.game,e=g.field?.entries[0];
+  return {missionId:this.activeMission.id,attemptId:r.attemptId,validated:true,supported:false,autonomous:r.autonomous,inputTime:r.inputTime,elapsed:r.elapsed,distance:r.distance,checkpoints:r.checkpoints,lapCount:r.lapCount,validLaps:r.validLaps,lapTime:r.lapTime,contacts:r.contacts,resets:r.resets,wrongWay:r.wrongWay,nonfinite:r.nonfinite,position:e?.pos||1,fieldSize:g.field?.entries.length||1,finished:!!e?.finished};
+ }
+ queue(){if(this.pending)return;if(this.run.inputTime<.3){this.fail('Use steering or pedals to drive this event. Supported demonstrations do not earn career rewards.');return;}this.pending={proof:this.proof()};}
+ fail(reason){if(!this.pending)this.pending={proof:this.proof(),failure:reason};}
+ onReset(){if(this.active){this.run.resets++;this.fail('Car reset. Retry this event from the starting line.');}}
+ onSessionEnd(){if(!this.active)return false;this.fail('You returned to the crew before the objective was complete.');this.flush();return true;}
+ abort(){this.active=false;this.launching=false;this.activeMission=null;this.run=null;this.pending=null;if($('career-hud'))$('career-hud').hidden=true;}
+ flush(){
+  if(!this.pending)return;
+  const pending=this.pending,mission=this.activeMission;this.pending=null;
+  let outcome;
+  if(pending.failure)outcome={success:false,stars:0,earned:0,reason:pending.failure,accepted:false};
+  else outcome=this.change('result',pending.proof,true);
+  this.result={mission,proof:pending.proof,...outcome};
+  if(!outcome.accepted)this.result.success=false;
+  this.active=false;$('career-hud').hidden=true;this.game.returnCareerMenu();this.chapter=mission.chapter;this.focusMission=mission.id;this.renderCareer();this.scrollEvent();
+ }
+ updateHud(){
+  if(!this.active||!this.run)return;const r=this.run,m=this.activeMission,g=this.game;
+  let goal,detail,progress;
+  if(['sprint','checkpoint'].includes(m.type)){goal=`GATE ${Math.min(r.checkpoints,m.checkpoints)} / ${m.checkpoints}`;detail=`${Math.max(0,m.timeLimit-r.elapsed).toFixed(1)}s · ${Math.min(m.minDistance,Math.floor(r.distance))}/${m.minDistance} m`;progress=Math.min(1,Math.min(r.distance/m.minDistance,r.checkpoints/m.checkpoints));}
+  else if(['race','duel'].includes(m.type)){const e=g.field?.entries[0];goal=`P${e?.pos||1} / ${m.fieldSize} · LAP ${Math.min(m.laps,(e?.lap||0)+1)} / ${m.laps}`;detail=m.requiredPosition===1?'Win this duel':'Finish top '+m.requiredPosition;progress=Math.min(1,r.distance/Math.max(m.minDistance,g.track.length*m.laps));}
+  else{goal=m.type==='clean'?'ZERO CONTACTS · CLEAN STINT':'RECORD A VALID LAP';detail=`${Math.max(0,m.timeLimit-r.elapsed).toFixed(1)}s left · ${r.contacts} contacts`;progress=Math.min(1,r.distance/g.track.length);}
+  $('career-hud-goal').textContent=goal;$('career-hud-detail').textContent=detail;$('career-hud-progress').value=progress;
+ }
+ renderResult(){
+  const r=this.result,m=r.mission,proof=r.proof;const record=this.state.records[m.id];
+  const next=r.success?nextMission(this.state):m;$('career-quick-start').disabled=false;$('career-quick-event').textContent=next.title;$('career-quick-start').querySelector('strong').textContent=r.success?'NEXT RIDE ↗':'TRY AGAIN ↗';
+  $('career-result-kicker').textContent=r.success?'EVENT COMPLETE':'BACK TO THE START';$('career-result-title').textContent=r.success?(r.stars===3?'THAT WAS YOUR LINE.':'YOU MADE THE CUT.'):'ONE MORE RIDE.';
+  $('career-result-stars').textContent='★'.repeat(r.stars||0)+'☆'.repeat(3-(r.stars||0));$('career-result-stars').setAttribute('aria-label',`${r.stars||0} of three medals earned`);
+  const host=$('career-result-metrics');host.replaceChildren();for(const [label,value] of [['Time',fmt(m.type==='timetrial'?proof.lapTime:proof.elapsed)],['Contacts',String(proof.contacts)],['This reward',`+${r.earned||0} CR`],['Your best',fmt(record.bestTime)]]){const box=node('div');box.append(node('small','',label),node('strong','',value));host.append(box);}
+  $('career-result-story').textContent=r.success?careerDialogue(this.state,m.id,true).slice(0,2).join(' '):r.reason||'Retry the event with a different line or setup.';
+  $('career-result-unlock').textContent=r.unlockedRide?getRide(r.unlockedRide).name+' unlocked · waiting in your workshop':r.success?'Medals saved. Replays award only newly improved medals.':'Existing medals and credits are preserved. There is no fuel timer.';
+  $('career-result-next').hidden=!r.success;$('career-result-next').querySelector('strong').textContent=m.index===MISSIONS.length-1?'YOUR STORY TOUR':'NEXT RIDE';
+ }
+ scrollEvent(){const target=this.result?$('career-result'):$('career-event');target?.scrollIntoView({block:'nearest',behavior:'instant'});}
+ renderWorkshop(){
+  const s=this.state,ride=getRide(s.selectedRide),car=buildCareerCar(ride.car,s);$('career-workshop-credits').textContent=s.credits.toLocaleString();
+  $('career-workshop-h').textContent=ride.name;$('career-ride-description').textContent=ride.tagline;
+  const peak=Math.max(...car.engine.curve.map(([rpm,torque])=>rpm*torque*Math.PI/30/1000*car.gearbox.efficiency));const stats=$('career-workshop-stats');stats.replaceChildren();for(const [label,value] of [['POWER',Math.round(peak)+' kW'],['MASS',Math.round(car.mass)+' kg'],['GRIP','μ '+car.tire.mu.toFixed(2)]]){const item=node('div');item.append(node('small','',label),node('strong','',value));stats.append(item);}
+  const rides=$('career-rides');rides.replaceChildren();for(const item of RIDES){const available=rideUnlocked(s,item.id),button=node('button','sc-ride'+(available?'':' is-locked'));button.type='button';button.dataset.ride=item.id;button.setAttribute('aria-pressed',String(item.id===s.selectedRide));button.append(node('small','',available?'READY TO RIDE':'STORY REWARD'),node('strong','',item.name),node('span','',available?item.tagline:item.id==='vx1'?'Unlock: Beat the closing bell':'Unlock: Keep the lights steady'));button.addEventListener('click',()=>{const outcome=this.change('ride',{rideId:item.id});if(outcome.accepted){this._preview='';this.renderWorkshop();}});rides.append(button);}
+  const parts=$('career-parts');parts.replaceChildren();for(const part of CAREER_PARTS){const level=s.parts[part.id],price=upgradePrice(s,part.id),box=node('div','sc-part'),top=node('div','sc-part-top');top.append(node('strong','',part.name),node('small','',`TIER ${level} / 3`));box.append(top,node('p','',part.effect));const b=node('button','',price===null?'FULLY BUILT':`BUILD TIER ${level+1} · ${price} CR`);b.type='button';b.dataset.part=part.id;b.disabled=price===null||s.credits<price;b.addEventListener('click',()=>{const result=this.change('buy',{part:part.id});if(result.accepted){this._preview='';this.renderWorkshop();}});box.append(b);parts.append(box);}
+  const sig=JSON.stringify([ride.id,s.parts,s.crew,s.setup]);if(this._preview!==sig){this._preview=sig;this.game.configureDrive(ride.id,this.game.currentCircuitId||'harbor_loop',car);}
+ }
+}
+
+return { StoryCareerClient };
 })();
 
 // ---- game/main.js ----
@@ -7661,6 +8198,9 @@ const { LobbyMotion } = __m_game_lobby;
 const { AppNavigation } = __m_game_navigation;
 const { downloadBlob } = __m_game_platform;
 const { OpenlineCampaign } = __m_game_openline;
+const { StoryCareerClient } = __m_game_story_career;
+const { getRide } = __m_sim_rides;
+const { getCircuit } = __m_sim_circuits;
 const SIM_DT = 1 / 120, MAX_STEPS = 8;
 const $ = (id) => document.getElementById(id);
 const isTouch = (navigator.maxTouchPoints || 0) > 0;
@@ -7728,6 +8268,7 @@ class Game {
     this.track = new Track(TRACK_HARBOR, this.world, CAR_VX1);
     this.veh = new Vehicle(CAR_VX1, this.world, this.track);
     this.veh.reset(this.track.def.lineS + 18, 0);
+    this.baseRideId='vx1';this.currentCircuitId='harbor_loop';this.careerMission=null;
     this.school = null; this.pendingLessonResult = null;
     this.driver = new DriverInput();
     this.input = new Input($('touch'));
@@ -7757,6 +8298,7 @@ class Game {
     this.applySettings();
     this.app = new AppFeatures(this); this.hub = new HubShell(this);
     this.campaign = new OpenlineCampaign(this);
+    this.storyCareer = new StoryCareerClient(this);
     this.navigation = new AppNavigation(this); this.navigation.wire();
     this.nativeSaveResult = (success,message) => {
       const note=message || (success ? 'File saved.' : 'File could not be saved.');
@@ -7765,7 +8307,7 @@ class Game {
     document.body.classList.toggle('native-android', !!window.NativeBridge);
     this.lobby = new LobbyMotion(this);
     this.wireUi();
-    this.app.wire(); this.hub.wire(); this.campaign.wire();
+    this.app.wire(); this.hub.wire(); this.campaign.wire(); this.storyCareer.wire();
     this.show(window.NativeBridge ? 'hub' : 'title');
     document.addEventListener('visibilitychange', () => { if (document.hidden && this.mode === 'race' && !this.paused) this.pause(); });
     window.addEventListener('resize', () => this.layoutCheck());
@@ -7773,9 +8315,46 @@ class Game {
     window.__vv = this; // exposed for automated smoke tests and debugging
   }
 
-  livery() { if (this.save.data.livery === 'custom') return personalLivery(this.save.data.customLivery); return CAR_VX1.liveries.find((l) => l.id === this.save.data.livery) || CAR_VX1.liveries[0]; }
+  livery() { if (this.save.data.livery === 'custom') return personalLivery(this.save.data.customLivery); const paints=this.veh?.car?.liveries||CAR_VX1.liveries;return paints.find(l=>l.id===this.save.data.livery)||paints[0]; }
   assists() { return this.school ? { ...ASSIST_PRESETS.racer, autoReverse: false } : this.save.data.assists; }
   isRace() { return !!(this.race && this.race.mode === 'race'); }
+
+  configureDrive(rideId='vx1',circuitId='harbor_loop',carOverride=null) {
+    const ride=getRide(rideId),circuit=getCircuit(circuitId),car=carOverride||ride.car;
+    const signature=JSON.stringify([ride.id,circuit.id,car]);
+    if(this.driveSignature===signature)return true;
+    const old={track:this.track,world:this.world,veh:this.veh,ride:this.baseRideId,circuit:this.currentCircuitId};
+    this.clearRivals();this.renderer?.dispose();
+    try {
+      const track=new Track(circuit.track,circuit.world,car),veh=new Vehicle(car,circuit.world,track);
+      veh.reset(track.def.lineS+18,0);
+      this.renderer=new Renderer($('gl'),track,car);this.track=track;this.veh=veh;this.world=circuit.world;
+      this.baseRideId=ride.id;this.currentCircuitId=circuit.id;this.driveSignature=signature;
+    } catch(error) {
+      this.track=old.track;this.world=old.world;this.veh=old.veh;
+      this.renderer=new Renderer($('gl'),old.track,old.veh.car);this.toast('This ride could not load. Your previous ride is restored.');
+      return false;
+    }
+    this.driver=new DriverInput();this.prev=snapshot(this.veh,{});this.curr=snapshot(this.veh,{});this.pose=snapshot(this.veh,{});
+    this.acc=0;this.race=null;this.school=null;this.pendingLessonResult=null;this.fxHits.clear();this.gearEvents.clear();
+    this.pbGhost=null;this.pbTime=null;this.cam.snap();this.buildMinimap();this.applySettings();
+    return true;
+  }
+
+  launchCareerMission(mission,car,options={}) {
+    this.campaign.leaveDrive();this.careerMission=mission;this.careerOptions=options;
+    if(!this.configureDrive(mission.rideId,mission.circuitId||mission.trackId,car))return false;
+    this.startRace(mission.raceMode||(['race','duel'].includes(mission.type)?'race':'practice'));
+    this.careerMission=mission;
+    $('hud-mode').textContent=mission.title||mission.name;
+    $('hud-best').textContent='CAREER · EARNED BUILD';
+    return true;
+  }
+
+  returnCareerMenu() {
+    this.input.reset();this.mode='menu';this.paused=false;this.acc=0;this.school=null;this.pendingLessonResult=null;
+    this.clearRivals();this.careerMission=null;this.audio.mute(true);this.cam.snap();this.show('career');
+  }
 
   // ---------- loop ----------
   frame(now) {
@@ -7786,6 +8365,7 @@ class Game {
     else { this.simMs = 0; this.steps = 0; }
     if (this.pendingLessonResult) this.completeLesson();
     this.campaign.flush();
+    this.storyCareer.flush();
     const t0 = performance.now();
     this.draw(dtReal);
     this.renderMs = performance.now() - t0;
@@ -7842,6 +8422,7 @@ class Game {
     if (this.field) this.field.update(SIM_DT, veh.time);
     race.update(SIM_DT, veh.time, veh, this.campaign.active && this.campaign.supported ? 'story-supported' : assistClass(a));
     this.campaign.observe(SIM_DT);
+    this.storyCareer.step(SIM_DT,raw);
     if (this.school) {
       this.school.update(SIM_DT, veh, raw, this.track);
       for (const ev of this.school.events.splice(0)) {
@@ -7881,7 +8462,7 @@ class Game {
   draw(dt) {
     if (!this.renderer) return;
     // Opaque app pages need no 3D frames. Resume rendering for the showroom and racing.
-    if (this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard','story','universe'].includes(this.screen)) return;
+    if (this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard','story','universe','career'].includes(this.screen)) return;
     if (this.mode === 'menu' && this.screen === 'hub') {
       this.lobbyFrameAge=(this.lobbyFrameAge||0)+dt;
       if(this.lobbyFrameAge<1/30)return;
@@ -7892,7 +8473,7 @@ class Game {
     const racing = this.mode === 'race', alpha = this.paused ? 1 : Math.min(1, this.acc / SIM_DT);
     const pose = racing ? lerpPose(this.prev, this.curr, alpha, this.pose) : snapshot(this.veh, this.pose);
     let camMode = racing ? this.S.camera : (this.screen === 'title' || this.screen === 'onboard' ? 'title' : 'orbit');
-    if(this.screen==='hub')camMode='lobby';
+    if(this.screen==='hub'||this.screen==='workshop')camMode='lobby';
     if (racing && this.isRace() && this.countdown > 1.3) camMode = 'grid';
     if (racing && this.autopilot) camMode = 'finish';
     if (this.screen === 'photo') camMode = 'photo';
@@ -7916,7 +8497,9 @@ class Game {
     R.updateFx(racing && !this.paused ? dt : 0, fxCars, simT, { active: racing, player: { pose, speed: u }, streaks: motion });
     this.fxHits.forEach((l) => { l.length = 0; }); this.gearEvents.clear();
     const trailCols = (id) => { const r = this.rivals.find((x) => x.id === id); return r ? R.carModel(r.livery).trail : playerModel.trail; };
-    R.render({ cam, cars, lobby: this.screen==='hub', beacon: this.save.data.openline.completed, focus: pose, showLine: racing && this.assists().showLine && !this.autopilot, time: this.time, fxTime: simT,
+    const mission=this.storyCareer.activeMission,gateS=this.storyCareer.run?.nextGateS;
+    const careerGate=this.storyCareer.active&&['sprint','checkpoint'].includes(mission?.type)&&Number.isFinite(gateS)?{s:gateS,next:(this.storyCareer.run.checkpoints||0)+1,total:mission.checkpoints}:null;
+    R.render({ cam, cars, careerGate, lobby: ['hub','workshop'].includes(this.screen), beacon: this.save.data.openline.completed, focus: pose, showLine: racing && this.assists().showLine && !this.autopilot, time: this.time, fxTime: simT,
       speed: racing ? clamp((u - 40) / 50, 0, 1) : 0, showroom: !racing, motion, startLights: this.startLightsLit(),
       fxOpts: { streakK: racing && motion ? clamp((u - 30) / 40, 0, 1) : 0, speed: u, fwd: [Math.sin(pose.yaw), Math.cos(pose.yaw)], trailCols } });
     if(this.capturePhoto){this.capturePhoto=false;R.canvas.toBlob(blob=>{if(!blob){this.toast('Photo could not be saved.');return;}const target=downloadBlob(blob,'VelocityVerse-'+Date.now()+'.png');this.toast(target==='native'?'Saving photo…':'Photo saved.');},'image/png');}
@@ -7995,7 +8578,7 @@ class Game {
     this.navigation.onScreen(id, previous);
     this.lobby?.sync();
     window.NativeBridge?.setKeepScreenOn?.(this.mode === 'race' && !this.paused);
-    document.body.classList.toggle('app-art', this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard','story','universe'].includes(id));
+    document.body.classList.toggle('app-art', this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard','story','universe','career'].includes(id));
     const inRace = this.mode === 'race' && !this.paused;
     $('hud').hidden = this.mode !== 'race';
     $('touch').hidden = !(this.mode === 'race' && isTouch && this.S.layout !== 'keyboard') || this.paused;
@@ -8013,6 +8596,7 @@ class Game {
     if (id === 'customize') this.renderCustomize();
     this.app.render(id); this.hub.render(id);
     this.campaign.render(id);
+    this.storyCareer.render(id);
     $('academy-hud').hidden = !(this.school && this.mode === 'race' && !this.paused);
     if (this.school && this.mode === 'race' && !this.paused) $('hud-coach').classList.remove('on');
     const first = document.querySelector('.screen.active .btn.primary, .screen.active button');
@@ -8083,7 +8667,8 @@ class Game {
     $('dialog-ok').addEventListener('click', () => { $('dialog').hidden = true; this.save.reset(); this.S = this.save.data.settings; this.input.bindings = { ...DEFAULT_KEYS }; this.applySettings(); this.renderSettings(); this.toast('Saved data cleared.'); });
   }
   navTo(where) {
-    if (this.mode === 'race' && ['hub','story','universe','garage','event','team','academy','lab','explorer','records'].includes(where)) {
+    if (this.mode === 'race' && ['hub','story','universe','garage','event','team','academy','lab','explorer','records','career','workshop'].includes(where)) {
+      this.storyCareer.abort();this.careerMission=null;
       this.campaign.leaveDrive(); this.input.reset(); this.mode='menu'; this.paused=false; this.school=null;
       this.clearRivals(); this.audio.mute(true); this.acc=0; this.cam.snap();
     }
@@ -8099,11 +8684,12 @@ class Game {
   }
 
   renderGarage() {
-    const c = CAR_VX1;
+    const c = this.veh.car;
+    const power=Math.max(...c.engine.curve.map(([rpm,torque])=>rpm*torque*Math.PI/30*c.gearbox.efficiency/1000));
     const rows = [
-      ['Power (peak, at the wheels)', '≈ 398 kW', 'F'], ['Mass with driver', `${c.mass} kg`, 'F'], ['Weight distribution', `${Math.round(c.frontWeight * 100)} / ${Math.round((1 - c.frontWeight) * 100)}`, 'F'],
-      ['Top speed (sim test)', '305 km/h', 'M'], ['0–100 km/h (sim test)', '3.2 s', 'M'], ['Downforce at 200 km/h', `${Math.round(0.5 * 1.225 * c.aero.clA * (200 / 3.6) ** 2)} N`, 'E'],
-      ['Tire peak friction', `μ ${c.tire.mu}`, 'E'], ['Gearbox', '8-speed sequential, RWD, limited-slip diff', 'T'],
+      ['Power (peak, at the wheels)', `≈ ${Math.round(power)} kW`, 'F'], ['Mass with driver', `${c.mass} kg`, 'F'], ['Weight distribution', `${Math.round(c.frontWeight * 100)} / ${Math.round((1 - c.frontWeight) * 100)}`, 'F'],
+      ['Wheelbase', `${c.wheelbase.toFixed(2)} m`, 'F'], ['Ride',c.name,'F'], ['Downforce at 200 km/h', `${Math.round(0.5 * 1.225 * c.aero.clA * (200 / 3.6) ** 2)} N`, 'E'],
+      ['Tire peak friction', `μ ${c.tire.mu.toFixed(3)}`, 'E'], ['Gearbox', `${c.gearbox.ratios.length}-speed sequential, RWD, limited-slip diff`, 'T'],
     ];
     $('car-specs').innerHTML = rows.map(([k, v, p]) => `<div><dt>${k}</dt><dd>${v} <abbr class="prov" title="${PROVENANCE_LABEL[p] || 'measured in sim'}">${PROVENANCE_LABEL[p] || 'measured in sim'}</abbr></dd></div>`).join('');
     const career=this.save.data.career;
@@ -8119,8 +8705,16 @@ class Game {
     });
   }
 
-  pbFor(cls) { return this.save.data.pbs[`${this.track.def.id}|${cls}`]; }
+  pbKey(cls) {
+    const car=this.veh.car;
+    const build=car.careerBuild?.signature||car.buildSignature||car.careerBuildSignature||'';
+    return `${this.track.def.id}|${cls}`+(this.baseRideId!=='vx1'||build?`|${this.baseRideId}|${build}`:'');
+  }
+  pbFor(cls) { return this.save.data.pbs[this.pbKey(cls)]; }
   renderEvent() {
+    const banner=document.querySelector('.circuit-banner');banner.querySelector('h3').textContent=this.track.def.name;
+    banner.querySelector('p').textContent=`${(this.track.length/1000).toFixed(2)} km · ${this.track.def.segments.filter(s=>s[0]!=='S').length} corners · Lumen Harbor`;
+    banner.querySelector('small').textContent=getCircuit(this.currentCircuitId).description;
     const cls = assistClass(this.assists());
     const pb = this.pbFor(cls);
     $('ev-tt-meta').textContent = pb ? `Your best (${cls}): ${fmtTime(pb.time)} · ghost ready` : `No ${cls} lap yet. Your first valid lap becomes your ghost.`;
@@ -8130,7 +8724,7 @@ class Game {
 
   renderPrep() {
     const a = this.assists(), race = this.pendingMode === 'race';
-    $('prep-event').textContent = this.pendingMode === 'practice' ? 'Practice · Harbor Loop' : race ? `Race · ${this.S.raceLaps || 3} laps vs AI` : 'Time trial · out-lap + 3 timed laps';
+    $('prep-event').textContent = (this.pendingMode === 'practice' ? 'Practice · ' : race ? `Race · ${this.S.raceLaps || 3} laps vs AI · ` : 'Time trial · ')+this.track.def.name;
     $('race-opts').hidden = !race;
     const segBuild = (el, opts, cur, set) => { el.innerHTML = ''; opts.forEach(([v, l]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'segbtn'; b.textContent = l; b.setAttribute('aria-pressed', String(cur === v)); b.addEventListener('click', () => { set(v); this.save.save(); this.renderPrep(); }); el.appendChild(b); }); };
     if (race) {
@@ -8239,24 +8833,29 @@ class Game {
 
   startRace(mode) {
     if (!this.renderer) return;
+    if(this.storyCareer?.active&&!this.storyCareer.launching){this.storyCareer.abort();this.careerMission=null;}
     this.audio.unlock(); this.audio.mute(false);
     this.school=null; this.pendingLessonResult=null;
     this.sessionId=`${Date.now()}-${Math.random().toString(36).slice(2)}`;
     this.lastMode = mode;
-    const a = this.assists(), cls = assistClass(a), laps = mode === 'race' ? Number(this.S.raceLaps || 3) : 3;
+    const career=this.storyCareer?.launching?this.careerMission:null;
+    const a = this.assists(), cls = assistClass(a), laps = career?.laps || (mode === 'race' ? Number(this.S.raceLaps || 3) : 3);
+    const fieldSize=career?Math.max(2,Math.min(8,career.fieldSize||8)):8;
+    const playerGrid=Math.min(PLAYER_GRID,fieldSize-1);
     this.clearRivals();
     this.race = new RaceSession(this.track, mode, { laps });
     const lineS = this.track.def.lineS, grid = (k) => [lineS - 20 - k * 8, k % 2 ? 2.2 : -2.2];
     if (mode === 'race') {
-      const [s, off] = grid(PLAYER_GRID); this.veh.reset(s, off);
+      const [s, off] = grid(playerGrid); this.veh.reset(s, off);
       this.field = new RaceField(this.track, laps);
-      this.field.add(this.veh, { id: 'player', code: 'YOU', name: 'You', team: 'VX-1 · ' + this.livery().name, color: this.livery().secondary, player: true });
-      const base = AI_LEVELS[this.S.aiLevel || 'medium'];
+      this.field.add(this.veh, { id: 'player', code: 'YOU', name: 'You', team: this.veh.car.name+' · ' + this.livery().name, color: this.livery().secondary, player: true });
+      const base = Number.isFinite(career?.pace)?career.pace:AI_LEVELS[this.S.aiLevel || 'medium'];
       let slot = 0;
-      RIVALS.forEach((original, k) => {
-        const rv=this.campaign.launching && k===0 ? { ...original, code:'SOL',name:'Sola Kest',team:'Crownline',livery:{id:'sola',primary:[.92,.91,.87],secondary:[.92,.28,.1],accent:[.22,.1,.28],stripe:[.92,.28,.1]} } : original;
-        if (slot === PLAYER_GRID) slot++;
-        const veh = new Vehicle(CAR_VX1, this.world, this.track); const [gs, go] = grid(slot++); veh.reset(gs, go);
+      RIVALS.slice(0,fieldSize-1).forEach((original, k) => {
+        const rivalName=career?.rival==='neri'?'Neri Vale':career?.rival==='veska'?'Veska Thorne':'Sola Kest';
+        const rv=(this.campaign.launching||career) && k===0 ? { ...original, code:career?.rival==='neri'?'NER':'SOL',name:rivalName,team:career?.rival==='neri'?'Openline Garage':'Crownline',livery:{id:'sola',primary:[.92,.91,.87],secondary:[.92,.28,.1],accent:[.22,.1,.28],stripe:[.92,.28,.1]} } : original;
+        if (slot === playerGrid) slot++;
+        const veh = new Vehicle(this.veh.car, this.world, this.track); const [gs, go] = grid(slot++); veh.reset(gs, go);
         const r = { id: rv.code, ...rv, veh, ai: new AIDriver({ pace: base + PACE_SPREAD[k], seed: 1000 + k * 77 }), prev: snapshot(veh, {}), curr: snapshot(veh, {}) };
         r.entry = this.field.add(veh, { id: rv.code, code: rv.code, name: rv.name, team: rv.team, color: rv.livery.secondary });
         this.renderer.carModel(rv.livery);
@@ -8281,7 +8880,7 @@ class Game {
     $('hud-sectors').querySelectorAll('span').forEach((s, i) => { s.className = ''; s.textContent = `S${i + 1}`; });
     $('hud-flag').hidden = true; $('hud-delta').textContent = '';
     $('hud-best').textContent = mode === 'race' ? `${laps} LAPS · ${(this.S.aiLevel || 'medium').toUpperCase()}` : (this.pbTime ? `BEST ${fmtTime(this.pbTime)}` : 'NO BEST YET');
-    $('hud-mode').textContent = mode === 'practice' ? 'PRACTICE · HARBOR LOOP' : mode === 'race' ? 'GRAND PRIX · HARBOR LOOP' : 'TIME TRIAL · HARBOR LOOP';
+    $('hud-mode').textContent = (mode === 'practice' ? 'PRACTICE · ' : mode === 'race' ? 'GRAND PRIX · ' : 'TIME TRIAL · ')+this.track.def.name.toUpperCase();
     this.buildTower();
     this.show('none');
     this._goShown = mode !== 'race' && mode !== 'timetrial';
@@ -8290,6 +8889,7 @@ class Game {
   }
 
   onPlayerFinished() {
+    if(this.storyCareer.active)return;
     const me = this.field.entries[0];
     this.banner(me.pos === 1 ? 'P1 · WINNER' : `P${me.pos} · FINISH`, me.pos === 1 ? 'win' : 'fin', 4000);
     this.finishT = this.time;
@@ -8306,6 +8906,8 @@ class Game {
 
   onRaceEvent(ev) {
     this.campaign.onRaceEvent(ev);
+    this.storyCareer.onRaceEvent(ev);
+    if(this.storyCareer.active)return;
     const race = this.race;
     if (ev.type === 'start') { if (!this.isRace()) this.coach('Timing started.', 2, 'start'); return; }
     if (ev.type === 'invalid') { const f = $('hud-flag'); f.hidden = false; f.textContent = `✕ Lap invalid: ${ev.reason}`; this.coach(ev.reason === 'track limits' ? 'Keep at least one wheel on the asphalt or curb.' : 'This lap will not count.', 3, 'inv-' + ev.reason); return; }
@@ -8318,7 +8920,7 @@ class Game {
         if (race.targetLaps - race.laps.length === 1) this.banner('FINAL LAP', 'final', 1800);
         this.toast(`Lap ${lap.n}: ${fmtTime(lap.time)}${lap.valid ? '' : ' — invalid (' + lap.reason + ')'}`);
       } else if (lap.valid) {
-        const key = `${this.track.def.id}|${lap.assist}`;
+        const key = this.pbKey(lap.assist);
         const pb = this.save.data.pbs[key];
         if (!pb || lap.time < pb.time) {
           const delta = pb ? lap.time - pb.time : null;
@@ -8340,6 +8942,7 @@ class Game {
   }
 
   recover() {
+    this.storyCareer.onReset?.();
     this.campaign.invalidate('Car reset. Start another clean lap for homologation.');
     const p = this.track.project(this.veh.x, this.veh.z, -1, {});
     this.veh.reset(p.s - 2, 0);
@@ -8360,6 +8963,7 @@ class Game {
   resume() { this.input.buildTouch(this.S.layout === 'keyboard' ? 'buttons' : this.S.layout, this.assists().autoThrottle, !this.assists().autoGears); this.paused = false; this.last = performance.now(); this.acc = 0; this.audio.mute(false); this.show('none'); }
 
   finishSession() {
+    if(this.storyCareer.onSessionEnd())return;
     if (this.campaign.active) { this.campaign.returnToStory(); return; }
     const race = this.race; if (!race) return;
     this.mode = 'menu'; this.paused = false; this.finishT = null;
@@ -8503,7 +9107,7 @@ class Game {
       });
     } else {
       const lapN = race.laps.length + 1;
-      $('hud-lap').textContent = race.lapStart === null ? 'OUT LAP' : race.mode === 'timetrial' ? `LAP ${Math.min(lapN, 3)}/3` : `LAP ${lapN}`;
+      $('hud-lap').textContent = this.storyCareer.active ? (this.storyCareer.activeMission?.laps?`LAP ${Math.min(lapN,this.storyCareer.activeMission.laps)}/${this.storyCareer.activeMission.laps}`:'ROUTE CHALLENGE') : race.lapStart === null ? 'OUT LAP' : race.mode === 'timetrial' ? `LAP ${Math.min(lapN, 3)}/3` : `LAP ${lapN}`;
     }
     const t = race.currentLapTime(veh.time);
     if (racing) { const me = this.field.entries[0], rt = me.finished ? me.finishTime - this.countTotal : Math.max(0, veh.time - this.countTotal); $('hud-time').textContent = rt > 0 ? fmtTime(rt) : '0:00.000'; }
@@ -8573,9 +9177,9 @@ class Game {
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
-  if (!$('scr-story')) {
+  for(const [screen,file] of [['scr-story','openline.html'],['scr-career','career.html']])if (!$(screen)) {
     try {
-      const response=await fetch('./openline.html');
+      const response=await fetch('./'+file);
       if(!response.ok)throw new Error('Chapter interface could not load.');
       document.body.insertAdjacentHTML('beforeend',await response.text());
     } catch(e) { $('title-error').textContent=e.message; $('title-error').hidden=false; return; }

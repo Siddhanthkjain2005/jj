@@ -1,0 +1,1332 @@
+{
+  "checks": [
+    {
+      "name": "Story tour opens eight gated events with real workshop choices",
+      "pass": true
+    },
+    {
+      "name": "Workshop purchase changes real car parameters and spends earned budget once",
+      "pass": true
+    },
+    {
+      "name": "Pause and return abort safely without medals, then the event can restart",
+      "pass": true
+    },
+    {
+      "name": "Actual drive 1/8: first-light",
+      "pass": true
+    },
+    {
+      "name": "Actual drive 2/8: beacon-rush",
+      "pass": true
+    },
+    {
+      "name": "Actual drive 3/8: neri-duel",
+      "pass": true
+    },
+    {
+      "name": "Actual drive 4/8: tavi-test",
+      "pass": true
+    },
+    {
+      "name": "Actual drive 5/8: safe-passage",
+      "pass": true
+    },
+    {
+      "name": "Actual drive 6/8: sola-trial",
+      "pass": true
+    },
+    {
+      "name": "Actual drive 7/8: openline-semi",
+      "pass": false,
+      "error": "{\"mission\":{\"id\":\"openline-semi\",\"index\":6,\"chapter\":3,\"title\":\"A place on the grid\",\"type\":\"race\",\"trackId\":\"harbor_loop\",\"rideId\":\"vx1\",\"laps\":3,\"minDistance\":5800,\"checkpoints\":36,\"timeLimit\":480,\"targetTime\":195,\"requiredPosition\":3,\"fieldSize\":8,\"opponent\":\"sola\",\"rival\":\"sola\",\"raceMode\":\"race\",\"pace\":0.84,\"objective\":\"Finish in the top three over three laps. Manage traffic and keep enough grip for the final lap.\",\"before\":[\"Veska: Three laps. A complete classification. Earn the final on the same terms as everyone else.\",\"Sola: I’ll race you properly. I expect you to do the same.\"],\"after\":[\"Neri: Podium! The Openline crew is in the final.\",\"Veska: Your garage has earned its entry. Bring that discipline to Breakwater.\"],\"reward\":80,\"starReward\":50,\"maxContacts\":20,\"raceLaps\":3},\"proof\":{\"missionId\":\"openline-semi\",\"attemptId\":\"tour-openline-semi-1794291159753-4zhc5d\",\"validated\":true,\"supported\":false,\"autonomous\":false,\"elapsed\":110.20833333336711,\"distance\":3679.783457146379,\"checkpoints\":21,\"lapCount\":1,\"validLaps\":1,\"lapTime\":64.00065401684623,\"contacts\":13,\"resets\":0,\"wrongWay\":false,\"nonfinite\":false,\"position\":7,\"fieldSize\":8,\"finished\":false},\"success\":false,\"stars\":0,\"earned\":0,\"reason\":\"The route left the circuit. Follow the gates and retry.\",\"accepted\":false}"
+    }
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "runs": [
+    {
+      "active": false,
+      "mission": "first-light",
+      "run": {
+        "attemptId": "tour-first-light-1794291156849-ats5ag",
+        "elapsed": 22.89999999999934,
+        "distance": 650.1565419072683,
+        "netProgress": 650.1565419072683,
+        "checkpoints": 6,
+        "lapCount": 0,
+        "validLaps": 0,
+        "lapTime": null,
+        "contacts": 0,
+        "carContactEpisodes": 0,
+        "carContactQuiet": 23.199999999999324,
+        "resets": 0,
+        "wrongWay": false,
+        "nonfinite": false,
+        "autonomous": false,
+        "inputTime": 22.65833333333269,
+        "startS": 30,
+        "lastS": 680.1565419072683,
+        "lastX": 99.76379526888863,
+        "lastZ": -136.79636976601353,
+        "lastTime": 23.70833333333263,
+        "impact": 0,
+        "carImpact": 0,
+        "nan": 0,
+        "offTime": 0,
+        "reverseTime": 0,
+        "calls": {
+          "quarter": true,
+          "near": true
+        },
+        "lastPosition": 1,
+        "gateSpacing": 108.33333333333333,
+        "nextGateS": 788.3333333333333
+      },
+      "result": {
+        "mission": {
+          "id": "first-light",
+          "index": 0,
+          "chapter": 1,
+          "title": "Run the delivery",
+          "type": "sprint",
+          "trackId": "beacon_short",
+          "rideId": "sprint",
+          "laps": 0,
+          "minDistance": 650,
+          "checkpoints": 6,
+          "timeLimit": 60,
+          "targetTime": 35,
+          "maxContacts": 3,
+          "objective": "Reach six ordered gates and carry the timing relay 650 m before the workshop closes.",
+          "before": [
+            "Neri: The last timing relay is at the far end of the test course. We can still make tonight’s qualifier.",
+            "Maela: Follow the gates. Bring the car home; a scratch is better than a shortcut."
+          ],
+          "after": [
+            "Neri: You brought it back! Now the workshop can time its own qualifying runs.",
+            "Maela: One delivery. One driver we can trust. Let’s earn a place on the grid."
+          ],
+          "fieldSize": 1,
+          "reward": 80,
+          "starReward": 50,
+          "raceMode": "practice",
+          "raceLaps": 1
+        },
+        "proof": {
+          "missionId": "first-light",
+          "attemptId": "tour-first-light-1794291156849-ats5ag",
+          "validated": true,
+          "supported": false,
+          "autonomous": false,
+          "elapsed": 22.89999999999934,
+          "distance": 650.1565419072683,
+          "checkpoints": 6,
+          "lapCount": 0,
+          "validLaps": 0,
+          "lapTime": null,
+          "contacts": 0,
+          "resets": 0,
+          "wrongWay": false,
+          "nonfinite": false,
+          "position": 1,
+          "fieldSize": 1,
+          "finished": false
+        },
+        "state": {
+          "version": 1,
+          "credits": 330,
+          "selectedMission": "first-light",
+          "selectedRide": "sprint",
+          "ownedRides": [
+            "sprint"
+          ],
+          "crew": "mentor",
+          "setup": "balanced",
+          "parts": {
+            "grip": 1,
+            "aero": 0,
+            "gearing": 0
+          },
+          "records": {
+            "first-light": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 22.89999999999934,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "beacon-rush": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "neri-duel": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "tavi-test": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "safe-passage": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "sola-trial": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "openline-semi": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "crownline-final": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            }
+          },
+          "processedRuns": [
+            "tour-first-light-1794291156849-ats5ag"
+          ],
+          "chapterChoices": {}
+        },
+        "accepted": true,
+        "reason": "Event complete. Your crew is ready for the next drive.",
+        "earned": 230,
+        "success": true,
+        "stars": 3,
+        "unlockedRide": null,
+        "buildSignature": "sprint:mentor:balanced:1:0:0"
+      },
+      "mode": "menu",
+      "screen": "career",
+      "autopilot": false,
+      "simTime": 23.70833333333263,
+      "car": "sprint",
+      "track": "beacon_short",
+      "glError": 0
+    },
+    {
+      "active": false,
+      "mission": "beacon-rush",
+      "run": {
+        "attemptId": "tour-beacon-rush-1794291157149-x68kob",
+        "elapsed": 27.433333333332417,
+        "distance": 780.0177798681997,
+        "netProgress": 780.0177798681997,
+        "checkpoints": 10,
+        "lapCount": 0,
+        "validLaps": 0,
+        "lapTime": null,
+        "contacts": 0,
+        "carContactEpisodes": 0,
+        "carContactQuiet": 27.7333333333324,
+        "resets": 0,
+        "wrongWay": false,
+        "nonfinite": false,
+        "autonomous": false,
+        "inputTime": 27.108333333332435,
+        "startS": 30,
+        "lastS": 6.123996966656932,
+        "lastX": 3.8068673275984617,
+        "lastZ": -93.87600303334307,
+        "lastTime": 28.241666666665704,
+        "impact": 0,
+        "carImpact": 0,
+        "nan": 0,
+        "offTime": 0,
+        "reverseTime": 0,
+        "calls": {
+          "quarter": true,
+          "near": true
+        },
+        "lastPosition": 1,
+        "gateSpacing": 78,
+        "nextGateS": 84.10621709845736
+      },
+      "result": {
+        "mission": {
+          "id": "beacon-rush",
+          "index": 1,
+          "chapter": 1,
+          "title": "Beat the closing bell",
+          "type": "checkpoint",
+          "trackId": "beacon_short",
+          "rideId": "sprint",
+          "laps": 0,
+          "minDistance": 780,
+          "checkpoints": 10,
+          "timeLimit": 80,
+          "targetTime": 48,
+          "maxContacts": 3,
+          "objective": "Link ten ordered gates around Beacon Short before the clock expires.",
+          "unlockRide": "vx1",
+          "before": [
+            "Tavi: Crownline accepts one final qualifying trace. I’ve marked the full route.",
+            "Neri: Keep your momentum through the bends. The gates only count in order."
+          ],
+          "after": [
+            "Tavi: A complete trace, no missing gates. The qualifier accepts us.",
+            "Neri: Maela’s unlocked the VX-1 for you. Time to meet me on the grid."
+          ],
+          "fieldSize": 1,
+          "reward": 80,
+          "starReward": 50,
+          "raceMode": "practice",
+          "raceLaps": 1
+        },
+        "proof": {
+          "missionId": "beacon-rush",
+          "attemptId": "tour-beacon-rush-1794291157149-x68kob",
+          "validated": true,
+          "supported": false,
+          "autonomous": false,
+          "elapsed": 27.433333333332417,
+          "distance": 780.0177798681997,
+          "checkpoints": 10,
+          "lapCount": 0,
+          "validLaps": 0,
+          "lapTime": null,
+          "contacts": 0,
+          "resets": 0,
+          "wrongWay": false,
+          "nonfinite": false,
+          "position": 1,
+          "fieldSize": 1,
+          "finished": false
+        },
+        "state": {
+          "version": 1,
+          "credits": 560,
+          "selectedMission": "beacon-rush",
+          "selectedRide": "vx1",
+          "ownedRides": [
+            "sprint",
+            "vx1"
+          ],
+          "crew": "mentor",
+          "setup": "balanced",
+          "parts": {
+            "grip": 1,
+            "aero": 0,
+            "gearing": 0
+          },
+          "records": {
+            "first-light": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 22.89999999999934,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "beacon-rush": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 27.433333333332417,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "neri-duel": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "tavi-test": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "safe-passage": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "sola-trial": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "openline-semi": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "crownline-final": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            }
+          },
+          "processedRuns": [
+            "tour-first-light-1794291156849-ats5ag",
+            "tour-beacon-rush-1794291157149-x68kob"
+          ],
+          "chapterChoices": {}
+        },
+        "accepted": true,
+        "reason": "Event complete. Your crew is ready for the next drive.",
+        "earned": 230,
+        "success": true,
+        "stars": 3,
+        "unlockedRide": "vx1",
+        "buildSignature": "sprint:mentor:balanced:1:0:0"
+      },
+      "mode": "menu",
+      "screen": "career",
+      "autopilot": false,
+      "simTime": 28.241666666665704,
+      "car": "sprint",
+      "track": "beacon_short",
+      "glError": 0
+    },
+    {
+      "active": false,
+      "mission": "neri-duel",
+      "run": {
+        "attemptId": "tour-neri-duel-1794291157544-y9rl4w",
+        "elapsed": 29.266666666665646,
+        "distance": 832.0435463544046,
+        "netProgress": 832.0435463544046,
+        "checkpoints": 12,
+        "lapCount": 1,
+        "validLaps": 1,
+        "lapTime": 26.772139867414655,
+        "contacts": 0,
+        "carContactEpisodes": 0,
+        "carContactQuiet": 29.56666666666563,
+        "resets": 0,
+        "wrongWay": false,
+        "nonfinite": false,
+        "autonomous": false,
+        "inputTime": 28.916666666665666,
+        "startS": 47,
+        "lastS": 75.1497634528624,
+        "lastX": 5.252749381237773,
+        "lastZ": -24.850236547137598,
+        "lastTime": 35.724999999998616,
+        "impact": 0,
+        "carImpact": 0,
+        "nan": 0,
+        "offTime": 0,
+        "reverseTime": 0,
+        "calls": {
+          "pass": true,
+          "quarter": true,
+          "near": true
+        },
+        "lastPosition": 1,
+        "gateSpacing": 66.99114857512855,
+        "nextGateS": 113.99114857512848
+      },
+      "result": {
+        "mission": {
+          "id": "neri-duel",
+          "index": 2,
+          "chapter": 1,
+          "title": "Neri’s wager",
+          "type": "duel",
+          "trackId": "beacon_short",
+          "rideId": "vx1",
+          "laps": 1,
+          "minDistance": 780,
+          "checkpoints": 10,
+          "timeLimit": 160,
+          "targetTime": 60,
+          "requiredPosition": 1,
+          "fieldSize": 2,
+          "opponent": "neri",
+          "rival": "neri",
+          "raceMode": "race",
+          "pace": 0.78,
+          "objective": "Win a one-lap duel against Neri. Clean exits matter more than first-corner bravery.",
+          "before": [
+            "Neri: One lap. If you win, you lead the crew’s qualifying entry.",
+            "Maela: Give each other room. A rival who comes back is worth more than a broken trophy."
+          ],
+          "after": [
+            "Neri: That exit! All right, you lead. I’ll watch your blind side.",
+            "Maela: You’ve won more than a lap. The crew can enter together now."
+          ],
+          "reward": 80,
+          "starReward": 50,
+          "maxContacts": 20,
+          "raceLaps": 1
+        },
+        "proof": {
+          "missionId": "neri-duel",
+          "attemptId": "tour-neri-duel-1794291157544-y9rl4w",
+          "validated": true,
+          "supported": false,
+          "autonomous": false,
+          "elapsed": 29.266666666665646,
+          "distance": 832.0435463544046,
+          "checkpoints": 12,
+          "lapCount": 1,
+          "validLaps": 1,
+          "lapTime": 26.772139867414655,
+          "contacts": 0,
+          "resets": 0,
+          "wrongWay": false,
+          "nonfinite": false,
+          "position": 1,
+          "fieldSize": 2,
+          "finished": true
+        },
+        "state": {
+          "version": 1,
+          "credits": 790,
+          "selectedMission": "neri-duel",
+          "selectedRide": "vx1",
+          "ownedRides": [
+            "sprint",
+            "vx1"
+          ],
+          "crew": "mentor",
+          "setup": "balanced",
+          "parts": {
+            "grip": 1,
+            "aero": 0,
+            "gearing": 0
+          },
+          "records": {
+            "first-light": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 22.89999999999934,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "beacon-rush": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 27.433333333332417,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "neri-duel": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 29.266666666665646,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "tavi-test": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "safe-passage": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "sola-trial": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "openline-semi": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "crownline-final": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            }
+          },
+          "processedRuns": [
+            "tour-first-light-1794291156849-ats5ag",
+            "tour-beacon-rush-1794291157149-x68kob",
+            "tour-neri-duel-1794291157544-y9rl4w"
+          ],
+          "chapterChoices": {}
+        },
+        "accepted": true,
+        "reason": "Event complete. Your crew is ready for the next drive.",
+        "earned": 230,
+        "success": true,
+        "stars": 3,
+        "unlockedRide": null,
+        "buildSignature": "vx1:mentor:balanced:1:0:0"
+      },
+      "mode": "menu",
+      "screen": "career",
+      "autopilot": false,
+      "simTime": 35.724999999998616,
+      "car": "vx1",
+      "track": "beacon_short",
+      "glError": 0
+    },
+    {
+      "active": false,
+      "mission": "tavi-test",
+      "run": {
+        "attemptId": "tour-tavi-test-1794291158106-pdjwh3",
+        "elapsed": 56.04999999999746,
+        "distance": 2236.672718981045,
+        "netProgress": 2236.672718981045,
+        "checkpoints": 12,
+        "lapCount": 1,
+        "validLaps": 1,
+        "lapTime": 50.47851090360983,
+        "contacts": 0,
+        "carContactEpisodes": 0,
+        "carContactQuiet": 56.34999999999744,
+        "resets": 0,
+        "wrongWay": false,
+        "nonfinite": false,
+        "autonomous": false,
+        "inputTime": 54.93333333333086,
+        "startS": 60,
+        "lastS": 200.40595485253885,
+        "lastX": 3.0089903324208405,
+        "lastZ": 43.40595485253884,
+        "lastTime": 58.45833333333066,
+        "impact": 0,
+        "carImpact": 0,
+        "nan": 0,
+        "offTime": 0,
+        "reverseTime": 0,
+        "calls": {
+          "quarter": true,
+          "near": true
+        },
+        "lastPosition": 1,
+        "gateSpacing": 174.6888970107093,
+        "nextGateS": 234.6888970107093
+      },
+      "result": {
+        "mission": {
+          "id": "tavi-test",
+          "index": 3,
+          "chapter": 2,
+          "title": "The part we can prove",
+          "type": "timetrial",
+          "trackId": "harbor_loop",
+          "rideId": "vx1",
+          "laps": 1,
+          "minDistance": 1900,
+          "checkpoints": 12,
+          "timeLimit": 180,
+          "targetTime": 68,
+          "maxContacts": 4,
+          "raceMode": "timetrial",
+          "objective": "Record one valid Harbor lap. Choose a real setup tradeoff in the workshop before driving.",
+          "before": [
+            "Tavi: We can improve turn-in or straight-line speed. We cannot get both for free.",
+            "Sola: Show me your complete lap, not a perfect graph from half the course."
+          ],
+          "after": [
+            "Tavi: Now the setup has a whole lap behind it. We can decide what the car needs next.",
+            "Sola: You tested it on the road. That is worth listening to."
+          ],
+          "fieldSize": 1,
+          "reward": 80,
+          "starReward": 50,
+          "raceLaps": 1
+        },
+        "proof": {
+          "missionId": "tavi-test",
+          "attemptId": "tour-tavi-test-1794291158106-pdjwh3",
+          "validated": true,
+          "supported": false,
+          "autonomous": false,
+          "elapsed": 56.04999999999746,
+          "distance": 2236.672718981045,
+          "checkpoints": 12,
+          "lapCount": 1,
+          "validLaps": 1,
+          "lapTime": 50.47851090360983,
+          "contacts": 0,
+          "resets": 0,
+          "wrongWay": false,
+          "nonfinite": false,
+          "position": 1,
+          "fieldSize": 1,
+          "finished": false
+        },
+        "state": {
+          "version": 1,
+          "credits": 1020,
+          "selectedMission": "tavi-test",
+          "selectedRide": "vx1",
+          "ownedRides": [
+            "sprint",
+            "vx1"
+          ],
+          "crew": "mentor",
+          "setup": "balanced",
+          "parts": {
+            "grip": 1,
+            "aero": 0,
+            "gearing": 0
+          },
+          "records": {
+            "first-light": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 22.89999999999934,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "beacon-rush": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 27.433333333332417,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "neri-duel": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 29.266666666665646,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "tavi-test": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 50.47851090360983,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "safe-passage": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "sola-trial": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "openline-semi": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "crownline-final": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            }
+          },
+          "processedRuns": [
+            "tour-first-light-1794291156849-ats5ag",
+            "tour-beacon-rush-1794291157149-x68kob",
+            "tour-neri-duel-1794291157544-y9rl4w",
+            "tour-tavi-test-1794291158106-pdjwh3"
+          ],
+          "chapterChoices": {}
+        },
+        "accepted": true,
+        "reason": "Event complete. Your crew is ready for the next drive.",
+        "earned": 230,
+        "success": true,
+        "stars": 3,
+        "unlockedRide": null,
+        "buildSignature": "vx1:mentor:balanced:1:0:0"
+      },
+      "mode": "menu",
+      "screen": "career",
+      "autopilot": false,
+      "simTime": 58.45833333333066,
+      "car": "vx1",
+      "track": "harbor_loop",
+      "glError": 0
+    },
+    {
+      "active": false,
+      "mission": "safe-passage",
+      "run": {
+        "attemptId": "tour-safe-passage-1794291158632-3s7y71",
+        "elapsed": 39.333333333331744,
+        "distance": 1722.17848090949,
+        "netProgress": 1722.17848090949,
+        "checkpoints": 12,
+        "lapCount": 1,
+        "validLaps": 1,
+        "lapTime": 36.16240581678718,
+        "contacts": 0,
+        "carContactEpisodes": 0,
+        "carContactQuiet": 39.63333333333173,
+        "resets": 0,
+        "wrongWay": false,
+        "nonfinite": false,
+        "autonomous": false,
+        "inputTime": 38.808333333331774,
+        "startS": 95,
+        "lastS": 140.2758767274309,
+        "lastX": 4.213325341045448,
+        "lastZ": 40.27587672743089,
+        "lastTime": 40.14166666666503,
+        "impact": 0,
+        "carImpact": 0,
+        "nan": 0,
+        "offTime": 0,
+        "reverseTime": 0,
+        "calls": {
+          "quarter": true,
+          "near": true
+        },
+        "lastPosition": 1,
+        "gateSpacing": 139.7418836818384,
+        "nextGateS": 234.74188368183854
+      },
+      "result": {
+        "mission": {
+          "id": "safe-passage",
+          "index": 4,
+          "chapter": 2,
+          "title": "Keep the lights steady",
+          "type": "clean",
+          "trackId": "breakwater",
+          "rideId": "vx1",
+          "laps": 1,
+          "minDistance": 1550,
+          "checkpoints": 12,
+          "timeLimit": 150,
+          "targetTime": 70,
+          "maxContacts": 0,
+          "raceMode": "practice",
+          "unlockRide": "vanta_gt",
+          "objective": "Complete a Breakwater lap without touching another car or barrier. Preserve the beacon test equipment.",
+          "before": [
+            "Maela: The rebuilt beacon needs one uninterrupted vibration test. Give me a clean lap.",
+            "Neri: No medal for scaring the pit crew this time. Smooth hands."
+          ],
+          "after": [
+            "Maela: Steady all the way. The teaching room’s equipment passes inspection.",
+            "Tavi: The Vanta GT is ready. Heavier, stronger, and a completely different braking rhythm."
+          ],
+          "fieldSize": 1,
+          "reward": 80,
+          "starReward": 50,
+          "raceLaps": 1
+        },
+        "proof": {
+          "missionId": "safe-passage",
+          "attemptId": "tour-safe-passage-1794291158632-3s7y71",
+          "validated": true,
+          "supported": false,
+          "autonomous": false,
+          "elapsed": 39.333333333331744,
+          "distance": 1722.17848090949,
+          "checkpoints": 12,
+          "lapCount": 1,
+          "validLaps": 1,
+          "lapTime": 36.16240581678718,
+          "contacts": 0,
+          "resets": 0,
+          "wrongWay": false,
+          "nonfinite": false,
+          "position": 1,
+          "fieldSize": 1,
+          "finished": false
+        },
+        "state": {
+          "version": 1,
+          "credits": 1250,
+          "selectedMission": "safe-passage",
+          "selectedRide": "vanta_gt",
+          "ownedRides": [
+            "sprint",
+            "vx1",
+            "vanta_gt"
+          ],
+          "crew": "mentor",
+          "setup": "balanced",
+          "parts": {
+            "grip": 1,
+            "aero": 0,
+            "gearing": 0
+          },
+          "records": {
+            "first-light": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 22.89999999999934,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "beacon-rush": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 27.433333333332417,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "neri-duel": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 29.266666666665646,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "tavi-test": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 50.47851090360983,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "safe-passage": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 39.333333333331744,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "sola-trial": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "openline-semi": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "crownline-final": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            }
+          },
+          "processedRuns": [
+            "tour-first-light-1794291156849-ats5ag",
+            "tour-beacon-rush-1794291157149-x68kob",
+            "tour-neri-duel-1794291157544-y9rl4w",
+            "tour-tavi-test-1794291158106-pdjwh3",
+            "tour-safe-passage-1794291158632-3s7y71"
+          ],
+          "chapterChoices": {}
+        },
+        "accepted": true,
+        "reason": "Event complete. Your crew is ready for the next drive.",
+        "earned": 230,
+        "success": true,
+        "stars": 3,
+        "unlockedRide": "vanta_gt",
+        "buildSignature": "vx1:mentor:balanced:1:0:0"
+      },
+      "mode": "menu",
+      "screen": "career",
+      "autopilot": false,
+      "simTime": 40.14166666666503,
+      "car": "vx1",
+      "track": "breakwater",
+      "glError": 0
+    },
+    {
+      "active": false,
+      "mission": "sola-trial",
+      "run": {
+        "attemptId": "tour-sola-trial-1794291159104-t7c9o1",
+        "elapsed": 62.416666666663765,
+        "distance": 2236.4474395968273,
+        "netProgress": 2236.4474395968273,
+        "checkpoints": 12,
+        "lapCount": 1,
+        "validLaps": 1,
+        "lapTime": 56.440097790368426,
+        "contacts": 0,
+        "carContactEpisodes": 0,
+        "carContactQuiet": 62.71666666666375,
+        "resets": 0,
+        "wrongWay": false,
+        "nonfinite": false,
+        "autonomous": false,
+        "inputTime": 61.12499999999717,
+        "startS": 60,
+        "lastS": 200.1806754683145,
+        "lastX": 3.3988744814425966,
+        "lastZ": 43.18067546831449,
+        "lastTime": 64.82499999999766,
+        "impact": 0,
+        "carImpact": 0,
+        "nan": 0,
+        "offTime": 0,
+        "reverseTime": 0,
+        "calls": {
+          "quarter": true,
+          "near": true
+        },
+        "lastPosition": 1,
+        "gateSpacing": 174.6888970107093,
+        "nextGateS": 234.6888970107093
+      },
+      "result": {
+        "mission": {
+          "id": "sola-trial",
+          "index": 5,
+          "chapter": 2,
+          "title": "Sola’s reference",
+          "type": "timetrial",
+          "trackId": "harbor_loop",
+          "rideId": "vanta_gt",
+          "laps": 1,
+          "minDistance": 1900,
+          "checkpoints": 12,
+          "timeLimit": 160,
+          "targetTime": 62,
+          "maxContacts": 4,
+          "raceMode": "timetrial",
+          "opponent": "sola",
+          "rival": "sola",
+          "objective": "Finish one valid lap; chase Sola’s 62-second reference for the time star.",
+          "before": [
+            "Sola: My reference is sixty-two seconds. You don’t have to copy my line to improve it.",
+            "Tavi: Review grip and gearing. What helped at Beacon may cost time here."
+          ],
+          "after": [
+            "Sola: You’ve earned a comparison, not a copy. Let’s see what you do with it under pressure.",
+            "Neri: Crownline’s invitational has our name on the reserve list. Two races left."
+          ],
+          "fieldSize": 1,
+          "reward": 80,
+          "starReward": 50,
+          "raceLaps": 1
+        },
+        "proof": {
+          "missionId": "sola-trial",
+          "attemptId": "tour-sola-trial-1794291159104-t7c9o1",
+          "validated": true,
+          "supported": false,
+          "autonomous": false,
+          "elapsed": 62.416666666663765,
+          "distance": 2236.4474395968273,
+          "checkpoints": 12,
+          "lapCount": 1,
+          "validLaps": 1,
+          "lapTime": 56.440097790368426,
+          "contacts": 0,
+          "resets": 0,
+          "wrongWay": false,
+          "nonfinite": false,
+          "position": 1,
+          "fieldSize": 1,
+          "finished": false
+        },
+        "state": {
+          "version": 1,
+          "credits": 1480,
+          "selectedMission": "sola-trial",
+          "selectedRide": "vanta_gt",
+          "ownedRides": [
+            "sprint",
+            "vx1",
+            "vanta_gt"
+          ],
+          "crew": "mentor",
+          "setup": "balanced",
+          "parts": {
+            "grip": 1,
+            "aero": 0,
+            "gearing": 0
+          },
+          "records": {
+            "first-light": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 22.89999999999934,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "beacon-rush": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 27.433333333332417,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "neri-duel": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 29.266666666665646,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "tavi-test": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 50.47851090360983,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "safe-passage": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 39.333333333331744,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "sola-trial": {
+              "completed": true,
+              "stars": 3,
+              "bestTime": 56.440097790368426,
+              "attempts": 1,
+              "lastOutcome": "Event complete. Your crew is ready for the next drive.",
+              "bestPosition": 1
+            },
+            "openline-semi": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            },
+            "crownline-final": {
+              "completed": false,
+              "stars": 0,
+              "bestTime": null,
+              "attempts": 0,
+              "lastOutcome": "",
+              "bestPosition": null
+            }
+          },
+          "processedRuns": [
+            "tour-first-light-1794291156849-ats5ag",
+            "tour-beacon-rush-1794291157149-x68kob",
+            "tour-neri-duel-1794291157544-y9rl4w",
+            "tour-tavi-test-1794291158106-pdjwh3",
+            "tour-safe-passage-1794291158632-3s7y71",
+            "tour-sola-trial-1794291159104-t7c9o1"
+          ],
+          "chapterChoices": {}
+        },
+        "accepted": true,
+        "reason": "Event complete. Your crew is ready for the next drive.",
+        "earned": 230,
+        "success": true,
+        "stars": 3,
+        "unlockedRide": null,
+        "buildSignature": "vanta_gt:mentor:balanced:1:0:0"
+      },
+      "mode": "menu",
+      "screen": "career",
+      "autopilot": false,
+      "simTime": 64.82499999999766,
+      "car": "vanta_gt",
+      "track": "harbor_loop",
+      "glError": 0
+    },
+    {
+      "active": false,
+      "mission": "openline-semi",
+      "run": {
+        "attemptId": "tour-openline-semi-1794291159753-4zhc5d",
+        "elapsed": 110.20833333336711,
+        "distance": 3679.783457146379,
+        "netProgress": 3679.783457146379,
+        "checkpoints": 21,
+        "lapCount": 1,
+        "validLaps": 1,
+        "lapTime": 64.00065401684623,
+        "contacts": 13,
+        "carContactEpisodes": 13,
+        "carContactQuiet": 1.249999999999998,
+        "resets": 0,
+        "wrongWay": false,
+        "nonfinite": false,
+        "autonomous": false,
+        "inputTime": 105.44166666669665,
+        "startS": 140,
+        "lastS": 1731.9490188137293,
+        "lastX": 284.25699274405696,
+        "lastZ": -305.9423575147083,
+        "lastTime": 116.37500000003868,
+        "impact": 0,
+        "carImpact": 0,
+        "nan": 0,
+        "offTime": 0.35000000000000026,
+        "reverseTime": 0,
+        "calls": {
+          "contact": true,
+          "quarter": true,
+          "pass": true
+        },
+        "lastPosition": 7,
+        "gateSpacing": 174.6888970107093,
+        "nextGateS": 1886.888970107093
+      },
+      "result": {
+        "mission": {
+          "id": "openline-semi",
+          "index": 6,
+          "chapter": 3,
+          "title": "A place on the grid",
+          "type": "race",
+          "trackId": "harbor_loop",
+          "rideId": "vx1",
+          "laps": 3,
+          "minDistance": 5800,
+          "checkpoints": 36,
+          "timeLimit": 480,
+          "targetTime": 195,
+          "requiredPosition": 3,
+          "fieldSize": 8,
+          "opponent": "sola",
+          "rival": "sola",
+          "raceMode": "race",
+          "pace": 0.84,
+          "objective": "Finish in the top three over three laps. Manage traffic and keep enough grip for the final lap.",
+          "before": [
+            "Veska: Three laps. A complete classification. Earn the final on the same terms as everyone else.",
+            "Sola: I’ll race you properly. I expect you to do the same."
+          ],
+          "after": [
+            "Neri: Podium! The Openline crew is in the final.",
+            "Veska: Your garage has earned its entry. Bring that discipline to Breakwater."
+          ],
+          "reward": 80,
+          "starReward": 50,
+          "maxContacts": 20,
+          "raceLaps": 3
+        },
+        "proof": {
+          "missionId": "openline-semi",
+          "attemptId": "tour-openline-semi-1794291159753-4zhc5d",
+          "validated": true,
+          "supported": false,
+          "autonomous": false,
+          "elapsed": 110.20833333336711,
+          "distance": 3679.783457146379,
+          "checkpoints": 21,
+          "lapCount": 1,
+          "validLaps": 1,
+          "lapTime": 64.00065401684623,
+          "contacts": 13,
+          "resets": 0,
+          "wrongWay": false,
+          "nonfinite": false,
+          "position": 7,
+          "fieldSize": 8,
+          "finished": false
+        },
+        "success": false,
+        "stars": 0,
+        "earned": 0,
+        "reason": "The route left the circuit. Follow the gates and retry.",
+        "accepted": false
+      },
+      "mode": "menu",
+      "screen": "career",
+      "autopilot": false,
+      "simTime": 116.37500000003868,
+      "car": "vx1",
+      "track": "harbor_loop",
+      "glError": 0
+    }
+  ],
+  "artifactSHA256": "99b44a2014ef3223df26edd5e248767c86b3d9108aad6c510e36e4a43929c22e",
+  "method": "Scripted test-driver commands pass through actual fixed-step Vehicle/race/mission observers; results are never injected. Desktop Chrome, not a phone performance benchmark.",
+  "fatal": "{\"mission\":{\"id\":\"openline-semi\",\"index\":6,\"chapter\":3,\"title\":\"A place on the grid\",\"type\":\"race\",\"trackId\":\"harbor_loop\",\"rideId\":\"vx1\",\"laps\":3,\"minDistance\":5800,\"checkpoints\":36,\"timeLimit\":480,\"targetTime\":195,\"requiredPosition\":3,\"fieldSize\":8,\"opponent\":\"sola\",\"rival\":\"sola\",\"raceMode\":\"race\",\"pace\":0.84,\"objective\":\"Finish in the top three over three laps. Manage traffic and keep enough grip for the final lap.\",\"before\":[\"Veska: Three laps. A complete classification. Earn the final on the same terms as everyone else.\",\"Sola: I’ll race you properly. I expect you to do the same.\"],\"after\":[\"Neri: Podium! The Openline crew is in the final.\",\"Veska: Your garage has earned its entry. Bring that discipline to Breakwater.\"],\"reward\":80,\"starReward\":50,\"maxContacts\":20,\"raceLaps\":3},\"proof\":{\"missionId\":\"openline-semi\",\"attemptId\":\"tour-openline-semi-1794291159753-4zhc5d\",\"validated\":true,\"supported\":false,\"autonomous\":false,\"elapsed\":110.20833333336711,\"distance\":3679.783457146379,\"checkpoints\":21,\"lapCount\":1,\"validLaps\":1,\"lapTime\":64.00065401684623,\"contacts\":13,\"resets\":0,\"wrongWay\":false,\"nonfinite\":false,\"position\":7,\"fieldSize\":8,\"finished\":false},\"success\":false,\"stars\":0,\"earned\":0,\"reason\":\"The route left the circuit. Follow the gates and retry.\",\"accepted\":false}",
+  "passed": 9,
+  "total": 10
+}

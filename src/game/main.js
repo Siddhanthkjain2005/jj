@@ -22,6 +22,9 @@ import { LobbyMotion } from './lobby.js';
 import { AppNavigation } from './navigation.js';
 import { downloadBlob } from './platform.js';
 import { OpenlineCampaign } from './openline.js';
+import { StoryCareerClient } from './story-career.js';
+import { getRide } from '../sim/rides.js';
+import { getCircuit } from '../sim/circuits.js';
 
 const SIM_DT = 1 / 120, MAX_STEPS = 8;
 const $ = (id) => document.getElementById(id);
@@ -90,6 +93,7 @@ class Game {
     this.track = new Track(TRACK_HARBOR, this.world, CAR_VX1);
     this.veh = new Vehicle(CAR_VX1, this.world, this.track);
     this.veh.reset(this.track.def.lineS + 18, 0);
+    this.baseRideId='vx1';this.currentCircuitId='harbor_loop';this.careerMission=null;
     this.school = null; this.pendingLessonResult = null;
     this.driver = new DriverInput();
     this.input = new Input($('touch'));
@@ -119,6 +123,7 @@ class Game {
     this.applySettings();
     this.app = new AppFeatures(this); this.hub = new HubShell(this);
     this.campaign = new OpenlineCampaign(this);
+    this.storyCareer = new StoryCareerClient(this);
     this.navigation = new AppNavigation(this); this.navigation.wire();
     this.nativeSaveResult = (success,message) => {
       const note=message || (success ? 'File saved.' : 'File could not be saved.');
@@ -127,7 +132,7 @@ class Game {
     document.body.classList.toggle('native-android', !!window.NativeBridge);
     this.lobby = new LobbyMotion(this);
     this.wireUi();
-    this.app.wire(); this.hub.wire(); this.campaign.wire();
+    this.app.wire(); this.hub.wire(); this.campaign.wire(); this.storyCareer.wire();
     this.show(window.NativeBridge ? 'hub' : 'title');
     document.addEventListener('visibilitychange', () => { if (document.hidden && this.mode === 'race' && !this.paused) this.pause(); });
     window.addEventListener('resize', () => this.layoutCheck());
@@ -135,9 +140,46 @@ class Game {
     window.__vv = this; // exposed for automated smoke tests and debugging
   }
 
-  livery() { if (this.save.data.livery === 'custom') return personalLivery(this.save.data.customLivery); return CAR_VX1.liveries.find((l) => l.id === this.save.data.livery) || CAR_VX1.liveries[0]; }
+  livery() { if (this.save.data.livery === 'custom') return personalLivery(this.save.data.customLivery); const paints=this.veh?.car?.liveries||CAR_VX1.liveries;return paints.find(l=>l.id===this.save.data.livery)||paints[0]; }
   assists() { return this.school ? { ...ASSIST_PRESETS.racer, autoReverse: false } : this.save.data.assists; }
   isRace() { return !!(this.race && this.race.mode === 'race'); }
+
+  configureDrive(rideId='vx1',circuitId='harbor_loop',carOverride=null) {
+    const ride=getRide(rideId),circuit=getCircuit(circuitId),car=carOverride||ride.car;
+    const signature=JSON.stringify([ride.id,circuit.id,car]);
+    if(this.driveSignature===signature)return true;
+    const old={track:this.track,world:this.world,veh:this.veh,ride:this.baseRideId,circuit:this.currentCircuitId};
+    this.clearRivals();this.renderer?.dispose();
+    try {
+      const track=new Track(circuit.track,circuit.world,car),veh=new Vehicle(car,circuit.world,track);
+      veh.reset(track.def.lineS+18,0);
+      this.renderer=new Renderer($('gl'),track,car);this.track=track;this.veh=veh;this.world=circuit.world;
+      this.baseRideId=ride.id;this.currentCircuitId=circuit.id;this.driveSignature=signature;
+    } catch(error) {
+      this.track=old.track;this.world=old.world;this.veh=old.veh;
+      this.renderer=new Renderer($('gl'),old.track,old.veh.car);this.toast('This ride could not load. Your previous ride is restored.');
+      return false;
+    }
+    this.driver=new DriverInput();this.prev=snapshot(this.veh,{});this.curr=snapshot(this.veh,{});this.pose=snapshot(this.veh,{});
+    this.acc=0;this.race=null;this.school=null;this.pendingLessonResult=null;this.fxHits.clear();this.gearEvents.clear();
+    this.pbGhost=null;this.pbTime=null;this.cam.snap();this.buildMinimap();this.applySettings();
+    return true;
+  }
+
+  launchCareerMission(mission,car,options={}) {
+    this.campaign.leaveDrive();this.careerMission=mission;this.careerOptions=options;
+    if(!this.configureDrive(mission.rideId,mission.circuitId||mission.trackId,car))return false;
+    this.startRace(mission.raceMode||(['race','duel'].includes(mission.type)?'race':'practice'));
+    this.careerMission=mission;
+    $('hud-mode').textContent=mission.title||mission.name;
+    $('hud-best').textContent='CAREER · EARNED BUILD';
+    return true;
+  }
+
+  returnCareerMenu() {
+    this.input.reset();this.mode='menu';this.paused=false;this.acc=0;this.school=null;this.pendingLessonResult=null;
+    this.clearRivals();this.careerMission=null;this.audio.mute(true);this.cam.snap();this.show('career');
+  }
 
   // ---------- loop ----------
   frame(now) {
@@ -148,6 +190,7 @@ class Game {
     else { this.simMs = 0; this.steps = 0; }
     if (this.pendingLessonResult) this.completeLesson();
     this.campaign.flush();
+    this.storyCareer.flush();
     const t0 = performance.now();
     this.draw(dtReal);
     this.renderMs = performance.now() - t0;
@@ -204,6 +247,7 @@ class Game {
     if (this.field) this.field.update(SIM_DT, veh.time);
     race.update(SIM_DT, veh.time, veh, this.campaign.active && this.campaign.supported ? 'story-supported' : assistClass(a));
     this.campaign.observe(SIM_DT);
+    this.storyCareer.step(SIM_DT,raw);
     if (this.school) {
       this.school.update(SIM_DT, veh, raw, this.track);
       for (const ev of this.school.events.splice(0)) {
@@ -243,7 +287,7 @@ class Game {
   draw(dt) {
     if (!this.renderer) return;
     // Opaque app pages need no 3D frames. Resume rendering for the showroom and racing.
-    if (this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard','story','universe'].includes(this.screen)) return;
+    if (this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard','story','universe','career'].includes(this.screen)) return;
     if (this.mode === 'menu' && this.screen === 'hub') {
       this.lobbyFrameAge=(this.lobbyFrameAge||0)+dt;
       if(this.lobbyFrameAge<1/30)return;
@@ -254,7 +298,7 @@ class Game {
     const racing = this.mode === 'race', alpha = this.paused ? 1 : Math.min(1, this.acc / SIM_DT);
     const pose = racing ? lerpPose(this.prev, this.curr, alpha, this.pose) : snapshot(this.veh, this.pose);
     let camMode = racing ? this.S.camera : (this.screen === 'title' || this.screen === 'onboard' ? 'title' : 'orbit');
-    if(this.screen==='hub')camMode='lobby';
+    if(this.screen==='hub'||this.screen==='workshop')camMode='lobby';
     if (racing && this.isRace() && this.countdown > 1.3) camMode = 'grid';
     if (racing && this.autopilot) camMode = 'finish';
     if (this.screen === 'photo') camMode = 'photo';
@@ -278,7 +322,9 @@ class Game {
     R.updateFx(racing && !this.paused ? dt : 0, fxCars, simT, { active: racing, player: { pose, speed: u }, streaks: motion });
     this.fxHits.forEach((l) => { l.length = 0; }); this.gearEvents.clear();
     const trailCols = (id) => { const r = this.rivals.find((x) => x.id === id); return r ? R.carModel(r.livery).trail : playerModel.trail; };
-    R.render({ cam, cars, lobby: this.screen==='hub', beacon: this.save.data.openline.completed, focus: pose, showLine: racing && this.assists().showLine && !this.autopilot, time: this.time, fxTime: simT,
+    const mission=this.storyCareer.activeMission,gateS=this.storyCareer.run?.nextGateS;
+    const careerGate=this.storyCareer.active&&['sprint','checkpoint'].includes(mission?.type)&&Number.isFinite(gateS)?{s:gateS,next:(this.storyCareer.run.checkpoints||0)+1,total:mission.checkpoints}:null;
+    R.render({ cam, cars, careerGate, lobby: ['hub','workshop'].includes(this.screen), beacon: this.save.data.openline.completed, focus: pose, showLine: racing && this.assists().showLine && !this.autopilot, time: this.time, fxTime: simT,
       speed: racing ? clamp((u - 40) / 50, 0, 1) : 0, showroom: !racing, motion, startLights: this.startLightsLit(),
       fxOpts: { streakK: racing && motion ? clamp((u - 30) / 40, 0, 1) : 0, speed: u, fwd: [Math.sin(pose.yaw), Math.cos(pose.yaw)], trailCols } });
     if(this.capturePhoto){this.capturePhoto=false;R.canvas.toBlob(blob=>{if(!blob){this.toast('Photo could not be saved.');return;}const target=downloadBlob(blob,'VelocityVerse-'+Date.now()+'.png');this.toast(target==='native'?'Saving photo…':'Photo saved.');},'image/png');}
@@ -357,7 +403,7 @@ class Game {
     this.navigation.onScreen(id, previous);
     this.lobby?.sync();
     window.NativeBridge?.setKeepScreenOn?.(this.mode === 'race' && !this.paused);
-    document.body.classList.toggle('app-art', this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard','story','universe'].includes(id));
+    document.body.classList.toggle('app-art', this.mode === 'menu' && ['lab','explorer','records','team','academy','event','onboard','story','universe','career'].includes(id));
     const inRace = this.mode === 'race' && !this.paused;
     $('hud').hidden = this.mode !== 'race';
     $('touch').hidden = !(this.mode === 'race' && isTouch && this.S.layout !== 'keyboard') || this.paused;
@@ -375,6 +421,7 @@ class Game {
     if (id === 'customize') this.renderCustomize();
     this.app.render(id); this.hub.render(id);
     this.campaign.render(id);
+    this.storyCareer.render(id);
     $('academy-hud').hidden = !(this.school && this.mode === 'race' && !this.paused);
     if (this.school && this.mode === 'race' && !this.paused) $('hud-coach').classList.remove('on');
     const first = document.querySelector('.screen.active .btn.primary, .screen.active button');
@@ -445,7 +492,8 @@ class Game {
     $('dialog-ok').addEventListener('click', () => { $('dialog').hidden = true; this.save.reset(); this.S = this.save.data.settings; this.input.bindings = { ...DEFAULT_KEYS }; this.applySettings(); this.renderSettings(); this.toast('Saved data cleared.'); });
   }
   navTo(where) {
-    if (this.mode === 'race' && ['hub','story','universe','garage','event','team','academy','lab','explorer','records'].includes(where)) {
+    if (this.mode === 'race' && ['hub','story','universe','garage','event','team','academy','lab','explorer','records','career','workshop'].includes(where)) {
+      this.storyCareer.abort();this.careerMission=null;
       this.campaign.leaveDrive(); this.input.reset(); this.mode='menu'; this.paused=false; this.school=null;
       this.clearRivals(); this.audio.mute(true); this.acc=0; this.cam.snap();
     }
@@ -461,11 +509,12 @@ class Game {
   }
 
   renderGarage() {
-    const c = CAR_VX1;
+    const c = this.veh.car;
+    const power=Math.max(...c.engine.curve.map(([rpm,torque])=>rpm*torque*Math.PI/30*c.gearbox.efficiency/1000));
     const rows = [
-      ['Power (peak, at the wheels)', '≈ 398 kW', 'F'], ['Mass with driver', `${c.mass} kg`, 'F'], ['Weight distribution', `${Math.round(c.frontWeight * 100)} / ${Math.round((1 - c.frontWeight) * 100)}`, 'F'],
-      ['Top speed (sim test)', '305 km/h', 'M'], ['0–100 km/h (sim test)', '3.2 s', 'M'], ['Downforce at 200 km/h', `${Math.round(0.5 * 1.225 * c.aero.clA * (200 / 3.6) ** 2)} N`, 'E'],
-      ['Tire peak friction', `μ ${c.tire.mu}`, 'E'], ['Gearbox', '8-speed sequential, RWD, limited-slip diff', 'T'],
+      ['Power (peak, at the wheels)', `≈ ${Math.round(power)} kW`, 'F'], ['Mass with driver', `${c.mass} kg`, 'F'], ['Weight distribution', `${Math.round(c.frontWeight * 100)} / ${Math.round((1 - c.frontWeight) * 100)}`, 'F'],
+      ['Wheelbase', `${c.wheelbase.toFixed(2)} m`, 'F'], ['Ride',c.name,'F'], ['Downforce at 200 km/h', `${Math.round(0.5 * 1.225 * c.aero.clA * (200 / 3.6) ** 2)} N`, 'E'],
+      ['Tire peak friction', `μ ${c.tire.mu.toFixed(3)}`, 'E'], ['Gearbox', `${c.gearbox.ratios.length}-speed sequential, RWD, limited-slip diff`, 'T'],
     ];
     $('car-specs').innerHTML = rows.map(([k, v, p]) => `<div><dt>${k}</dt><dd>${v} <abbr class="prov" title="${PROVENANCE_LABEL[p] || 'measured in sim'}">${PROVENANCE_LABEL[p] || 'measured in sim'}</abbr></dd></div>`).join('');
     const career=this.save.data.career;
@@ -481,8 +530,16 @@ class Game {
     });
   }
 
-  pbFor(cls) { return this.save.data.pbs[`${this.track.def.id}|${cls}`]; }
+  pbKey(cls) {
+    const car=this.veh.car;
+    const build=car.careerBuild?.signature||car.buildSignature||car.careerBuildSignature||'';
+    return `${this.track.def.id}|${cls}`+(this.baseRideId!=='vx1'||build?`|${this.baseRideId}|${build}`:'');
+  }
+  pbFor(cls) { return this.save.data.pbs[this.pbKey(cls)]; }
   renderEvent() {
+    const banner=document.querySelector('.circuit-banner');banner.querySelector('h3').textContent=this.track.def.name;
+    banner.querySelector('p').textContent=`${(this.track.length/1000).toFixed(2)} km · ${this.track.def.segments.filter(s=>s[0]!=='S').length} corners · Lumen Harbor`;
+    banner.querySelector('small').textContent=getCircuit(this.currentCircuitId).description;
     const cls = assistClass(this.assists());
     const pb = this.pbFor(cls);
     $('ev-tt-meta').textContent = pb ? `Your best (${cls}): ${fmtTime(pb.time)} · ghost ready` : `No ${cls} lap yet. Your first valid lap becomes your ghost.`;
@@ -492,7 +549,7 @@ class Game {
 
   renderPrep() {
     const a = this.assists(), race = this.pendingMode === 'race';
-    $('prep-event').textContent = this.pendingMode === 'practice' ? 'Practice · Harbor Loop' : race ? `Race · ${this.S.raceLaps || 3} laps vs AI` : 'Time trial · out-lap + 3 timed laps';
+    $('prep-event').textContent = (this.pendingMode === 'practice' ? 'Practice · ' : race ? `Race · ${this.S.raceLaps || 3} laps vs AI · ` : 'Time trial · ')+this.track.def.name;
     $('race-opts').hidden = !race;
     const segBuild = (el, opts, cur, set) => { el.innerHTML = ''; opts.forEach(([v, l]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'segbtn'; b.textContent = l; b.setAttribute('aria-pressed', String(cur === v)); b.addEventListener('click', () => { set(v); this.save.save(); this.renderPrep(); }); el.appendChild(b); }); };
     if (race) {
@@ -601,24 +658,29 @@ class Game {
 
   startRace(mode) {
     if (!this.renderer) return;
+    if(this.storyCareer?.active&&!this.storyCareer.launching){this.storyCareer.abort();this.careerMission=null;}
     this.audio.unlock(); this.audio.mute(false);
     this.school=null; this.pendingLessonResult=null;
     this.sessionId=`${Date.now()}-${Math.random().toString(36).slice(2)}`;
     this.lastMode = mode;
-    const a = this.assists(), cls = assistClass(a), laps = mode === 'race' ? Number(this.S.raceLaps || 3) : 3;
+    const career=this.storyCareer?.launching?this.careerMission:null;
+    const a = this.assists(), cls = assistClass(a), laps = career?.laps || (mode === 'race' ? Number(this.S.raceLaps || 3) : 3);
+    const fieldSize=career?Math.max(2,Math.min(8,career.fieldSize||8)):8;
+    const playerGrid=Math.min(PLAYER_GRID,fieldSize-1);
     this.clearRivals();
     this.race = new RaceSession(this.track, mode, { laps });
     const lineS = this.track.def.lineS, grid = (k) => [lineS - 20 - k * 8, k % 2 ? 2.2 : -2.2];
     if (mode === 'race') {
-      const [s, off] = grid(PLAYER_GRID); this.veh.reset(s, off);
+      const [s, off] = grid(playerGrid); this.veh.reset(s, off);
       this.field = new RaceField(this.track, laps);
-      this.field.add(this.veh, { id: 'player', code: 'YOU', name: 'You', team: 'VX-1 · ' + this.livery().name, color: this.livery().secondary, player: true });
-      const base = AI_LEVELS[this.S.aiLevel || 'medium'];
+      this.field.add(this.veh, { id: 'player', code: 'YOU', name: 'You', team: this.veh.car.name+' · ' + this.livery().name, color: this.livery().secondary, player: true });
+      const base = Number.isFinite(career?.pace)?career.pace:AI_LEVELS[this.S.aiLevel || 'medium'];
       let slot = 0;
-      RIVALS.forEach((original, k) => {
-        const rv=this.campaign.launching && k===0 ? { ...original, code:'SOL',name:'Sola Kest',team:'Crownline',livery:{id:'sola',primary:[.92,.91,.87],secondary:[.92,.28,.1],accent:[.22,.1,.28],stripe:[.92,.28,.1]} } : original;
-        if (slot === PLAYER_GRID) slot++;
-        const veh = new Vehicle(CAR_VX1, this.world, this.track); const [gs, go] = grid(slot++); veh.reset(gs, go);
+      RIVALS.slice(0,fieldSize-1).forEach((original, k) => {
+        const rivalName=career?.rival==='neri'?'Neri Vale':career?.rival==='veska'?'Veska Thorne':'Sola Kest';
+        const rv=(this.campaign.launching||career) && k===0 ? { ...original, code:career?.rival==='neri'?'NER':'SOL',name:rivalName,team:career?.rival==='neri'?'Openline Garage':'Crownline',livery:{id:'sola',primary:[.92,.91,.87],secondary:[.92,.28,.1],accent:[.22,.1,.28],stripe:[.92,.28,.1]} } : original;
+        if (slot === playerGrid) slot++;
+        const veh = new Vehicle(this.veh.car, this.world, this.track); const [gs, go] = grid(slot++); veh.reset(gs, go);
         const r = { id: rv.code, ...rv, veh, ai: new AIDriver({ pace: base + PACE_SPREAD[k], seed: 1000 + k * 77 }), prev: snapshot(veh, {}), curr: snapshot(veh, {}) };
         r.entry = this.field.add(veh, { id: rv.code, code: rv.code, name: rv.name, team: rv.team, color: rv.livery.secondary });
         this.renderer.carModel(rv.livery);
@@ -643,7 +705,7 @@ class Game {
     $('hud-sectors').querySelectorAll('span').forEach((s, i) => { s.className = ''; s.textContent = `S${i + 1}`; });
     $('hud-flag').hidden = true; $('hud-delta').textContent = '';
     $('hud-best').textContent = mode === 'race' ? `${laps} LAPS · ${(this.S.aiLevel || 'medium').toUpperCase()}` : (this.pbTime ? `BEST ${fmtTime(this.pbTime)}` : 'NO BEST YET');
-    $('hud-mode').textContent = mode === 'practice' ? 'PRACTICE · HARBOR LOOP' : mode === 'race' ? 'GRAND PRIX · HARBOR LOOP' : 'TIME TRIAL · HARBOR LOOP';
+    $('hud-mode').textContent = (mode === 'practice' ? 'PRACTICE · ' : mode === 'race' ? 'GRAND PRIX · ' : 'TIME TRIAL · ')+this.track.def.name.toUpperCase();
     this.buildTower();
     this.show('none');
     this._goShown = mode !== 'race' && mode !== 'timetrial';
@@ -652,6 +714,7 @@ class Game {
   }
 
   onPlayerFinished() {
+    if(this.storyCareer.active)return;
     const me = this.field.entries[0];
     this.banner(me.pos === 1 ? 'P1 · WINNER' : `P${me.pos} · FINISH`, me.pos === 1 ? 'win' : 'fin', 4000);
     this.finishT = this.time;
@@ -668,6 +731,8 @@ class Game {
 
   onRaceEvent(ev) {
     this.campaign.onRaceEvent(ev);
+    this.storyCareer.onRaceEvent(ev);
+    if(this.storyCareer.active)return;
     const race = this.race;
     if (ev.type === 'start') { if (!this.isRace()) this.coach('Timing started.', 2, 'start'); return; }
     if (ev.type === 'invalid') { const f = $('hud-flag'); f.hidden = false; f.textContent = `✕ Lap invalid: ${ev.reason}`; this.coach(ev.reason === 'track limits' ? 'Keep at least one wheel on the asphalt or curb.' : 'This lap will not count.', 3, 'inv-' + ev.reason); return; }
@@ -680,7 +745,7 @@ class Game {
         if (race.targetLaps - race.laps.length === 1) this.banner('FINAL LAP', 'final', 1800);
         this.toast(`Lap ${lap.n}: ${fmtTime(lap.time)}${lap.valid ? '' : ' — invalid (' + lap.reason + ')'}`);
       } else if (lap.valid) {
-        const key = `${this.track.def.id}|${lap.assist}`;
+        const key = this.pbKey(lap.assist);
         const pb = this.save.data.pbs[key];
         if (!pb || lap.time < pb.time) {
           const delta = pb ? lap.time - pb.time : null;
@@ -702,6 +767,7 @@ class Game {
   }
 
   recover() {
+    this.storyCareer.onReset?.();
     this.campaign.invalidate('Car reset. Start another clean lap for homologation.');
     const p = this.track.project(this.veh.x, this.veh.z, -1, {});
     this.veh.reset(p.s - 2, 0);
@@ -722,6 +788,7 @@ class Game {
   resume() { this.input.buildTouch(this.S.layout === 'keyboard' ? 'buttons' : this.S.layout, this.assists().autoThrottle, !this.assists().autoGears); this.paused = false; this.last = performance.now(); this.acc = 0; this.audio.mute(false); this.show('none'); }
 
   finishSession() {
+    if(this.storyCareer.onSessionEnd())return;
     if (this.campaign.active) { this.campaign.returnToStory(); return; }
     const race = this.race; if (!race) return;
     this.mode = 'menu'; this.paused = false; this.finishT = null;
@@ -865,7 +932,7 @@ class Game {
       });
     } else {
       const lapN = race.laps.length + 1;
-      $('hud-lap').textContent = race.lapStart === null ? 'OUT LAP' : race.mode === 'timetrial' ? `LAP ${Math.min(lapN, 3)}/3` : `LAP ${lapN}`;
+      $('hud-lap').textContent = this.storyCareer.active ? (this.storyCareer.activeMission?.laps?`LAP ${Math.min(lapN,this.storyCareer.activeMission.laps)}/${this.storyCareer.activeMission.laps}`:'ROUTE CHALLENGE') : race.lapStart === null ? 'OUT LAP' : race.mode === 'timetrial' ? `LAP ${Math.min(lapN, 3)}/3` : `LAP ${lapN}`;
     }
     const t = race.currentLapTime(veh.time);
     if (racing) { const me = this.field.entries[0], rt = me.finished ? me.finishTime - this.countTotal : Math.max(0, veh.time - this.countTotal); $('hud-time').textContent = rt > 0 ? fmtTime(rt) : '0:00.000'; }
@@ -935,9 +1002,9 @@ class Game {
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
-  if (!$('scr-story')) {
+  for(const [screen,file] of [['scr-story','openline.html'],['scr-career','career.html']])if (!$(screen)) {
     try {
-      const response=await fetch('./openline.html');
+      const response=await fetch('./'+file);
       if(!response.ok)throw new Error('Chapter interface could not load.');
       document.body.insertAdjacentHTML('beforeend',await response.text());
     } catch(e) { $('title-error').textContent=e.message; $('title-error').hidden=false; return; }

@@ -5,7 +5,7 @@
       "pass": true
     },
     {
-      "name": "Universe offers eighteen people and ten cities with only Harbor playable",
+      "name": "Universe offers eighteen people and ten cities with three built circuits playable",
       "pass": true
     },
     {
@@ -281,16 +281,16 @@
     "exhibition": {
       "phase": "complete",
       "active": false,
-      "vehicleTime": 141.85000000003532,
+      "vehicleTime": 141.54166666670227,
       "laps": [
         {
           "valid": true,
-          "time": 66.38381181997693,
+          "time": 66.38381181997667,
           "reason": ""
         },
         {
           "valid": true,
-          "time": 65.5492205439974,
+          "time": 65.54922054399792,
           "reason": ""
         }
       ],
@@ -308,7 +308,7 @@
       }
     }
   },
-  "artifactSHA256": "984a1a9c5670daf21661cf2326dd1d6e246532dd21c10c456a24127cfe348243",
+  "artifactSHA256": "99b44a2014ef3223df26edd5e248767c86b3d9108aad6c510e36e4a43929c22e",
   "passed": 11,
   "total": 11
 }

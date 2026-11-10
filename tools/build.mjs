@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const ORDER = ['sim/units', 'sim/data', 'sim/track', 'sim/vehicle', 'sim/assists', 'sim/race', 'sim/traffic', 'sim/ai', 'sim/academy', 'sim/lab', 'game/gfx', 'game/world', 'game/carmodel', 'game/fx', 'game/assets', 'game/renderer', 'game/camera', 'game/input', 'game/audio', 'game/career', 'game/openline-data', 'game/openline-state', 'game/save', 'game/telemetry', 'game/platform', 'game/app', 'game/hub', 'game/lobby', 'game/navigation', 'game/openline', 'game/main'];
+const ORDER = ['sim/units', 'sim/data', 'sim/rides', 'sim/circuits', 'sim/track', 'sim/vehicle', 'sim/assists', 'sim/race', 'sim/traffic', 'sim/ai', 'sim/academy', 'sim/lab', 'game/gfx', 'game/world', 'game/carmodel', 'game/fx', 'game/assets', 'game/renderer', 'game/camera', 'game/input', 'game/audio', 'game/career', 'game/openline-data', 'game/openline-state', 'game/career-mode', 'game/save', 'game/telemetry', 'game/platform', 'game/app', 'game/hub', 'game/lobby', 'game/navigation', 'game/openline', 'game/story-career', 'game/main'];
 const id = (p) => '__m_' + p.replace(/[^a-z0-9]/gi, '_');
 let bundle = '';
 for (const mod of ORDER) {
@@ -24,7 +24,8 @@ const html = fs.readFileSync(path.join(ROOT, 'web', 'index.html'), 'utf8');
 const stamp = JSON.parse(fs.readFileSync(path.join(ROOT,'package.json'),'utf8')).version;
 let out = html
   .replace('<!--OPENLINE-->',fs.readFileSync(path.join(ROOT,'web','openline.html'),'utf8'))
-  .replace(/<link rel="stylesheet" href="\.\/(app|neon-panels|openline)\.css">/g,(_,name)=>'<style>\n'+fs.readFileSync(path.join(ROOT,'web',name+'.css'),'utf8')+'\n</style>')
+  .replace('<!--CAREER-->',fs.readFileSync(path.join(ROOT,'web','career.html'),'utf8'))
+  .replace(/<link rel="stylesheet" href="\.\/(app|neon-panels|openline|career)\.css">/g,(_,name)=>'<style>\n'+fs.readFileSync(path.join(ROOT,'web',name+'.css'),'utf8')+'\n</style>')
   .replace(/<script type="module" src="[^"]+"><\/script>\n?/, '')
   .replace('<!--APP-->', `<script>\n"use strict";\n// VELOCITYVERSE Milestone 0 bundle, built ${stamp}. Source: src/ (see README).\n${bundle}\n</script>`);
 // Embed the exact source assets so the distributable works offline as a single file.

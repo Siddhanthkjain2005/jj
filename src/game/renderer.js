@@ -453,7 +453,7 @@ export class Renderer {
     this.buildMs = performance.now() - t0;
     this.models = new Map();
     this.quadVao = gl.createVertexArray(); gl.bindVertexArray(this.quadVao);
-    const qb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, qb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const qb = this.quadBuffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, qb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
     gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0); gl.bindVertexArray(null);
     this.fxAdd = dynamicMesh(gl, 30000); this.fxAlpha = dynamicMesh(gl, 14000);
     this.fxSys = new FX();
@@ -473,12 +473,62 @@ export class Renderer {
     this.probe = null; this.probeFace = 0; this.probeFrame = 0; this.probePos = [1e9, 0, 0];
   }
 
+  // Track/ride changes rebuild this reference renderer. Release all owned GL
+  // objects without losing the shared canvas context; late image loads are ignored.
+  dispose() {
+    if(this.disposed)return;
+    this.disposed=true;
+    const gl=this.gl;
+    this._freeTargets();this._freeProbe();this._freeShadow();
+    const release=mesh=>{if(!mesh)return;if(mesh.vb)gl.deleteBuffer(mesh.vb);if(mesh.ib)gl.deleteBuffer(mesh.ib);if(mesh.vao)gl.deleteVertexArray(mesh.vao);};
+    for(const id of [...this.models.keys()])this.invalidateModel(id);
+    for(const mesh of [this.worldMesh,this.waterMesh,this.fenceMesh,this.lineMesh,this.shadow,this.ringA,this.ringB,this.fxAdd,this.fxAlpha])release(mesh);
+    if(this.lobbyStage)Object.values(this.lobbyStage).forEach(release);
+    if(this.careerGates)Object.values(this.careerGates).forEach(release);
+    gl.deleteBuffer(this.quadBuffer);gl.deleteVertexArray(this.quadVao);
+    for(const texture of [this.signTex,this.roadTex,this.black2D,this.blackCube])if(texture)gl.deleteTexture(texture);
+    for(const program of [this.depthP,this.main,this.fx,this.sky,this.pre,this.down,this.up,this.streakP,this.comp,this.lobbyBg]){
+      if(!program?.p)continue;
+      for(const shader of gl.getAttachedShaders(program.p)||[])gl.deleteShader(shader);
+      gl.deleteProgram(program.p);
+    }
+    this.models.clear();this.fxSys=null;this.lobbyStage=null;
+  }
+
+  _drawCareerGate(scene) {
+    const gate=scene.careerGate;
+    if(!gate || !Number.isFinite(gate.s))return;
+    if(!this.careerGates) {
+      const build=col=>{
+        const mb=new MeshBuilder(),w=this.track.halfWidth+.25;
+        // A road-width holographic portal: posts sit beyond the driving surface.
+        mb.box(-w,2.05,0,.13,4.1,.13,col,5);mb.box(w,2.05,0,.13,4.1,.13,col,5);
+        mb.box(0,4.1,0,w*2+.13,.13,.13,col,5);
+        mb.box(0,.045,0,w*2,.035,.16,col,5);
+        for(const side of [-1,1]) {
+          mb.box(side*w,.50,0,.32,.04,.32,col,5);
+          mb.box(side*w,3.5,0,.32,.04,.32,col,5);
+        }
+        // Forward chevrons remain readable on the road approaching the next gate.
+        for(const x of [-2,0,2])mb.quad([x-.5,.055,-2.4],[x,.055,-1.7],[x+.5,.055,-2.4],[x,.055,-2.1],col,5,[0,1,0]);
+        return upload(this.gl,mb);
+      };
+      this.careerGates={next:build([.10,.80,1,.54]),finish:build([1,.58,.13,.58])};
+      this.careerGatePoint={};this.careerGateModel=M4.create();
+    }
+    const p=this.track.pointAt(gate.s,0,this.careerGatePoint);
+    this._fxProg(scene.cam,0,.85,scene.motion?scene.time:0);
+    const finish=Number.isFinite(gate.next)&&Number.isFinite(gate.total)&&gate.next>=gate.total;
+    this._draw(this.fx,finish?this.careerGates.finish:this.careerGates.next,M4.fromPose(this.careerGateModel,p.x,0,p.z,p.heading,0,0));
+  }
+
   _makeRoadTexture() {
     const gl=this.gl,tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);
     gl.texImage2D(gl.TEXTURE_2D,0,gl.SRGB8_ALPHA8,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([75,75,75,255]));
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
     this.assetsReady=new Promise(resolve=>{
       const img=new Image();img.onload=()=>{
+        if(this.disposed){resolve(false);return;}
         gl.bindTexture(gl.TEXTURE_2D,tex);gl.texImage2D(gl.TEXTURE_2D,0,gl.SRGB8_ALPHA8,gl.RGBA,gl.UNSIGNED_BYTE,img);
         gl.generateMipmap(gl.TEXTURE_2D);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
         gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.REPEAT);
@@ -904,6 +954,7 @@ export class Renderer {
     for (const car of cars) if (!car.ghost) this._draw(this.fx, this.shadow, M4.fromPose(this.model, car.pose.x, 0, car.pose.z, car.pose.yaw, 0, 0));
     this._fxProg(cam, 0, 0.7, time); gl.blendFunc(gl.ONE, gl.ONE);
     this._draw(this.fx, this.fenceMesh);
+    this._drawCareerGate(scene);
     if (scene.showLine) { this._fxProg(cam, 0, 0.42, time); gl.uniform1f(this.fx.u.uNear, 14); this._draw(this.fx, this.lineMesh); gl.uniform1f(this.fx.u.uNear, 0); }
     this._fxProg(cam, 0, 1.0, time);
     for (const car of cars) if (!car.ghost) this._draw(this.fx, car.model.glow, M4.fromPose(this.model, car.pose.x, 0, car.pose.z, car.pose.yaw, 0, 0));

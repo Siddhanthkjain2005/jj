@@ -1,0 +1,66 @@
+{
+  "rides": [
+    {
+      "ride": "sprint",
+      "circuit": "beacon_short",
+      "error": 0,
+      "bodyTriangles": 2240,
+      "worldTriangles": 185126,
+      "careerGateUploaded": true,
+      "afterDispose": {
+        "error": 0,
+        "live": {
+          "Buffer": 0,
+          "VertexArray": 0,
+          "Texture": 0,
+          "Renderbuffer": 0,
+          "Framebuffer": 0,
+          "Program": 0,
+          "Shader": 0
+        }
+      }
+    },
+    {
+      "ride": "vx1",
+      "circuit": "harbor_loop",
+      "error": 0,
+      "bodyTriangles": 9452,
+      "worldTriangles": 304384,
+      "careerGateUploaded": true,
+      "afterDispose": {
+        "error": 0,
+        "live": {
+          "Buffer": 0,
+          "VertexArray": 0,
+          "Texture": 0,
+          "Renderbuffer": 0,
+          "Framebuffer": 0,
+          "Program": 0,
+          "Shader": 0
+        }
+      }
+    },
+    {
+      "ride": "vanta_gt",
+      "circuit": "breakwater",
+      "error": 0,
+      "bodyTriangles": 1816,
+      "worldTriangles": 265378,
+      "careerGateUploaded": true,
+      "afterDispose": {
+        "error": 0,
+        "live": {
+          "Buffer": 0,
+          "VertexArray": 0,
+          "Texture": 0,
+          "Renderbuffer": 0,
+          "Framebuffer": 0,
+          "Program": 0,
+          "Shader": 0
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "pass": true
+}
