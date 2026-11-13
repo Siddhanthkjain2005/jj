@@ -18,7 +18,7 @@ export function defaultSave() {
     assists: { ...ASSIST_PRESETS.rookie },
     settings: {
       layout: touch ? 'buttons' : 'keyboard', steerSpeedRef: 25, haptics: true, camera: 'chase', fov: 62, shake: 0.6,
-      motion: true, reducedMotion: reduced, renderScale: 'auto', graphics: 'auto', units: 'kmh', textScale: 1, showTelemetry: false, showPerf: false,
+      motion: true, reducedMotion: reduced, renderScale: 'auto', graphics: 'auto', weather: 'rain', units: 'kmh', textScale: 1, showTelemetry: false, showPerf: false,
       volMaster: 0.8, volEngine: 0.8, volFx: 0.8, keys: { ...DEFAULT_KEYS },
     },
     pbs: {}, history: [], career: defaultCareer(), openline: defaultOpenline(), storyCareer: defaultStoryCareer(), customLivery: { primary: '#c9d1d5', secondary: '#167c97', accent: '#d1a05b' },

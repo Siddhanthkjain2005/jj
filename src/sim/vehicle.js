@@ -133,7 +133,10 @@ export class Vehicle {
       if (ctl.gearRequest === 'R' && this.gear !== -1 && Math.abs(u) < 1.0) { this.gear = -1; this.shiftTimer = gb.shiftTime; }
       else if (ctl.gearRequest === 'D' && this.gear <= 0 && u > -1.0) { this.gear = 1; this.shiftTimer = gb.shiftTime; }
       else if (this.gear >= 1 && this.shiftTimer <= 0) {
-        if (rpmLocked > gb.autoUpRpm && this.gear < gb.ratios.length) shift(1);
+        // Wheelspin alone must not trigger an upshift: the road speed has to be near the shift point too.
+        // (Without this a powerful car hunts 2-3-2 out of slow corners and loses all drive.)
+        const rpmRoad = Math.abs(u) / c.wheelRadius * Math.abs(ratio) * RADS_TO_RPM;
+        if (rpmLocked > gb.autoUpRpm && rpmRoad > gb.autoUpRpm * 0.85 && this.gear < gb.ratios.length) shift(1);
         else if (this.gear > 1) {
           const rpmDown = rpmLocked * gb.ratios[this.gear - 2] / gb.ratios[this.gear - 1];
           if (rpmLocked < gb.autoDownRpm && rpmDown < gb.autoUpRpm - 500) shift(-1);

@@ -1,12 +1,12 @@
 {
   "summary": {
-    "date": "2026-11-10T06:11:51.556Z",
-    "node": "v18.20.8",
+    "date": "2026-11-13T04:58:47.748Z",
+    "node": "v22.23.2",
     "platform": "darwin arm64",
     "dt": 0.008333333333333333,
     "passed": 34,
     "total": 34,
-    "seconds": 17.244,
+    "seconds": 6.17,
     "goldenRows": 161
   },
   "results": [
@@ -207,10 +207,10 @@
       "detects": "Speed-profile, braking or stability problems over a full lap"
     },
     {
-      "name": "CPU cost per step (darwin/arm64, Node v18.20.8 — not a phone measurement)",
+      "name": "CPU cost per step (darwin/arm64, Node v22.23.2 — not a phone measurement)",
       "pass": true,
       "expected": "< 50 µs per car-step here; device budget is 1.5 ms per frame for 8 cars at 120 Hz (measure in M1)",
-      "measured": "full stack 9.14 µs/step (vehicle only 21.62 µs) → 0.146 ms per 60 FPS frame for 8 cars",
+      "measured": "full stack 6.60 µs/step (vehicle only 7.55 µs) → 0.106 ms per 60 FPS frame for 8 cars",
       "detects": "Simulation too expensive for the frame budget"
     },
     {
@@ -238,7 +238,7 @@
       "name": "AI field: 8 AI cars race 2 laps from a standing grid start (Harbor Loop, medium pace)",
       "pass": true,
       "expected": "all 8 finish; no NaN; field spread < 30 s; ≤ 1 race-control reset; ≤ 2 car impacts above 6 m/s (reference lap 47.12 s)",
-      "measured": "finished 8/8; winner 108.53 s, last 117.90 s; best lap 51.69 s; car-contact steps 1859 (impacts > 6 m/s: 0, hardest 4.7 m/s); barrier impacts 0; resets 0; order 0-1-2-3-4-5-6-7; 2.23 s CPU for 117.9 s simulated",
+      "measured": "finished 8/8; winner 108.53 s, last 117.84 s; best lap 51.69 s; car-contact steps 2087 (impacts > 6 m/s: 0, hardest 4.7 m/s); barrier impacts 0; resets 0; order 0-1-2-3-4-5-6-7; 0.92 s CPU for 117.8 s simulated",
       "detects": "AI that cannot complete laps, piles up, or destabilises the field"
     },
     {
@@ -449,9 +449,9 @@
       }
     },
     "perf": {
-      "usFull": 9.14114583335403,
-      "usVeh": 21.61972506941917,
-      "perFrame8": 0.14625833333366448
+      "usFull": 6.598342013888865,
+      "usVeh": 7.552968750000022,
+      "perFrame8": 0.10557347222222184
     },
     "carContacts": {
       "dP": 1.6997532612877547e-18,
@@ -478,7 +478,7 @@
     "aiField": {
       "r1": {
         "hard": 0,
-        "maxHit": 4.688674405695428,
+        "maxHit": 4.743335066760425,
         "finished": 8,
         "order": [
           0,
@@ -491,23 +491,23 @@
           7
         ],
         "times": [
-          108.52582953293914,
-          110.24283838949134,
-          111.82208605349885,
-          113.296536225492,
-          114.59682844556005,
-          115.87348918505147,
-          117.15653696312707,
-          117.90484080819292
+          108.53121148449829,
+          110.25050864998636,
+          111.86121559200474,
+          113.13562772213774,
+          114.40040469183745,
+          115.48102492125592,
+          116.55724828599571,
+          117.83993368743273
         ],
-        "best": 51.68949636235665,
-        "contacts": 1859,
+        "best": 51.6914332644177,
+        "contacts": 2087,
         "resets": 0,
         "barrier": 0,
         "nan": 0,
-        "simTime": 117.90833333337324
+        "simTime": 117.84166666670652
       },
-      "ms": 2228.197708000429,
+      "ms": 921.2555840000005,
       "deterministic": true
     }
   }

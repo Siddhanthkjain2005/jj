@@ -6,7 +6,7 @@ import { Track } from '../src/sim/track.js';
 import { Vehicle } from '../src/sim/vehicle.js';
 
 let state=defaultStoryCareer();
-assert.equal(MISSIONS.length,8);assert.equal(new Set(MISSIONS.map(m=>m.trackId)).size,3);assert.equal(new Set(MISSIONS.map(m=>m.type)).size,6);
+assert.equal(MISSIONS.length,12);assert.equal(new Set(MISSIONS.map(m=>m.trackId)).size,3);assert.equal(new Set(MISSIONS.map(m=>m.type)).size,6);
 assert.deepEqual(state.ownedRides,['sprint']);assert.equal(state.credits,200);assert.ok(missionUnlocked(state,MISSIONS[0].id));assert.ok(!missionUnlocked(state,MISSIONS[1].id));
 const initial=JSON.stringify(state);
 assert.ok(!applyCareerAction(state,'select',{missionId:MISSIONS[7].id}).accepted);
@@ -32,7 +32,7 @@ for(const m of MISSIONS.slice(1)){
  if(m.type==='duel'||m.type==='race'){const r=applyCareerAction(state,'result',proof(m,{position:m.requiredPosition+1,attemptId:'miss-podium-'+m.id}));assert.ok(r.accepted&&!r.success);}
  result=applyCareerAction(state,'result',proof(m));assert.ok(result.accepted&&result.success,m.id+' '+result.reason);assert.ok(Number.isFinite(result.earned));state=result.state;
 }
-assert.equal(Object.values(state.records).filter(r=>r.completed).length,8);assert.deepEqual(state.ownedRides,['sprint','vx1','vanta_gt']);assert.ok(rideUnlocked(state,'vanta_gt'));assert.ok(state.records['crownline-final'].stars===3);
+assert.equal(Object.values(state.records).filter(r=>r.completed).length,12);assert.deepEqual(state.ownedRides,['sprint','vx1','vanta_gt']);assert.ok(rideUnlocked(state,'vanta_gt'));assert.ok(state.records['crownline-final'].stars===3);
 assert.deepEqual(normalizeStoryCareer(JSON.parse(JSON.stringify(state))),state,'complete save round trip');
 const original=getRide('vx1').car,copy=JSON.stringify(original);
 const base=buildCareerCar(original,{...state,parts:{grip:0,aero:0,gearing:0},crew:'mentor',setup:'balanced'});

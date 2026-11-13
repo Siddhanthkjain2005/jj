@@ -10,10 +10,10 @@ import { FX } from './fx.js';
 import { ASPHALT_URL } from './assets.js';
 
 export const QUALITY = {
-  low: { shadow: 0, bloom: 0, refl: false, msaa: 0, radial: false, lines: false, streak: false, probe: 'static', probeSize: 64, smoke: false },
-  medium: { shadow: 1024, bloom: 4, refl: false, msaa: 0, radial: false, lines: true, streak: false, probe: 'slow', probeSize: 96, smoke: true },
-  high: { shadow: 1536, bloom: 5, refl: false, msaa: 4, radial: false, lines: true, streak: true, probe: 'live', probeSize: 128, smoke: true },
-  ultra: { shadow: 2048, bloom: 5, refl: true, msaa: 4, radial: true, lines: true, streak: true, probe: 'live', probeSize: 128, smoke: true },
+  low: { shadow: 0, bloom: 0, refl: false, msaa: 0, radial: false, lines: false, streak: false, probe: 'static', probeSize: 64, smoke: false, rain: 0 },
+  medium: { shadow: 1024, bloom: 4, refl: false, msaa: 0, radial: false, lines: true, streak: false, probe: 'slow', probeSize: 96, smoke: true, rain: 1400 },
+  high: { shadow: 1536, bloom: 5, refl: false, msaa: 4, radial: false, lines: true, streak: true, probe: 'live', probeSize: 128, smoke: true, rain: 2600 },
+  ultra: { shadow: 2048, bloom: 5, refl: true, msaa: 4, radial: true, lines: true, streak: true, probe: 'live', probeSize: 128, smoke: true, rain: 3400 },
 };
 
 const VS = `#version 300 es
@@ -25,6 +25,88 @@ void main(){ vec4 w = uModel * vec4(aPos,1.0); vW = w.xyz; vO = aPos; vN = mat3(
 const NOISE = `
 float h2(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
 float vn(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(h2(i),h2(i+vec2(1,0)),f.x), mix(h2(i+vec2(0,1)),h2(i+vec2(1,1)),f.x), f.y); }`;
+
+// Raindrops landing on standing water: expanding rings returned as a normal offset in xz.
+const RAIN_GLSL = `
+vec2 rainRipple(vec2 p, float t){
+  vec2 acc = vec2(0.0);
+  for (int k = 0; k < 2; k++) {
+    float fk = float(k), sc = k == 0 ? 4.6 : 7.3;
+    vec2 q = p * sc + fk * 17.3, i = floor(q), f = fract(q) - 0.5;
+    float r = h2(i + fk * 3.1), ph = fract(t * (1.1 + 0.7 * r) + r * 7.0);
+    vec2 c = (vec2(h2(i + 1.7), h2(i + 9.2)) - 0.5) * 0.36, d = f - c;
+    float dist = length(d), x = (dist - ph * 0.34) * 26.0;
+    float w = exp(-x * x) * (1.0 - ph) * (1.0 - ph) * (1.0 - smoothstep(0.36, 0.5, max(abs(f.x), abs(f.y))));
+    acc += d / max(dist, 1e-3) * (-2.0 * x) * w * 0.12;
+  }
+  return acc;
+}`;
+
+// Lumen Harbor at night as seen across the water: sky glow, two skyline layers with lit windows and
+// neon signs, out-of-focus street lights and moving traffic. A function of view direction (azimuth,
+// elevation), so the showroom camera can orbit through it. Below the horizon it becomes the wet-ground mirror.
+const CITY_GLSL = `
+float ch1(float x){ return fract(sin(x * 127.1) * 43758.5453); }
+float ch2(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float cn1(float x){ float i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f); return mix(ch1(i), ch1(i + 1.0), f); }
+float cn2(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(ch2(i), ch2(i + vec2(1, 0)), f.x), mix(ch2(i + vec2(0, 1)), ch2(i + vec2(1, 1)), f.x), f.y); }
+float skyline(float a, float seed, float base, float amp, float w){
+  float x = a * w + seed, blk = floor(x), f = fract(x);
+  float h = base + amp * pow(ch1(blk + seed * 3.0), 1.5);
+  float spire = step(0.87, ch1(blk * 1.7 + seed)) * amp * 0.8 * (1.0 - smoothstep(0.06, 0.16, abs(f - 0.5)));
+  return mix(base * 0.35, h + spire, step(0.07, f) * step(f, 0.95));
+}
+vec3 bokehLayer(vec2 p, float cell, float seed, float rmax, float t, float density){
+  vec2 q = p / cell + seed, i = floor(q), f = fract(q);
+  float r = ch2(i + seed);
+  if (r > density) return vec3(0.0);
+  vec2 c = vec2(0.32) + 0.36 * vec2(ch2(i + 3.7), ch2(i + 9.1));
+  float rad = rmax * (0.45 + 0.55 * ch2(i + 5.3)), d = length(f - c) / rad;
+  float disc = (1.0 - smoothstep(0.8, 1.0, d)) * (0.7 + 0.4 * smoothstep(0.5, 0.95, d));
+  float pick = ch2(i + 1.9);
+  vec3 col = pick < 0.36 ? vec3(1.0, 0.56, 0.2) : pick < 0.56 ? vec3(1.0, 0.2, 0.66) : pick < 0.74 ? vec3(0.3, 0.86, 1.0) : pick < 0.9 ? vec3(1.0, 0.93, 0.82) : vec3(1.0, 0.14, 0.1);
+  return col * disc * (0.85 + 0.15 * sin(t * (0.5 + 2.0 * r) + r * 40.0)) * (0.5 + 1.5 * ch2(i + 7.7));
+}
+vec3 cityAt(float az, float el, float t, float rain){
+  float up = max(el, 0.0), glow = exp(-up * 8.0);
+  vec3 c = mix(vec3(0.012, 0.018, 0.045), vec3(0.002, 0.004, 0.014), smoothstep(0.0, 0.55, up));
+  float hue = cn1(az * 0.9 + 5.0);
+  c += mix(vec3(0.035, 0.07, 0.15), vec3(0.13, 0.03, 0.12), smoothstep(0.35, 0.75, hue)) * glow * (0.75 + 0.25 * cn1(az * 1.3 + 2.0)) + vec3(0.24, 0.11, 0.035) * exp(-up * 26.0);
+  float cl = cn2(vec2(az * 3.0 + t * 0.012, up * 14.0)) * 0.65 + cn2(vec2(az * 9.0 - t * 0.02, up * 38.0)) * 0.35;
+  c += vec3(0.08, 0.035, 0.08) * smoothstep(0.42, 0.8, cl) * glow * (0.6 + rain);
+  for (int k = 0; k < 2; k++) {
+    float fk = float(k), b = (fract((az + 2.4 * fk + 0.3 * sin(t * 0.16 + fk * 2.0)) / 6.2832 + 0.5) - 0.5) * 6.2832 * (10.0 + 26.0 * up);
+    c += vec3(0.28, 0.48, 1.0) * exp(-b * b * 4.0) * smoothstep(0.0, 0.05, up) * (1.0 - smoothstep(0.05, 0.55, up)) * 0.09;
+  }
+  float h1 = skyline(az, 11.0, 0.03, 0.10, 7.0);
+  if (el < h1) {
+    float shade = 0.75 + 0.5 * ch1(floor(az * 7.0 + 11.0) + 0.5);
+    c = mix(c, (vec3(0.02, 0.028, 0.05) + vec3(0.03, 0.025, 0.05) * glow) * shade * (0.8 + 0.4 * smoothstep(0.0, h1, el)), 0.86);
+    vec2 w = vec2(az * 300.0, el * 230.0), wi = floor(w), wf = fract(w) - 0.5;
+    float floorLit = step(0.3, ch1(wi.y * 7.1 + floor(az * 7.0)));
+    c += mix(vec3(1.0, 0.72, 0.42), vec3(0.6, 0.85, 1.0), step(0.6, ch2(wi + 3.0))) * step(0.72, ch2(wi)) * floorLit * (1.0 - smoothstep(0.14, 0.46, length(wf * vec2(1.0, 1.4)))) * 0.3;
+  }
+  float h2v = skyline(az, 37.0, 0.018, 0.19, 3.1);
+  if (el < h2v) {
+    c = mix(c, vec3(0.008, 0.011, 0.022), 0.9);
+    vec2 w = vec2(az, el) * 150.0, wi = floor(w), wf = fract(w) - 0.5;
+    c += vec3(1.0, 0.78, 0.5) * step(0.84, ch2(wi + 17.0)) * (1.0 - smoothstep(0.1, 0.42, length(wf))) * 0.5;
+    float blk = floor(az * 3.1 + 37.0), sx = fract(az * 3.1 + 37.0), sy = el / max(h2v, 1e-3);
+    float bar = (1.0 - smoothstep(0.0, 0.05, abs(sx - 0.5 - 0.22 * (ch1(blk) - 0.5)))) * step(0.3, sy) * step(sy, 0.86);
+    vec3 neon = ch1(blk * 5.1) < 0.5 ? vec3(1.0, 0.16, 0.72) : vec3(0.22, 0.9, 1.0);
+    c += neon * step(0.6, ch1(blk * 2.3)) * bar * 2.4 * step(0.05, fract(sin(floor(t * 8.0) + blk) * 91.3));
+  }
+  if (abs(el) < 0.17) {
+    vec2 p = vec2(az, el);
+    c += bokehLayer(p, 0.075, 3.0, 0.24, t, 0.42) * smoothstep(0.17, 0.02, abs(el - 0.02));
+    c += bokehLayer(p + vec2(0.031, 0.017), 0.12, 9.0, 0.22, t, 0.3) * smoothstep(0.17, 0.0, abs(el - 0.045)) * 1.2;
+    float lane = 1.0 - smoothstep(0.003, 0.011, abs(el - 0.006));
+    float tx = az * 55.0 + t * 1.4, ti = floor(tx), tf = fract(tx);
+    c += mix(vec3(1.0, 0.95, 0.82), vec3(1.0, 0.1, 0.08), step(0.5, ch1(ti + 4.0))) * step(0.55, ch1(ti)) * (1.0 - smoothstep(0.08, 0.32, abs(tf - 0.5))) * lane * 1.5;
+  }
+  c += vec3(0.05, 0.06, 0.08) * smoothstep(0.8, 0.98, cn2(vec2(az * 420.0, el * 9.0 + t * 7.0))) * rain;
+  return c;
+}`;
 
 // Bound radiance before filtering: one invalid HDR texel otherwise contaminates
 // the probe mip chain and the whole bloom pyramid. NaN fails these comparisons.
@@ -39,12 +121,13 @@ precision highp float;
 ${SAFE_GLSL}
 in vec3 vW; in vec3 vN; in vec4 vC; in float vM; in vec2 vUV; in vec3 vO;
 uniform vec3 uCam, uMoon, uMoonCol, uSkyAmb, uGndAmb, uFog, uTint, uSunDir, uSunCol;
-uniform float uTime, uFogD, uReflOn, uPass, uTintK, uAlpha, uEnvOn, uBrake, uStart, uHW, uLane, uFlood, uLobby;
-uniform sampler2D uSign, uRoad;
+uniform float uTime, uFogD, uReflOn, uPass, uTintK, uAlpha, uEnvOn, uBrake, uStart, uHW, uLane, uFlood, uLobby, uRain, uHorizon;
+uniform sampler2D uSign, uRoad, uBg;
 uniform mat4 uShadowVP; uniform sampler2D uShadow; uniform float uShadowOn, uShadowSize;
 uniform vec2 uRes; uniform sampler2D uRefl; uniform samplerCube uEnv;
 out vec4 o;
 ${NOISE}
+${RAIN_GLSL}
 float shadowAt(vec3 pos, vec3 normal) {
   if (uShadowOn < 0.5) return 1.0;
   vec3 p = (uShadowVP * vec4(pos + normal * 0.08, 1.0)).xyz * 0.5 + 0.5;
@@ -56,11 +139,14 @@ float shadowAt(vec3 pos, vec3 normal) {
   return mix(0.25 + 0.75 * vis / 9.0, 1.0, fade);
 }
 vec3 skyEnv(vec3 d){ // analytic environment (used while the probe itself is being rendered)
-  if(uLobby>0.5){
-    vec3 e=vec3(0.022,0.031,0.065);
-    e+=vec3(1.1,1.2,1.4)*pow(max(dot(d,safeNormalize(vec3(-0.4,0.85,0.3))),0.0),22.0)*2.2;
-    e+=vec3(0.03,0.65,1.0)*pow(max(dot(d,safeNormalize(vec3(0.9,0.2,-0.4))),0.0),10.0)*1.4;
-    e+=vec3(0.75,0.035,0.65)*pow(max(dot(d,safeNormalize(vec3(-0.8,0.25,-0.6))),0.0),12.0)*1.1;
+  if(uLobby>0.5){ // showroom: overhead softboxes, neon accents and the city glow band
+    vec3 e = mix(vec3(0.014,0.018,0.04), vec3(0.003,0.005,0.014), smoothstep(0.0,0.6,d.y));
+    e += vec3(0.06,0.09,0.17) * exp(-abs(d.y)*6.0) + vec3(0.12,0.03,0.11) * exp(-abs(d.y)*9.0) * 0.6 + vec3(0.28,0.12,0.04) * exp(-abs(d.y)*24.0);
+    e += vec3(1.0,1.02,1.08) * smoothstep(0.86,0.95,d.y) * (0.55 + 0.45 * step(0.5, fract(d.x * 2.5 + 0.25))) * 2.2;
+    e += vec3(1.1,1.2,1.4)*pow(max(dot(d,safeNormalize(vec3(-0.4,0.85,0.3))),0.0),22.0)*1.5;
+    e += vec3(0.03,0.65,1.0)*pow(max(dot(d,safeNormalize(vec3(0.9,0.2,-0.4))),0.0),10.0)*1.5;
+    e += vec3(0.85,0.035,0.65)*pow(max(dot(d,safeNormalize(vec3(-0.8,0.25,-0.6))),0.0),16.0)*0.9;
+    e = mix(e, vec3(0.006,0.008,0.015), 1.0 - smoothstep(-0.2, 0.0, d.y));
     return safeHDR(e);
   }
   vec3 c = mix(vec3(0.05,0.11,0.22), vec3(0.004,0.008,0.03), smoothstep(-0.05, 0.6, d.y));
@@ -183,10 +269,12 @@ void main(){
     float lanes = (1.0 - smoothstep(0.07 - aw, 0.07 + aw, abs(abs(d) - uLane))) * dash;
     float paint = clamp(edge + lanes, 0.0, 1.0);
     float wet = smoothstep(0.38, 0.72, vn(vW.xz * 0.06 + 3.1) * 0.65 + vn(vW.xz * 0.27) * 0.35) * (1.0 - 0.6 * rub);
-    wet = max(wet, 0.22) * (1.0 - paint * 0.6);
+    wet = max(wet, 0.22);
+    wet = mix(wet, 0.8 + 0.2 * wet, uRain) * (1.0 - paint * 0.6);
+    if (uRain > 0.01 && uPass < 0.5) { vec2 rp = rainRipple(vW.xz, uTime) * uRain * wet * (1.0 - smoothstep(5.0, 18.0, length(vW - uCam))); roadN = safeNormalize(roadN + vec3(rp.x, 0.0, rp.y)); }
     vec3 light = amb * 1.2 + uMoonCol * NdL * 0.5 + vec3(uFlood) * (0.4+0.5*shadow);
     float fine = clamp(g*0.7,0.0,1.0), wear = vn(vec2(d*1.8,s*0.11));
-    vec3 asphalt = stone * vec3(0.42,0.46,0.51) * (1.0-0.24*rub);
+    vec3 asphalt = stone * vec3(0.42,0.46,0.51) * (1.0-0.24*rub) * (1.0 - 0.3 * uRain);
     float seams = (1.0-smoothstep(0.018,0.045,abs(fract(s/32.0)-0.5))) * 0.15;
     asphalt *= (1.0-seams) * (0.92+0.08*wear);
     col = mix(asphalt, vec3(0.56,0.59,0.61), paint*(0.85+0.15*fine)) * light;
@@ -198,8 +286,9 @@ void main(){
   } else if (m == 2 || m == 3) { // run-off / ground, harbour water
     float g = vn(vW.xz * 2.7) * 0.5 + vn(vW.xz * 0.33) * 0.5;
     col = base * (0.72 + 0.5 * g) * (amb * 1.2 + uMoonCol * NdL + vec3(uFlood) * (m == 2 ? 0.5 : 0.0));
-    float fres = pow(1.0 - clamp(v.y, 0.0, 1.0), m == 3 ? 3.0 : 4.0), k = m == 3 ? 0.85 : 0.1;
+    float fres = pow(1.0 - clamp(v.y, 0.0, 1.0), m == 3 ? 3.0 : 4.0), k = m == 3 ? 0.85 : 0.1 + 0.26 * uRain;
     vec3 refl = (uReflOn > 0.5 && uPass < 0.5) ? planarRefl(m == 3 ? 0.01 : 0.012, m == 3 ? 0.03 : 0.006) : envAt(reflect(-v, vec3(0.0, 1.0, 0.0)), m == 3 ? 1.0 : 4.0);
+    if (m == 2) col *= 1.0 - 0.3 * uRain;
     col += refl * k * (0.25 + 0.75 * fres);
     if (m == 3) col += vec3(0.01, 0.04, 0.09) * vn(vW.xz * 0.08 + uTime * 0.04);
   } else if (m == 19) { // floodlit paint (markings, curbs, barriers)
@@ -213,12 +302,26 @@ void main(){
   } else if (m == 23) { // foliage: broadleaf color variation, soft sky transmission
     float mottled = vn(vW.xz*4.0+vW.y*2.0);
     col = base*(0.65+0.5*mottled)*(amb*2.0+uMoonCol*(0.2+0.6*NdL)) + vec3(0.008,0.018,0.009);
-  } else if (m == 25) { // Lobby-only polished display disc; no asphalt markings or road assumptions.
-    col=surface(base,0.55,0.38,0.08,n,v)*0.30;
-    if(uReflOn>0.5 && uPass<0.5)col+=planarRefl(0.0008,0.0)*0.24;
-    float machining=length(vO.xz)*80.0;
-    float detail=1.0-smoothstep(.2,1.2,fwidth(machining));
-    col+=vec3(.0004,.0006,.0009)*cos(machining)*detail;
+  } else if (m == 25) { // showroom apron: wet concrete that mirrors the city, the car and the neon
+    vec2 fp = vO.xz;
+    float conc = vn(fp * 1.6) * 0.6 + vn(fp * 6.5) * 0.4;
+    float puddle = smoothstep(0.4, 0.62, vn(fp * 0.3 + 4.0) * 0.7 + vn(fp * 1.25) * 0.3);
+    float wet = mix(0.4, 1.0, puddle) * (0.6 + 0.4 * uRain);
+    vec3 fn = vec3(0.0, 1.0, 0.0);
+    if (uRain > 0.01 && uPass < 0.5) { vec2 rp = rainRipple(fp, uTime) * uRain * wet * 1.6 * (1.0 - smoothstep(6.0, 20.0, length(vW - uCam))); fn = safeNormalize(fn + vec3(rp.x, 0.0, rp.y)); }
+    float paintMask = (1.0 - smoothstep(0.05, 0.065, abs(abs(fp.x) - 1.68))) * (1.0 - smoothstep(3.05, 3.15, abs(fp.y)));
+    paintMask = max(paintMask, (1.0 - smoothstep(0.05, 0.065, abs(fp.y + 3.1))) * (1.0 - smoothstep(1.68, 1.74, abs(fp.x))));
+    paintMask *= smoothstep(0.2, 0.55, vn(fp * 5.0 + 2.0));
+    vec3 albedo = mix(base * (0.75 + 0.5 * conc) * (1.0 - 0.45 * wet), vec3(0.55, 0.68, 0.16), paintMask * 0.85);
+    col = albedo * (amb * 1.5 + uMoonCol * NdL * 0.35);
+    float fres = pow(1.0 - clamp(dot(fn, v), 0.0, 1.0), 3.0);
+    vec2 suv = gl_FragCoord.xy / uRes, ruv = vec2(suv.x, 2.0 * uHorizon - suv.y) + fn.xz * 0.05;
+    vec3 env = vec3(0.0); float sp = 0.012 * (1.0 - 0.6 * wet);
+    for (int i = 0; i < 4; i++) env += safeHDR(texture(uBg, ruv + vec2(0.0, float(i) * sp)).rgb);
+    env *= 0.25;
+    if (uReflOn > 0.5 && uPass < 0.5) { vec4 rc = texture(uRefl, suv + fn.xz * 0.035); env = mix(env, safeHDR(rc.rgb), clamp(rc.a, 0.0, 1.0)); }
+    col += env * (0.05 + 0.6 * wet) * (1.0 - paintMask * 0.7) * (0.35 + 0.65 * fres);
+    col = mix(col, safeHDR(texture(uBg, suv).rgb), smoothstep(16.0, 64.0, length(vW.xz - uCam.xz)));
   } else if (m == 22) { // car paint: clear-coated with fine metallic flake
     float flake = step(0.984, h2(floor(vO.xz * 700.0) + floor(vO.y * 700.0) * 3.1)) * (1.0-smoothstep(0.2,1.0,length(fwidth(vO*700.0))));
     col = surface(base, 0.3, 0.22, 0.75, n, v) + uMoonCol * flake * NdL * 0.25;
@@ -286,25 +389,72 @@ void main(){ vP = aP; vUV = aP * 0.5 + 0.5; gl_Position = vec4(aP, 0.9999, 1.0);
 const FS_LOBBY = `#version 300 es
 precision highp float;
 ${SAFE_GLSL}
-in vec2 vUV; uniform float uTime,uAspect; out vec4 o;
-float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+${CITY_GLSL}
+in vec2 vUV; uniform float uTime, uYaw, uHorizon, uFovX, uFovY, uRain; out vec4 o;
 void main(){
-  vec2 q=(vUV-vec2(0.64,0.48))*vec2(uAspect,1.0);
-  vec3 col=vec3(0.002,0.004,0.012);
-  col+=vec3(0.002,0.012,0.025)*exp(-dot(q*vec2(0.75,1.3),q*vec2(0.75,1.3))*3.0);
-  vec2 p=(vUV-vec2(0.18,0.49))*vec2(uAspect,1.0);
-  col+=vec3(0.016,0.001,0.018)*exp(-dot(p,p)*5.0);
-  col+=vec3(0.002,0.007,0.012)*exp(-abs(vUV.y-0.28)*18.0);
-  vec2 cell=floor(vUV*vec2(180.0*uAspect,110.0)),f=fract(vUV*vec2(180.0*uAspect,110.0))-.5;
-  float star=step(.9975,hash(cell))*(1.0-smoothstep(.03,.15,length(f)))*smoothstep(.32,.9,vUV.y);
-  col+=vec3(.14,.21,.28)*star*(.8+.2*sin(uTime*.12+hash(cell)*6.28));
-  o=vec4(safeHDR(col),1.0);
+  float az = uYaw + (vUV.x - 0.5) * uFovX, el = (vUV.y - uHorizon) * uFovY;
+  vec3 c;
+  if (el >= 0.0) c = cityAt(az, el, uTime, uRain);
+  else { // the same city mirrored and smeared by the wet ground beyond the apron
+    float m = -el;
+    c = (cityAt(az, m * 0.85, uTime, uRain) + cityAt(az, m * 1.4 + 0.004, uTime, uRain)) * 0.5 * (0.3 + 0.22 * uRain) + vec3(0.004, 0.006, 0.012);
+  }
+  o = vec4(safeHDR(c), 1.0);
+}`;
+
+// Falling rain (mode 0: streaks in a box that follows the camera, stretched by the relative motion)
+// and splashes (mode 1: short-lived rings on the ground ahead). Positions are generated from the vertex id.
+const VS_RAIN = `#version 300 es
+layout(location=0) in float aId;
+uniform mat4 uVP; uniform vec3 uCam, uWind, uCamVel; uniform vec2 uRes, uFwd; uniform float uTime, uSpan, uExpose, uWidth, uMode, uGround;
+out float vA; out vec2 vQ; out vec3 vTint;
+float rh(float x){ return fract(sin(x * 12.9898 + 0.137) * 43758.5453); }
+void main(){
+  float id = floor(aId / 6.0); int k = int(aId - id * 6.0 + 0.5);
+  float side = (k == 1 || k == 2 || k == 4) ? 1.0 : -1.0, end = (k == 2 || k == 4 || k == 5) ? 1.0 : 0.0;
+  float tr = rh(id + 91.0);
+  vTint = tr > 0.93 ? vec3(1.0, 0.25, 0.75) : tr > 0.86 ? vec3(0.3, 0.9, 1.0) : tr > 0.8 ? vec3(1.0, 0.7, 0.36) : vec3(0.55, 0.62, 0.78);
+  if (uMode < 0.5) {
+    float speed = 8.5 + 3.5 * rh(id + 3.3);
+    vec3 vel = vec3(uWind.x, -speed, uWind.z), box = vec3(uSpan, uSpan * 0.55, uSpan);
+    vec3 p = vec3(rh(id), rh(id + 17.31), rh(id + 41.7)) * box + vel * uTime;
+    p = uCam + (fract((p - uCam) / box + 0.5) - 0.5) * box;
+    vec3 rel = vel - uCamVel; float rl = length(rel);
+    vec3 tail = p - rel * min(uExpose, 2.6 / max(rl, 1e-3));
+    vec4 A = uVP * vec4(p, 1.0), B = uVP * vec4(tail, 1.0);
+    float d = distance(p, uCam);
+    vA = smoothstep(0.6, 2.2, d) * (1.0 - smoothstep(uSpan * 0.3, uSpan * 0.5, d)) * step(uGround, p.y) * (0.55 + 0.45 * rh(id + 7.0));
+    vQ = vec2(end, side);
+    if (A.w < 0.15 || B.w < 0.15) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vA = 0.0; return; }
+    vec2 dir = (B.xy / B.w - A.xy / A.w) * uRes;
+    vec2 nrm = dot(dir, dir) > 1e-8 ? normalize(vec2(-dir.y, dir.x)) : vec2(1.0, 0.0);
+    vec4 P = end > 0.5 ? B : A;
+    P.xy += nrm / uRes * 2.0 * uWidth * side * P.w;
+    gl_Position = P;
+  } else {
+    float cyc = uTime * (1.5 + rh(id + 5.0)) + rh(id + 2.0), life = fract(cyc), gen = floor(cyc);
+    float r1 = rh(id * 1.31 + gen * 7.17), r2 = rh(id * 2.71 + gen * 3.91);
+    float dist = 1.4 + r1 * r1 * 17.0, ang = (r2 - 0.5) * 2.3;
+    vec2 rt = vec2(uFwd.y, -uFwd.x), c2 = uCam.xz + (uFwd * cos(ang) + rt * sin(ang)) * dist;
+    float rad = 0.02 + 0.09 * life; vTint = vec3(0.62, 0.7, 0.85);
+    vec2 off = vec2(side, end * 2.0 - 1.0);
+    gl_Position = uVP * vec4(c2.x + off.x * rad, uGround + 0.012, c2.y + off.y * rad, 1.0);
+    vQ = off; vA = (1.0 - life) * (1.0 - life) * (1.0 - smoothstep(10.0, 19.0, dist));
+  }
+}`;
+const FS_RAIN = `#version 300 es
+precision highp float;
+${SAFE_GLSL}
+in float vA; in vec2 vQ; in vec3 vTint; uniform float uMode, uBright; out vec4 o;
+void main(){
+  float a = uMode < 0.5 ? (1.0 - abs(vQ.y)) * (1.0 - 0.75 * vQ.x) : smoothstep(0.5, 0.82, length(vQ)) * (1.0 - smoothstep(0.82, 1.0, length(vQ)));
+  o = vec4(safeHDR(vTint * vA * a * uBright), 1.0);
 }`;
 
 const FS_SKY = `#version 300 es
 precision highp float;
 ${SAFE_GLSL}
-in vec2 vP; in vec2 vUV; uniform mat4 uInv; uniform vec3 uCam, uSunDir, uSunCol; uniform float uTime; out vec4 o;
+in vec2 vP; in vec2 vUV; uniform mat4 uInv; uniform vec3 uCam, uSunDir, uSunCol; uniform float uTime, uStorm; out vec4 o;
 float h3(vec3 p){ return fract(sin(dot(p, vec3(127.1,311.7,74.7))) * 43758.5453); }
 float vn3(vec3 p){ vec3 i = floor(p), f = fract(p); f = f*f*(3.0-2.0*f);
   return mix(mix(mix(h3(i), h3(i+vec3(1,0,0)), f.x), mix(h3(i+vec3(0,1,0)), h3(i+vec3(1,1,0)), f.x), f.y),
@@ -350,6 +500,11 @@ void main(){
   for (int i = 0; i < 4; i++) { float fi = float(i), baz = -2.6 + fi * 1.7 + 0.3 * sin(uTime * 0.21 + fi * 2.1);
     float beam = (azm - baz) * (12.0 + 30.0 * y);
     c += vec3(0.25, 0.5, 1.0) * exp(-beam * beam) * smoothstep(-0.01, 0.06, y) * (1.0 - smoothstep(0.05, 0.8, y)) * 0.12; }
+  if (uStorm > 0.0) { // rain: a low overcast that the city lights from below
+    float ov = vn3(vec3(d.x * 3.0 + uTime * 0.01, y * 9.0, d.z * 3.0)) * 0.6 + vn3(vec3(d.x * 11.0, y * 30.0 - uTime * 0.03, d.z * 11.0)) * 0.4;
+    vec3 deck = vec3(0.03, 0.03, 0.055) + vec3(0.17, 0.05, 0.13) * exp(-max(y, 0.0) * 5.0) + vec3(0.2, 0.08, 0.03) * exp(-max(y, 0.0) * 18.0) + uSunCol * glow * 0.35;
+    c = mix(c, deck * (0.7 + 0.6 * ov), uStorm * 0.93 * smoothstep(-0.02, 0.05, y));
+  }
   c = mix(c, vec3(0.03, 0.05, 0.09), (1.0 - smoothstep(-0.06, 0.0, y)));
   o = vec4(safeHDR(c), 1.0);
 }`;
@@ -389,7 +544,7 @@ void main(){ vec3 s = vec3(0.0); float ws = 0.0;
 const FS_COMP = `#version 300 es
 precision highp float;
 ${SAFE_GLSL}
-in vec2 vUV; uniform sampler2D uScene, uBloom, uStreak; uniform float uBloomK, uStreakK, uExposure, uSpeed, uTime, uLines, uRadial, uAberr; uniform vec2 uRes; out vec4 o;
+in vec2 vUV; uniform sampler2D uScene, uBloom, uStreak, uDirt; uniform float uBloomK, uStreakK, uExposure, uSpeed, uTime, uLines, uRadial, uAberr, uDirtK, uGrain, uLook; uniform vec2 uRes; out vec4 o;
 vec3 aces(vec3 x){ x = safeHDR(x); return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0); }
 void main(){
   vec2 uv = vUV, dc = uv - 0.5; float r = length(dc);
@@ -400,7 +555,8 @@ void main(){
     for (int i = 1; i <= 6; i++) acc += safeHDR(texture(uScene, uv - dc * float(i) * 0.002 * uSpeed).rgb);
     col = mix(col, acc / 6.0, smoothstep(0.14, 0.58, r) * uSpeed * 0.35);
   }
-  col += safeHDR(texture(uBloom, uv).rgb) * uBloomK + safeHDR(texture(uStreak, uv).rgb) * uStreakK * vec3(0.55, 0.8, 1.25);
+  vec3 bl = safeHDR(texture(uBloom, uv).rgb);
+  col += bl * uBloomK * (1.0 + texture(uDirt, uv).r * uDirtK * 4.0) + bl * vec3(0.9, 0.22, 0.32) * uLook * 0.05 + safeHDR(texture(uStreak, uv).rgb) * uStreakK * vec3(0.55, 0.8, 1.25);
   if (uLines > 0.5) {
     float ang = atan(dc.y, dc.x), id = floor(ang * 54.0 / 3.14159), rnd = fract(sin(id * 91.7) * 43758.5453);
     float streak = step(0.82, rnd) * smoothstep(0.3, 0.74, r) * pow(fract(r * 1.4 - uTime * (1.4 + rnd * 2.2) + rnd), 10.0);
@@ -408,11 +564,12 @@ void main(){
   }
   col = aces(col * uExposure);
   float l = dot(col, vec3(0.2126, 0.7152, 0.0722));
-  col = mix(vec3(l), col, 1.08);
-  col *= mix(vec3(0.94, 0.98, 1.08), vec3(1.04, 1.0, 0.95), smoothstep(0.15, 0.75, l));
+  col = mix(vec3(l), col, 1.08 + 0.14 * uLook);
+  col *= mix(mix(vec3(0.94, 0.98, 1.08), vec3(0.84, 0.95, 1.18), uLook), mix(vec3(1.04, 1.0, 0.95), vec3(1.08, 0.98, 0.92), uLook), smoothstep(0.12, 0.75, l));
+  col = col * (1.0 - 0.025 * uLook) + vec3(0.004, 0.008, 0.02) * uLook;
   col *= 1.0 - smoothstep(0.45, 0.98, r) * 0.55;
   col = pow(clamp(col, 0.0, 1.0), vec3(1.0 / 2.2));
-  col += (fract(sin(dot(uv * uRes + fract(uTime) * 100.0, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * 0.003;
+  col += (fract(sin(dot(uv * uRes + fract(uTime) * 100.0, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * uGrain;
   o = vec4(col, 1.0);
 }`;
 
@@ -442,7 +599,8 @@ export class Renderer {
     this.main = compile(gl, VS, FS_MAIN); this.fx = compile(gl, VS, FS_FX); this.sky = compile(gl, VS_QUAD, FS_SKY);
     this.pre = compile(gl, VS_QUAD, FS_PRE); this.down = compile(gl, VS_QUAD, FS_DOWN); this.up = compile(gl, VS_QUAD, FS_UP);
     this.streakP = compile(gl, VS_QUAD, FS_STREAK); this.comp = compile(gl, VS_QUAD, FS_COMP);
-    this.lobbyBg = compile(gl, VS_QUAD, FS_LOBBY);
+    this.lobbyBg = compile(gl, VS_QUAD, FS_LOBBY); this.rainP = compile(gl, VS_RAIN, FS_RAIN);
+    this.rain = 0; this.rainMax = 3600; this.prevEye = null; this.prevTime = 0; this.camVel = [0, 0, 0];
     const t0 = performance.now();
     const { world, water, fence, artStats } = buildWorld(track);
     this.artStats = artStats;
@@ -455,6 +613,9 @@ export class Renderer {
     this.quadVao = gl.createVertexArray(); gl.bindVertexArray(this.quadVao);
     const qb = this.quadBuffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, qb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
     gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0); gl.bindVertexArray(null);
+    this.rainVao = gl.createVertexArray(); gl.bindVertexArray(this.rainVao);
+    this.rainBuffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, this.rainBuffer); gl.bufferData(gl.ARRAY_BUFFER, Float32Array.from({ length: this.rainMax * 6 }, (_, i) => i), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 0, 0); gl.bindVertexArray(null);
     this.fxAdd = dynamicMesh(gl, 30000); this.fxAlpha = dynamicMesh(gl, 14000);
     this.fxSys = new FX();
     this.vp = M4.create(); this.view = M4.create(); this.proj = M4.create(); this.inv = M4.create(); this.model = M4.create(); this.ident = M4.create();
@@ -468,7 +629,7 @@ export class Renderer {
     this.triangles = this.worldMesh.tris + this.waterMesh.tris + this.fenceMesh.tris;
     this.drawCalls = 0; this.targets = null; this.qName = 'high'; this.q = QUALITY.high;
     this.signTex = this._makeSign();
-    this.roadTex = this._makeRoadTexture();
+    this.roadTex = this._makeRoadTexture(); this.dirtTex = this._makeDirt();
     this.black2D = this._solidTex(gl.TEXTURE_2D); this.blackCube = this._solidTex(gl.TEXTURE_CUBE_MAP);
     this.probe = null; this.probeFace = 0; this.probeFrame = 0; this.probePos = [1e9, 0, 0];
   }
@@ -485,9 +646,9 @@ export class Renderer {
     for(const mesh of [this.worldMesh,this.waterMesh,this.fenceMesh,this.lineMesh,this.shadow,this.ringA,this.ringB,this.fxAdd,this.fxAlpha])release(mesh);
     if(this.lobbyStage)Object.values(this.lobbyStage).forEach(release);
     if(this.careerGates)Object.values(this.careerGates).forEach(release);
-    gl.deleteBuffer(this.quadBuffer);gl.deleteVertexArray(this.quadVao);
-    for(const texture of [this.signTex,this.roadTex,this.black2D,this.blackCube])if(texture)gl.deleteTexture(texture);
-    for(const program of [this.depthP,this.main,this.fx,this.sky,this.pre,this.down,this.up,this.streakP,this.comp,this.lobbyBg]){
+    gl.deleteBuffer(this.quadBuffer);gl.deleteVertexArray(this.quadVao);gl.deleteBuffer(this.rainBuffer);gl.deleteVertexArray(this.rainVao);
+    for(const texture of [this.signTex,this.roadTex,this.dirtTex,this.black2D,this.blackCube])if(texture)gl.deleteTexture(texture);
+    for(const program of [this.depthP,this.main,this.fx,this.sky,this.pre,this.down,this.up,this.streakP,this.comp,this.lobbyBg,this.rainP]){
       if(!program?.p)continue;
       for(const shader of gl.getAttachedShaders(program.p)||[])gl.deleteShader(shader);
       gl.deleteProgram(program.p);
@@ -557,6 +718,26 @@ export class Renderer {
     return tex;
   }
 
+  // Soft smudges and a few hairlines: modulates bloom like dirt on a real lens.
+  _makeDirt() {
+    const gl = this.gl, size = 256, t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+    let seed = 20261111; const r = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    try {
+      const cv = document.createElement('canvas'); cv.width = cv.height = size; const g = cv.getContext('2d');
+      g.fillStyle = '#000'; g.fillRect(0, 0, size, size);
+      for (let i = 0; i < 70; i++) {
+        const x = r() * size, y = r() * size, rad = 4 + r() * r() * 48, a = 0.05 + r() * 0.2, gr = g.createRadialGradient(x, y, 0, x, y, rad);
+        gr.addColorStop(0, `rgba(255,255,255,${a})`); gr.addColorStop(0.6, `rgba(255,255,255,${a * 0.45})`); gr.addColorStop(1, 'rgba(255,255,255,0)');
+        g.fillStyle = gr; g.beginPath(); g.arc(x, y, rad, 0, Math.PI * 2); g.fill();
+      }
+      g.strokeStyle = 'rgba(255,255,255,0.09)'; g.lineWidth = 1.1;
+      for (let i = 0; i < 9; i++) { const x = r() * size, y = r() * size; g.beginPath(); g.moveTo(x, y); g.bezierCurveTo(x + r() * 60 - 30, y + r() * 60 - 30, x + r() * 80 - 40, y + r() * 80 - 40, x + r() * 90 - 45, y + r() * 90 - 45); g.stroke(); }
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cv);
+    } catch (e) { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 255])); }
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    return t;
+  }
   _solidTex(target) {
     const gl = this.gl, t = gl.createTexture(); gl.bindTexture(target, t);
     const px = new Uint8Array([0, 0, 0, 255]);
@@ -622,7 +803,7 @@ export class Renderer {
   }
   _freeTargets() {
     const gl = this.gl; if (!this.targets) return;
-    const all = [this.targets.scene, this.targets.refl, this.targets.streak, this.targets.lobby, ...this.targets.bloom].filter(Boolean);
+    const all = [this.targets.scene, this.targets.refl, this.targets.streak, this.targets.lobby, this.targets.bg, ...this.targets.bloom].filter(Boolean);
     for (const T of all) { gl.deleteTexture(T.tex); gl.deleteFramebuffer(T.fb); if (T.depth) gl.deleteRenderbuffer(T.depth); if (T.msFb) { gl.deleteFramebuffer(T.msFb); gl.deleteRenderbuffer(T.msColor); gl.deleteRenderbuffer(T.msDepth); } }
     this.targets = null;
   }
@@ -733,7 +914,9 @@ export class Renderer {
     gl.uniformMatrix4fv(u.uVP, false, vp);
     gl.uniform3f(u.uCam, cam.eye[0], reflPass ? -cam.eye[1] : cam.eye[1], cam.eye[2]);
     gl.uniform3fv(u.uMoon, L.moon); gl.uniform3fv(u.uMoonCol, L.moonCol); gl.uniform3fv(u.uSkyAmb, L.sky); gl.uniform3fv(u.uGndAmb, L.gnd);
-    gl.uniform3fv(u.uFog, L.fog); gl.uniform1f(u.uFogD, L.fogD); gl.uniform3fv(u.uSunDir, L.sun); gl.uniform3fv(u.uSunCol, L.sunCol);
+    gl.uniform3fv(u.uFog, L.fog); gl.uniform1f(u.uFogD, L.fogD * (1 + 2.4 * this.rain)); gl.uniform3fv(u.uSunDir, L.sun); gl.uniform3fv(u.uSunCol, L.sunCol);
+    gl.uniform1f(u.uRain, this.rain); gl.uniform1f(u.uHorizon, 0.5);
+    gl.activeTexture(gl.TEXTURE5); gl.bindTexture(gl.TEXTURE_2D, this.black2D); gl.uniform1i(u.uBg, 5);
     gl.activeTexture(gl.TEXTURE4);gl.bindTexture(gl.TEXTURE_2D,this.roadTex);gl.uniform1i(u.uRoad,4);
     gl.activeTexture(gl.TEXTURE3);gl.bindTexture(gl.TEXTURE_2D,this.signTex);gl.uniform1i(u.uSign,3);
     gl.uniformMatrix4fv(u.uShadowVP,false,this.shadowVP);
@@ -761,9 +944,28 @@ export class Renderer {
     gl.disable(gl.DEPTH_TEST); gl.depthMask(false);
     gl.useProgram(this.sky.p); gl.uniformMatrix4fv(u.uInv, false, inv);
     gl.uniform3f(u.uCam, cam.eye[0], reflPass ? -cam.eye[1] : cam.eye[1], cam.eye[2]); gl.uniform1f(u.uTime, time);
-    gl.uniform3fv(u.uSunDir, L.sun); gl.uniform3fv(u.uSunCol, L.sunCol);
+    gl.uniform3fv(u.uSunDir, L.sun); gl.uniform3fv(u.uSunCol, L.sunCol); gl.uniform1f(u.uStorm, this.rain);
     gl.bindVertexArray(this.quadVao); gl.drawArrays(gl.TRIANGLES, 0, 3); this.drawCalls++;
     gl.enable(gl.DEPTH_TEST); gl.depthMask(true);
+  }
+  // Rain streaks and ground splashes, additive, depth-tested against the scene but not written.
+  _drawRain(cam, time, ground) {
+    const n = Math.min(this.q.rain | 0, this.rainMax); if (!n || this.rain <= 0) return;
+    const gl = this.gl, u = this.rainP.u, c = this.canvas;
+    gl.useProgram(this.rainP.p); gl.uniformMatrix4fv(u.uVP, false, this.vp);
+    gl.uniform3fv(u.uCam, cam.eye); gl.uniform3f(u.uWind, 1.3, 0, 0.7); gl.uniform3fv(u.uCamVel, this.camVel);
+    gl.uniform1f(u.uTime, time); gl.uniform1f(u.uSpan, 26); gl.uniform1f(u.uExpose, 0.024); gl.uniform1f(u.uWidth, 0.8 * Math.max(1, c.height / 820)); gl.uniform1f(u.uGround, ground);
+    gl.uniform2f(u.uRes, c.width, c.height);
+    const dx = cam.target[0] - cam.eye[0], dz = cam.target[2] - cam.eye[2], l = Math.hypot(dx, dz) || 1; gl.uniform2f(u.uFwd, dx / l, dz / l);
+    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE); gl.depthMask(false); gl.bindVertexArray(this.rainVao);
+    gl.uniform1f(u.uMode, 0); gl.uniform1f(u.uBright, 0.45 * this.rain); gl.drawArrays(gl.TRIANGLES, 0, n * 6); this.drawCalls++;
+    gl.uniform1f(u.uMode, 1); gl.uniform1f(u.uBright, 0.32 * this.rain); gl.drawArrays(gl.TRIANGLES, 0, Math.min(n, 480) * 6); this.drawCalls++;
+  }
+  _trackCamera(cam, time) { // camera velocity stretches the rain streaks during a race
+    const dt = time - this.prevTime;
+    if (this.prevEye && dt > 1e-3 && dt < 0.25) for (let k = 0; k < 3; k++) this.camVel[k] = this.camVel[k] * 0.6 + 0.4 * Math.max(-120, Math.min(120, (cam.eye[k] - this.prevEye[k]) / dt));
+    else this.camVel.fill(0);
+    this.prevEye = cam.eye.slice(); this.prevTime = time;
   }
   // car: { pose, model, brakes[4] (0..1 glow), ghost }
   _drawCar(prog, car, eye, lodFar) {
@@ -783,7 +985,7 @@ export class Renderer {
   _fxProg(cam, alphaMode, intensity, time) {
     const gl = this.gl, u = this.fx.u, L = this.L;
     gl.useProgram(this.fx.p); gl.uniformMatrix4fv(u.uVP, false, this.vp);
-    gl.uniform3fv(u.uCam, cam.eye); gl.uniform3fv(u.uFog, L.fog); gl.uniform1f(u.uFogD, L.fogD);
+    gl.uniform3fv(u.uCam, cam.eye); gl.uniform3fv(u.uFog, L.fog); gl.uniform1f(u.uFogD, L.fogD * (1 + 2.4 * this.rain));
     gl.uniform1f(u.uIntensity, intensity); gl.uniform1f(u.uAlphaMode, alphaMode); gl.uniform1f(u.uTime, time); gl.uniform1f(u.uNear, 0);
   }
   _pass(prog, target, src, setup) {
@@ -797,121 +999,128 @@ export class Renderer {
     gl.bindVertexArray(this.quadVao); gl.drawArrays(gl.TRIANGLES, 0, 3); this.drawCalls++;
   }
 
+  // The showroom is a wet concrete apron on the quay at night: the car on its painted bay, structural
+  // columns with neon tubes, a pit-wall barrier, a tool chest and tyres. Everything beyond is the city backdrop.
   _ensureLobbyStage() {
     if(this.lobbyStage)return;
-    const gl=this.gl,base=new MeshBuilder(),floor=new MeshBuilder(),lights=new MeshBuilder(),n=128;
-    const metal=[.075,.095,.145],cyan=[.08,.75,.94,.8],magenta=[.76,.10,.68,.65];
-    const center=floor.vert(0,-.014,0,0,1,0,[.055,.072,.11],25);
-    for(let i=0;i<=n;i++) {
-      const a=i/n*Math.PI*2;
-      floor.vert(Math.cos(a)*4.65,-.014,Math.sin(a)*4.65,0,1,0,[.055,.072,.11],25);
-      if(i)floor.i.push(center,center+i,center+i+1);
-    }
-    const horizontalRing=(r0,r1,y,col,mat=5,start=0,end=Math.PI*2) => {
-      const count=Math.ceil(n*(end-start)/(Math.PI*2));
-      for(let i=0;i<count;i++) {
-        const a=start+(end-start)*i/count,b=start+(end-start)*(i+1)/count;
-        const pt=(r,t)=>[Math.cos(t)*r,y,Math.sin(t)*r];
-        (mat===5?lights:base).quad(pt(r0,a),pt(r0,b),pt(r1,b),pt(r1,a),col,mat,[0,1,0]);
+    const gl=this.gl,base=new MeshBuilder(),floor=new MeshBuilder(),lights=new MeshBuilder(),beacon=new MeshBuilder();
+    const F=140;
+    floor.quad([-F,-.014,-F],[-F,-.014,F],[F,-.014,F],[F,-.014,-F],[.06,.064,.075],25,[0,1,0]);
+    const concrete=[.19,.2,.22],metal=[.075,.095,.145],cyan=[.08,.75,.94,.85],magenta=[.82,.1,.68,.75],lime=[.86,1,.32,.55],amber=[1,.62,.24,.7];
+    const cyl=(mb,cx,cy,cz,r,h,col,mat,seg=16)=>{ // closed vertical cylinder
+      for(let i=0;i<seg;i++){const a0=i/seg*Math.PI*2,a1=(i+1)/seg*Math.PI*2,p=(a,y)=>[cx+Math.cos(a)*r,y,cz+Math.sin(a)*r];
+        mb.quad(p(a0,cy-h/2),p(a1,cy-h/2),p(a1,cy+h/2),p(a0,cy+h/2),col,mat,[Math.cos((a0+a1)/2),0,Math.sin((a0+a1)/2)]);
+        for(const y of [cy-h/2,cy+h/2]){const c0=mb.vert(cx,y,cz,0,y>cy?1:-1,0,col,mat),v0=mb.vert(...p(a0,y),0,y>cy?1:-1,0,col,mat),v1=mb.vert(...p(a1,y),0,y>cy?1:-1,0,col,mat);mb.i.push(c0,v0,v1);}
       }
     };
-    for(let i=0;i<n;i++) {
-      const a=i/n*Math.PI*2,b=(i+1)/n*Math.PI*2;
-      const pt=(r,y,t)=>[Math.cos(t)*r,y,Math.sin(t)*r];
-      base.quad(pt(4.65,-.27,a),pt(4.65,-.27,b),pt(4.65,-.015,b),pt(4.65,-.015,a),metal,14);
-      base.quad(pt(4.85,-.34,a),pt(4.85,-.34,b),pt(4.65,-.27,b),pt(4.65,-.27,a),[.045,.06,.095],14);
+    for(const [x,z,col] of [[-7.6,-6.4,magenta],[4.4,-9.8,cyan],[-13,3.6,cyan],[9.8,-2.2,magenta],[-3.5,-15,amber]]){
+      base.box(x,3.8,z,1.05,7.6,1.05,concrete,13);
+      base.box(x,7.75,z,1.25,.3,1.25,[.12,.13,.15],13);
+      lights.box(x+.55,3.0,z+.55,.07,4.6,.07,col,5);
+      lights.box(x-.55,3.0,z+.55,.04,4.6,.04,[...col.slice(0,3),.35],5);
     }
-    horizontalRing(4.60,4.64,-.008,cyan);
-    horizontalRing(4.72,4.75,-.30,magenta);
-    horizontalRing(3.73,3.745,-.007,[.10,.25,.37,.22]);
-    // Machined inset segments rather than a flat featureless disc.
-    for(let i=0;i<24;i++) {
-      const a=i/24*Math.PI*2;
-      horizontalRing(4.27,4.43,-.006,i%4===0?[.48,.55,.70]:[.09,.14,.22],14,a,a+.04);
+    for(let k=0;k<5;k++){ // pit-wall barrier with a reflective lime stripe
+      const x=-7.2+k*3.0;
+      base.box(x,.42,-6.2,2.88,.84,.62,concrete,13);
+      base.box(x,.06,-6.2,3.0,.12,.82,[.12,.125,.135],13);
+      lights.box(x,.74,-5.88,2.7,.045,.02,lime,5);
     }
-    // Two architectural light arches sit behind the car, built as actual narrow 3D strips.
-    for(let side=0;side<2;side++) {
-      const r=side?4.14:3.94,z=-3.55-side*.14,col=side?magenta:cyan;
-      for(let i=0;i<72;i++) {
-        const a=Math.PI*.06+i/72*Math.PI*.88,b=Math.PI*.06+(i+1)/72*Math.PI*.88;
-        const pt=(rr,t)=>[Math.cos(t)*rr,.10+Math.sin(t)*rr,z];
-        lights.quad(pt(r,a),pt(r,b),pt(r+.035,b),pt(r+.035,a),col,5,[0,0,1]);
-      }
+    base.box(-3.5,.58,-3.7,1.05,1.16,.62,[.5,.045,.04],13); // red tool chest with drawer pulls
+    base.box(-3.5,1.2,-3.7,1.1,.08,.66,[.2,.22,.25],14);
+    for(let i=0;i<4;i++)base.box(-3.5,.3+i*.24,-3.38,.86,.025,.025,[.62,.64,.68],14);
+    for(const [x,z,n] of [[3.9,-3.4,4],[4.65,-2.8,2]])for(let i=0;i<n;i++){ // stacked wet-weather tyres
+      cyl(base,x,.14+i*.28,z,.34,.26,[.035,.036,.04],13);
+      cyl(lights,x,.14+i*.28,z,.345,.025,[.2,.85,1,.35],5);
     }
-    for(const x of [-4.1,4.1]) {
-      base.box(x,.2,-3.6,.25,.6,.42,[.10,.13,.18],14);
-      lights.box(x,.48,-3.6,.13,.03,.22,cyan,5);
-    }
+    lights.box(0,4.6,0,.16,.05,4.6,[1,.98,.92,.95],5); // the overhead light bar
+    lights.box(-1.2,4.6,0,.06,.05,4.6,[1,.98,.92,.6],5); lights.box(1.2,4.6,0,.06,.05,4.6,[1,.98,.92,.6],5);
     // The chapter leaves a physical exhibit in the showroom, persisted by the save.
-    const beacon=new MeshBuilder();
-    base.box(2.65,.12,-2.5,.72,.24,.72,metal,14);
-    base.box(2.65,1.05,-2.5,.16,1.9,.16,[.21,.24,.30],14);
+    const exhibit=new MeshBuilder();
+    exhibit.box(5.2,.12,-4.2,.72,.24,.72,metal,14);
+    exhibit.box(5.2,1.05,-4.2,.16,1.9,.16,[.21,.24,.30],14);
     for(let i=0;i<4;i++){
-      base.box(2.65,.55+i*.35,-2.5,.36,.26,.36,[.09,.10,.13],14);
-      beacon.box(2.65,.55+i*.35,-2.5,.38,.20,.38,[1,.53,.10,.65],5);
+      exhibit.box(5.2,.55+i*.35,-4.2,.36,.26,.36,[.09,.10,.13],14);
+      beacon.box(5.2,.55+i*.35,-4.2,.38,.20,.38,[1,.53,.10,.65],5);
     }
-    base.box(2.65,.38,-2.18,.56,.25,.025,[.76,.79,.73],14);
-    this.lobbyStage={base:upload(gl,base),floor:upload(gl,floor),lights:upload(gl,lights),beacon:upload(gl,beacon)};
+    exhibit.box(5.2,.38,-3.88,.56,.25,.025,[.76,.79,.73],14);
+    this.lobbyStage={base:upload(gl,base),floor:upload(gl,floor),lights:upload(gl,lights),beacon:upload(gl,beacon),exhibit:upload(gl,exhibit)};
   }
 
   _lobbyUniforms(cam,time,vp,reflPass,w,h) {
     this._uniformsMain(cam,time,vp,reflPass,w,h,false);
-    const gl=this.gl,u=this.main.u;
+    const gl=this.gl,u=this.main.u,T=this.targets;
     gl.uniform1f(u.uLobby,1);gl.uniform1f(u.uShadowOn,0);gl.uniform1f(u.uEnvOn,0);
     gl.uniform3fv(u.uMoon,norm([.3,.78,.65]));gl.uniform3f(u.uMoonCol,1.0,1.02,1.10);
-    gl.uniform3f(u.uSkyAmb,.13,.17,.25);gl.uniform3f(u.uGndAmb,.035,.045,.075);
-    gl.uniform3f(u.uFog,.003,.006,.016);gl.uniform1f(u.uFogD,.0015);gl.uniform1f(u.uFlood,.6);
-    gl.uniform3f(u.uSunCol,0,0,0);
-    const reflection=!reflPass && this.targets.lobby;
+    gl.uniform3f(u.uSkyAmb,.13,.15,.24);gl.uniform3f(u.uGndAmb,.04,.04,.07);
+    gl.uniform3f(u.uFog,.012,.016,.04);gl.uniform1f(u.uFogD,.004);gl.uniform1f(u.uFlood,.6);
+    gl.uniform3f(u.uSunCol,0,0,0);gl.uniform1f(u.uHorizon,this.lobbyView?this.lobbyView.horizon:.5);
+    const reflection=!reflPass && T.lobby;
     gl.uniform1f(u.uReflOn,reflection?1:0);
+    gl.activeTexture(gl.TEXTURE5);gl.bindTexture(gl.TEXTURE_2D,!reflPass&&T.bg?T.bg.tex:this.black2D);gl.uniform1i(u.uBg,5);
     gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,reflection?reflection.tex:this.black2D);
   }
 
   _lobbyBackground(time) {
-    const gl=this.gl,u=this.lobbyBg.u;
+    const gl=this.gl,u=this.lobbyBg.u,V=this.lobbyView;
     gl.disable(gl.DEPTH_TEST);gl.depthMask(false);gl.useProgram(this.lobbyBg.p);
-    gl.uniform1f(u.uTime,time);gl.uniform1f(u.uAspect,this.canvas.width/this.canvas.height);
+    gl.uniform1f(u.uTime,time);gl.uniform1f(u.uYaw,V.yaw);gl.uniform1f(u.uHorizon,V.horizon);
+    gl.uniform1f(u.uFovX,V.fovX);gl.uniform1f(u.uFovY,V.fovY);gl.uniform1f(u.uRain,this.rain);
+    gl.bindVertexArray(this.quadVao);gl.drawArrays(gl.TRIANGLES,0,3);this.drawCalls++;
+    gl.enable(gl.DEPTH_TEST);gl.depthMask(true);
+  }
+  _blit(src) { // softly filtered copy into the current framebuffer
+    const gl=this.gl,p=this.down;
+    gl.disable(gl.DEPTH_TEST);gl.depthMask(false);gl.useProgram(p.p);
+    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,src.tex);gl.uniform1i(p.u.uTex,0);gl.uniform2f(p.u.uTexel,1/src.w,1/src.h);
     gl.bindVertexArray(this.quadVao);gl.drawArrays(gl.TRIANGLES,0,3);this.drawCalls++;
     gl.enable(gl.DEPTH_TEST);gl.depthMask(true);
   }
 
   _renderLobby(scene) {
     const gl=this.gl,c=this.canvas,cam=scene.cam,time=scene.motion?scene.time:0;
-    this.drawCalls=0;this.startLights=0;this._ensureTargets();this._ensureLobbyStage();
+    this.drawCalls=0;this.startLights=0;this.rain=Math.max(0,Math.min(1,scene.rain||0));this._ensureTargets();this._ensureLobbyStage();
     const T=this.targets,S=T.scene,stage=this.lobbyStage,selected=(scene.cars||[]).find(c=>!c.ghost);
     const car=selected?{...selected,ghost:false,brakes:[0,0,0,0],pose:{x:0,z:0,yaw:0,h:0,pitch:0,roll:0,steer:0,spin:[0,0,0,0],road:[0,0,0,0]}}:null;
     gl.disable(gl.CULL_FACE);gl.disable(gl.BLEND);gl.enable(gl.DEPTH_TEST);gl.depthMask(true);
-    M4.perspectiveLH(this.proj,cam.fov,c.width/c.height,.1,100);
+    M4.perspectiveLH(this.proj,cam.fov,c.width/c.height,.1,420);
     M4.lookAtLH(this.view,...cam.eye,...cam.target);M4.mul(this.vp,this.proj,this.view);
-    // A bounded car-only planar pass. No city geometry, cube probe or shadow-map work in this scene.
+    const dx=cam.target[0]-cam.eye[0],dy=cam.target[1]-cam.eye[1],dz=cam.target[2]-cam.eye[2],tanH=Math.tan(cam.fov/2),aspect=c.width/c.height;
+    this.lobbyView={yaw:Math.atan2(dx,dz),horizon:.5-Math.tan(Math.atan2(dy,Math.hypot(dx,dz)))/(2*tanH),fovY:cam.fov,fovX:2*Math.atan(tanH*aspect)};
+    this.camVel.fill(0);
+    // 1. The city backdrop at half resolution (it is out of focus by design).
+    if(!T.bg)T.bg=this._target(Math.max(1,c.width>>1),Math.max(1,c.height>>1),false,0);
+    gl.bindFramebuffer(gl.FRAMEBUFFER,T.bg.fb);gl.viewport(0,0,T.bg.w,T.bg.h);this._lobbyBackground(time);
+    // 2. The car, props and neon mirrored in the wet apron; alpha marks covered pixels.
     if(this.qName!=='low' && car) {
       if(!T.lobby) {
-        const scale=Math.min(.5,512/c.width,512/c.height);
+        const scale=Math.min(.5,640/c.width,640/c.height);
         T.lobby=this._target(Math.max(1,Math.round(c.width*scale)),Math.max(1,Math.round(c.height*scale)),true,0);
       }
       const R=T.lobby;M4.mul(this.viewR,this.view,this.mirror);M4.mul(this.vpR,this.proj,this.viewR);
       gl.bindFramebuffer(gl.FRAMEBUFFER,R.fb);gl.viewport(0,0,R.w,R.h);
-      gl.clearColor(.003,.006,.016,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-      this._lobbyBackground(time);this._lobbyUniforms(cam,time,this.vpR,1,R.w,R.h);
+      gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.depthFunc(gl.LEQUAL);
+      this._lobbyUniforms(cam,time,this.vpR,1,R.w,R.h);
+      this._draw(this.main,stage.base);this._draw(this.main,stage.lights);if(scene.beacon){this._draw(this.main,stage.exhibit);this._draw(this.main,stage.beacon);}
       this._drawCar(this.main,car,cam.eye,false);
     }
     this.drawingMain=false;
     gl.bindFramebuffer(gl.FRAMEBUFFER,S.ms?S.msFb:S.fb);gl.viewport(0,0,S.w,S.h);
     gl.clearColor(.003,.006,.016,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-    this._lobbyBackground(time);gl.depthFunc(gl.LEQUAL);
+    this._blit(T.bg);gl.depthFunc(gl.LEQUAL);
     this._lobbyUniforms(cam,time,this.vp,0,S.w,S.h);
-    this._draw(this.main,stage.base);this._draw(this.main,stage.floor);this._draw(this.main,stage.lights);
-    if(scene.beacon)this._draw(this.main,stage.beacon);
+    this._draw(this.main,stage.floor);this._draw(this.main,stage.base);this._draw(this.main,stage.lights);
+    if(scene.beacon){this._draw(this.main,stage.exhibit);this._draw(this.main,stage.beacon);}
     if(car)this._drawCar(this.main,car,cam.eye,false);
     gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);
-    this._fxProg(cam,1,.7,time);gl.uniform1f(this.fx.u.uFogD,0);
+    this._fxProg(cam,1,.75,time);gl.uniform1f(this.fx.u.uFogD,0);
     if(car)this._draw(this.fx,this.shadow,M4.fromPose(this.model,0,.005,0,0,0,0));
     gl.blendFunc(gl.ONE,gl.ONE);this._fxProg(cam,0,.45,time);gl.uniform1f(this.fx.u.uFogD,0);
     if(car)this._draw(this.fx,car.model.glow,this.ident);
+    if(scene.motion)this._drawRain(cam,time,-.014);
     gl.depthMask(true);gl.disable(gl.BLEND);
     this._finishFrame({...scene,motion:false,lobby:true},time);
     this.lobbyStats={drawCalls:this.drawCalls,stageTriangles:stage.base.tris+stage.floor.tris+stage.lights.tris,
-      worldDraws:0,reflectionSize:T.lobby?[T.lobby.w,T.lobby.h]:null,shadowUpdates:0,probeUpdates:0};
+      worldDraws:0,reflectionSize:T.lobby?[T.lobby.w,T.lobby.h]:null,backdropSize:[T.bg.w,T.bg.h],shadowUpdates:0,probeUpdates:0};
   }
 
   // scene: { cam:{eye,target,fov}, cars:[{pose, model, brakes, ghost}], focus (pose for the probe and showroom),
@@ -919,7 +1128,7 @@ export class Renderer {
   render(scene) {
     if(scene.lobby){this._renderLobby(scene);return;}
     const gl = this.gl, c = this.canvas, cam = scene.cam, q = this.q, time = scene.time;
-    this.drawCalls = 0; this.startLights = scene.startLights || 0;
+    this.drawCalls = 0; this.startLights = scene.startLights || 0; this.rain = Math.max(0, Math.min(1, scene.rain || 0)); this._trackCamera(cam, time);
     this._ensureTargets();
     const T = this.targets, cars = scene.cars || [], focus = scene.focus;
     gl.disable(gl.CULL_FACE); gl.disable(gl.BLEND); gl.enable(gl.DEPTH_TEST);
@@ -961,10 +1170,11 @@ export class Renderer {
     if (scene.showroom && focus) { this._fxProg(cam, 0, 0.32, time); const m = M4.fromPose(this.model, focus.x, 0, focus.z, time * 0.3, 0, 0); this._draw(this.fx, this.ringA, m); this._draw(this.fx, this.ringB, m); }
     const V = this.view, fo = scene.fxOpts || {};
     this.fxSys.build(this.fxAdd, this.fxAlpha, cam.eye, [V[0], V[4], V[8]], [V[1], V[5], V[9]], scene.fxTime !== undefined ? scene.fxTime : time,
-      { trails: true, smoke: q.smoke, streakK: q.lines ? (fo.streakK || 0) : 0, speed: fo.speed || 0, fwd: fo.fwd || [0, 1], smokeCol: [0.28, 0.32, 0.4], trailCols: (id) => (fo.trailCols ? fo.trailCols(id) : { tail: [1, 0.06, 0.16], tip: NEON.cyan }) });
+      { trails: true, smoke: q.smoke, rainPoses: this.rain > 0 ? cars.filter((x) => !x.ghost).map((x) => x.pose) : null, streakK: q.lines ? (fo.streakK || 0) : 0, speed: fo.speed || 0, fwd: fo.fwd || [0, 1], smokeCol: [0.28, 0.32, 0.4], trailCols: (id) => (fo.trailCols ? fo.trailCols(id) : { tail: [1, 0.06, 0.16], tip: NEON.cyan }) });
     const flush = (mesh) => { gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vb); gl.bufferSubData(gl.ARRAY_BUFFER, 0, mesh.data, 0, mesh.count * 13); gl.uniformMatrix4fv(this.fx.u.uModel, false, this.ident); gl.bindVertexArray(mesh.vao); gl.drawArrays(gl.TRIANGLES, 0, mesh.count); this.drawCalls++; };
     if (this.fxAdd.count) { this._fxProg(cam, 0, 1.9, time); flush(this.fxAdd); }
     if (this.fxAlpha.count) { this._fxProg(cam, 1, 1, time); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); flush(this.fxAlpha); }
+    this._drawRain(cam, time, 0);
     const ghosts = cars.filter((x) => x.ghost);
     if (ghosts.length) {
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -999,9 +1209,11 @@ export class Renderer {
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, S.tex); gl.uniform1i(cp.u.uScene, 0);
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, B.length ? B[0].tex : this.black2D); gl.uniform1i(cp.u.uBloom, 1);
     gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, T.streak ? T.streak.tex : this.black2D); gl.uniform1i(cp.u.uStreak, 2);
-    gl.uniform1f(cp.u.uBloomK, B.length ? (scene.lobby?0.19:this.hdr?0.30:0.25) : 0); gl.uniform1f(cp.u.uStreakK, T.streak && !scene.lobby ? 0.12 : 0);
+    gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, this.dirtTex); gl.uniform1i(cp.u.uDirt, 3);
+    gl.uniform1f(cp.u.uDirtK, scene.lobby ? 0.6 : 0.3); gl.uniform1f(cp.u.uGrain, scene.lobby ? 0.011 : 0.006); gl.uniform1f(cp.u.uLook, 1);
+    gl.uniform1f(cp.u.uBloomK, B.length ? (scene.lobby?0.26:this.hdr?0.30:0.25) : 0); gl.uniform1f(cp.u.uStreakK, T.streak && !scene.lobby ? 0.12 : 0);
     gl.uniform1f(cp.u.uExposure, 1.2); gl.uniform1f(cp.u.uSpeed, scene.motion ? scene.speed : 0); gl.uniform1f(cp.u.uTime, time);
-    gl.uniform1f(cp.u.uLines, q.lines && scene.motion ? 1 : 0); gl.uniform1f(cp.u.uRadial, q.radial && scene.motion ? 1 : 0); gl.uniform1f(cp.u.uAberr, scene.lobby?0:scene.motion?1:0.3);
+    gl.uniform1f(cp.u.uLines, q.lines && scene.motion ? 1 : 0); gl.uniform1f(cp.u.uRadial, q.radial && scene.motion ? 1 : 0); gl.uniform1f(cp.u.uAberr, scene.lobby?0.35:scene.motion?1:0.3);
     gl.uniform2f(cp.u.uRes, c.width, c.height);
     gl.bindVertexArray(this.quadVao); gl.drawArrays(gl.TRIANGLES, 0, 3); this.drawCalls++;
     gl.activeTexture(gl.TEXTURE0);

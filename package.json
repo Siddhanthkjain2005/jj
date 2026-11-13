@@ -1,11 +1,11 @@
 {
   "name": "velocityverse-m0",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
-  "description": "VELOCITYVERSE Milestone 0: engine-agnostic vehicle simulation, validation suite and browser driving lab.",
+  "description": "VELOCITYVERSE 0.8: offline racing game (vehicle simulation, story tour, garage, world and crew) packaged for Android.",
   "type": "module",
   "scripts": {
-    "test": "node tests/input_regression.mjs && node tests/assist_regression.mjs && node tests/career.mjs && node tests/academy.mjs && node tests/lab.mjs && node tests/lobby.mjs && node tests/career_mode.mjs && node tests/rides_circuits.mjs && node tests/openline.mjs && node tests/validate.mjs",
+    "test": "node tests/input_regression.mjs && node tests/assist_regression.mjs && node tests/career.mjs && node tests/academy.mjs && node tests/lab.mjs && node tests/lobby.mjs && node tests/career_mode.mjs && node tests/rides_circuits.mjs && node tests/openline.mjs && node tests/progress.mjs && node tests/validate.mjs",
     "build": "node tools/build.mjs",
     "smoke": "node tests/browser_smoke.mjs",
     "serve": "python3 -m http.server 8080",
@@ -21,10 +21,15 @@
     "test:app": "node tests/app_flow.mjs",
     "build:android": "bash tools/android-build.sh",
     "test:story": "node tests/openline.mjs && node tests/openline_flow.mjs",
-    "test:career": "node tests/career_mode.mjs && node tests/rides_circuits.mjs && node tests/career_flow.mjs"
+    "test:career": "node tests/career_mode.mjs && node tests/rides_circuits.mjs && node tests/career_flow.mjs",
+    "test:paddock": "node tests/paddock_flow.mjs",
+    "build:release": "bash tools/android-release.sh"
   },
   "license": "UNLICENSED",
   "devDependencies": {
     "playwright": "1.61.1"
+  },
+  "dependencies": {
+    "gsap": "^3.15.1"
   }
 }

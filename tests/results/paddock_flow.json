@@ -1,0 +1,55 @@
+{
+ "checks": [
+  {
+   "name": "Home: five destinations, the next story event, the starter car and today’s goal",
+   "pass": true
+  },
+  {
+   "name": "Every destination renders inside the viewport with its primary action visible",
+   "pass": true
+  },
+  {
+   "name": "Garage parts: an upgrade spends credits and changes the car that races",
+   "pass": true
+  },
+  {
+   "name": "Garage tune: the setup changes the car and the bench measures it",
+   "pass": true
+  },
+  {
+   "name": "World → event ready → a real practice lap pays credits, grades sections and earns a mastery star",
+   "pass": true
+  },
+  {
+   "name": "Grand Prix: rivals keep their own stock cars and the finish pays a purse",
+   "pass": true
+  },
+  {
+   "name": "Daily goals open from the home card and pay when collected",
+   "pass": true
+  },
+  {
+   "name": "Story: event sheet → cutscene → event ready → the drive starts",
+   "pass": true
+  },
+  {
+   "name": "School drills run in the school car and grade a medal",
+   "pass": true
+  },
+  {
+   "name": "Cups: entering starts round one with the cup rules",
+   "pass": true
+  },
+  {
+   "name": "Android Back closes the event-ready screen before leaving",
+   "pass": true
+  },
+  {
+   "name": "Progress survives a reload",
+   "pass": true
+  }
+ ],
+ "errors": [],
+ "gsap": "3.15.1",
+ "pass": true
+}

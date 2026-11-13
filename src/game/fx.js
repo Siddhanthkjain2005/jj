@@ -62,6 +62,15 @@ export class FX {
           else { const d = Math.hypot(w[0] - last[0], w[1] - last[1]); if (d > 0.35) { if (d < 3) { this.skids[this.skidN % this.skids.length] = [last[0], last[1], w[0], w[1], Math.min(1, (s - 1.0) * 1.4), time]; this.skidN++; } last[0] = w[0]; last[1] = w[1]; } }
         } else if (last) this.skidLast.delete(key);
       }
+      // rain: spray thrown up by the rear tyres, heavier with speed
+      if (opts.rain > 0 && c.speed > 12 && this.smoke.length < 340) {
+        const n = Math.min(3, (c.speed - 8) / 18) * dt * 60 * 0.5 * opts.rain;
+        let k = Math.floor(n) + (R() < n % 1 ? 1 : 0);
+        while (k-- > 0) {
+          const p = toWorld(c.pose, R() < 0.5 ? -0.72 : 0.72, 0.2, -1.95);
+          this.smoke.push({ x: p[0], y: 0.16 + R() * 0.22, z: p[2], vx: c.vx * 0.55 + (R() - 0.5) * 2.4, vy: 0.8 + R() * 1.6, vz: c.vz * 0.55 + (R() - 0.5) * 2.4, age: 0, life: 0.45 + R() * 0.5, s0: 0.25, s1: 1.5 + R() * 1.4, a: 0.14 + 0.1 * Math.min(1, c.speed / 60) });
+        }
+      }
       // tire smoke from sliding or spinning tires
       for (let k = 0; k < 4; k++) {
         const s = c.slip[k];
@@ -179,6 +188,11 @@ export class FX {
     if (opts.smoke !== false) for (const p of this.smoke) {
       const t = p.age / p.life, s = p.s0 + (p.s1 - p.s0) * (1 - (1 - t) * (1 - t));
       sprite(p.x, p.y, p.z, s, opts.smokeCol, p.a * (1 - t) * Math.min(1, t * 8), 21, putA);
+    }
+    // the blinking rear rain light every car shows in the wet
+    if (opts.rainPoses && Math.floor(time * 4) % 2 === 0) for (const pose of opts.rainPoses) {
+      const p = toWorld(pose, 0, 0.42, -2.5);
+      sprite(p[0], p[1], p[2], 0.14, [1, 0.06, 0.08], 1, 10); sprite(p[0], p[1], p[2], 0.55, [1, 0.04, 0.06], 0.22, 10);
     }
     add.count = v; alpha.count = va;
   }

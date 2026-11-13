@@ -7,7 +7,7 @@
         android:usesCleartextTraffic="false" android:supportsRtl="true">
         <activity android:name=".MainActivity" android:exported="true"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout|uiMode"
-            android:resizeableActivity="true" android:enableOnBackInvokedCallback="true"
+            android:screenOrientation="sensorLandscape" android:resizeableActivity="true" android:enableOnBackInvokedCallback="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

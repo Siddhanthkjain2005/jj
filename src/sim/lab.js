@@ -95,3 +95,47 @@ export function runLabExperiment(setupId = 'baseline') {
   return {setupId:setup.id,metrics,samples,protocol:LAB_PROTOCOL,valid,guardTrips,contacts,
     parameters:{massKg:car.mass,peakFriction:car.tire.mu,dragAreaM2:car.aero.cdA,downforceAreaM2:car.aero.clA}};
 }
+
+// ---- 0.8 test bench -------------------------------------------------------------------------------
+// Bench for any built car (upgrades + setup). The car measured here is the car that races, so every
+// number comes from the same Vehicle model. Three runs: 0-100 km/h, 100-0 km/h, and a full-throttle
+// run until the car stops gaining speed (aero drag or the rev limiter in top gear).
+export function benchCar(car) {
+  if (!car || !car.tire || !car.aero || !car.gearbox) throw new Error('A complete vehicle is required for the bench.');
+  const world = WORLDS.lumen_harbor, track = new Track(LAB_TRACK, world, car), v = new Vehicle(car, world, track), ctl = controls();
+  const samples = { acceleration: [], braking: [], top: [] };
+  v.reset(50, 0);
+  const accel = accelerate(v, ctl, 100, samples.acceleration);
+  const bT = v.time, bZ = v.z;
+  ctl.throttle = 0; ctl.brake = 1;
+  samples.braking.push(sample(v, bT, bZ));
+  let stopped = false;
+  for (let i = 0; i < 120 * 15; i++) {
+    v.step(DT, ctl);
+    if (i % 12 === 11 || v.forwardSpeed < 0.05) samples.braking.push(sample(v, bT, bZ));
+    if (v.forwardSpeed < 0.05) { stopped = true; break; }
+  }
+  if (!stopped) throw new Error('Bench braking did not reach a standstill.');
+  const brake = v.z - bZ;
+  let trips = v.guardTrips + v.nanResets, contacts = v.impactCount;
+  v.reset(50, 0); ctl.throttle = 1; ctl.brake = 0;
+  const tT = v.time, tZ = v.z;
+  samples.top.push(sample(v, tT, tZ));
+  let top = 0, ref = 0, quarter = null;
+  for (let i = 0; i < 120 * 60; i++) {
+    v.step(DT, ctl);
+    top = Math.max(top, v.forwardSpeed);
+    if (quarter === null && v.z - tZ >= 400) quarter = v.time - tT;
+    if (i % 60 === 59) {
+      samples.top.push(sample(v, tT, tZ));
+      if (i > 120 * 12 && v.forwardSpeed - ref < 0.03) break; // the car has stopped gaining speed
+      ref = v.forwardSpeed;
+    }
+    if (v.z - tZ > 5600) break;
+  }
+  trips += v.guardTrips + v.nanResets; contacts += v.impactCount;
+  const metrics = { accel, brake, topKmh: top * 3.6, quarter: quarter === null ? NaN : quarter };
+  const valid = trips === 0 && contacts === 0 && [accel, brake, top].every(Number.isFinite);
+  if (!valid) throw new Error('The bench run hit an invalid simulation state.');
+  return { valid, metrics, samples };
+}

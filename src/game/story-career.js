@@ -3,16 +3,21 @@
 import { MISSIONS, CAREER_PARTS, applyCareerAction, normalizeStoryCareer, missionUnlocked, rideUnlocked, nextMission, buildCareerCar, upgradePrice, careerDialogue } from './career-mode.js';
 import { RIDES, getRide } from '../sim/rides.js';
 import { getCircuit } from '../sim/circuits.js';
+import { progressOf, selectedCar } from './progress.js';
 const $=id=>document.getElementById(id);
 const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
 const TYPES={sprint:'DELIVERY SPRINT',checkpoint:'CHECKPOINT RUSH',duel:'HEAD-TO-HEAD',timetrial:'TIME ATTACK',clean:'PRECISION STINT',race:'GRID RACE'};
-const ACTS=['THE FIRST LIGHT','A CREW WORTH KEEPING','THE CROWNLINE INVITATIONAL'];
+const ACTS=['THE FIRST LIGHT','A CREW WORTH KEEPING','THE CROWNLINE INVITATIONAL','THE OPEN SEASON'];
+const TOTAL=String(MISSIONS.length).padStart(2,'0');
 const fmt=t=>Number.isFinite(t)?`${Math.floor(t/60)}:${(t%60).toFixed(2).padStart(5,'0')}`:'—';
 const cleanName=line=>{const i=line.indexOf(':');return i<0?['CREW',line]:[line.slice(0,i),line.slice(i+1).trim()];};
 const speakerId=name=>({Neri:'neri',Tavi:'tavi',Maela:'maela',Sola:'sola',Veska:'veska'}[name]||'neri');
 export class StoryCareerClient {
  constructor(game){this.game=game;this.active=false;this.launching=false;this.activeMission=null;this.run=null;this.pending=null;this.result=null;this.focusMission=null;this.chapter=1;this.hudAge=0;this._preview='';}
  get state(){return this.game.save.data.storyCareer;}
+ rideId(){return progressOf(this.game.save.data).ride;}
+ // The car a story event is driven in: the garage build plus the crew chief and setup chosen for the event.
+ carFor(rideId){return buildCareerCar(selectedCar(this.game.save.data,rideId),{...this.state,parts:{grip:0,aero:0,gearing:0}});}
  get selected(){return MISSIONS.find(m=>m.id===(this.focusMission||this.state.selectedMission))||MISSIONS[0];}
  wire(){
   const on=(id,fn)=>$(id)?.addEventListener('click',fn);
@@ -35,16 +40,16 @@ export class StoryCareerClient {
  render(screen){
   if(!$('career-hud'))return;
   $('career-hud').hidden=!(this.active&&this.game.mode==='race'&&this.game.screen==='none'&&!this.game.paused);
-  if(screen==='career')this.renderCareer();
-  if(screen==='workshop')this.renderWorkshop();
-  if(screen==='hub'){const m=nextMission(this.state);this.game.hub.nextDestination='career';$('hub-next-title').textContent=m.title;$('hub-next-detail').textContent='Story Tour · '+Object.values(this.state.records).filter(r=>r.completed).length+'/8 events · '+this.state.credits+' CR';}
+  if(screen==='hub'&&$('hub-next-title')){const m=nextMission(this.state);this.game.hub.nextDestination='career';$('hub-next-title').textContent=m.title;$('hub-next-detail').textContent=Object.values(this.state.records).filter(r=>r.completed).length+' of '+MISSIONS.length+' events done · Act '+m.chapter;}
  }
- renderCareer(){
+ renderCareer(){this.game.pad.render('career');}
+ scrollEvent(){}
+ renderCareerLegacy(){
   const state=this.state,m=this.selected;
   if(!this.focusMission){this.focusMission=state.selectedMission;this.chapter=m.chapter;}
   $('career-stars').textContent=Object.values(state.records).reduce((sum,r)=>sum+r.stars,0);$('career-credits').textContent=state.credits.toLocaleString();
   const chapters=$('career-chapter-tabs');chapters.replaceChildren();
-  for(let c=1;c<=3;c++){const b=node('button');b.type='button';b.setAttribute('aria-pressed',String(c===this.chapter));const text=node('span');text.append(node('small','',`ACT 0${c}`),node('span','',ACTS[c-1]));b.append(node('b','',String(c).padStart(2,'0')),text);b.addEventListener('click',()=>{this.chapter=c;this.focusMission=MISSIONS.find(x=>x.chapter===c).id;this.result=null;this.renderCareer();});chapters.append(b);}
+  for(let c=1;c<=ACTS.length;c++){const b=node('button');b.type='button';b.setAttribute('aria-pressed',String(c===this.chapter));const text=node('span');text.append(node('small','',`ACT 0${c}`),node('span','',ACTS[c-1]));b.append(node('b','',String(c).padStart(2,'0')),text);b.addEventListener('click',()=>{this.chapter=c;this.focusMission=MISSIONS.find(x=>x.chapter===c).id;this.result=null;this.renderCareer();});chapters.append(b);}
   $('career-act-name').textContent=`ACT 0${this.chapter} · ${ACTS[this.chapter-1]}`;
   const list=$('career-mission-list');list.replaceChildren();
   for(const mission of MISSIONS.filter(x=>x.chapter===this.chapter)){
@@ -53,8 +58,8 @@ export class StoryCareerClient {
   }
   $('career-event').hidden=!!this.result;$('career-result').hidden=!this.result;
   if(this.result){this.renderResult();return;}
-  $('career-event-title').textContent=m.title;$('career-event-copy').textContent=m.objective;$('career-event-type').textContent=TYPES[m.type];$('career-event-number').textContent=String(m.index+1).padStart(2,'0')+' / 08';
-  $('career-event-track').textContent=getCircuit(m.trackId).name.toUpperCase();$('career-event-ride').textContent=getRide(state.selectedRide).name.toUpperCase();
+  $('career-event-title').textContent=m.title;$('career-event-copy').textContent=m.objective;$('career-event-type').textContent=TYPES[m.type];$('career-event-number').textContent=String(m.index+1).padStart(2,'0')+' / '+TOTAL;
+  $('career-event-track').textContent=getCircuit(m.trackId).name.toUpperCase();$('career-event-ride').textContent=getRide(this.rideId()).name.toUpperCase();
   const goals=$('career-event-goals');goals.replaceChildren();
   for(const text of [this.completionGoal(m),`Time medal: ${fmt(m.targetTime)} or faster`,'Clean medal: zero car or barrier contacts']){const row=node('div','sc-goal');row.append(node('span','','★'),node('span','',text));goals.append(row);}
   const [speaker,line]=cleanName(m.before[0]);$('career-brief-name').textContent=speaker.toUpperCase();$('career-brief-line').textContent=line;$('career-brief-portrait').className='sc-portrait ol-portrait ol-portrait-'+speakerId(speaker);$('career-brief-portrait').setAttribute('aria-label',speaker);$('career-brief-portrait').textContent=speaker==='Veska'?'VT':'';
@@ -71,8 +76,16 @@ export class StoryCareerClient {
  start(id){
   const mission=MISSIONS.find(m=>m.id===(id||this.selected.id))||this.selected;
   if(!missionUnlocked(this.state,mission.id)){this.status('Finish the previous event to earn this entry.');return;}
+  const ready=()=>this.game.pad.readyStory(mission.id);this.briefed=this.briefed||new Set();
+  if(this.state.records[mission.id].completed||this.briefed.has(mission.id)||!this.game.juice){ready();return;}
+  this.briefed.add(mission.id);
+  this.game.juice.cutscene(careerDialogue(this.state,mission.id,false),{title:mission.title,kicker:'Act '+mission.chapter+' · Event '+(mission.index+1)+' of '+MISSIONS.length,done:ready});
+ }
+ begin(id){
+  const mission=MISSIONS.find(m=>m.id===(id||this.selected.id))||this.selected;
+  if(!missionUnlocked(this.state,mission.id)){this.status('Finish the previous event to earn this entry.');return;}
   this.change('select',{missionId:mission.id},true);this.focusMission=mission.id;this.result=null;
-  const ride=getRide(this.state.selectedRide),car=buildCareerCar(ride.car,this.state);
+  const ride=getRide(this.rideId()),car=this.carFor(ride.id);
   this.active=true;this.launching=true;this.activeMission=mission;this.pending=null;
   try{if(this.game.launchCareerMission({...mission,rideId:ride.id,circuitId:mission.trackId},car,{crew:this.state.crew,setup:this.state.setup})===false)throw new Error('The selected circuit could not load.');}
   catch(e){this.active=false;this.launching=false;this.status('This ride could not start. '+e.message);return;}
@@ -140,12 +153,17 @@ export class StoryCareerClient {
  flush(){
   if(!this.pending)return;
   const pending=this.pending,mission=this.activeMission;this.pending=null;
-  let outcome;
+  let outcome;const before={...this.state.records[mission.id]};
   if(pending.failure)outcome={success:false,stars:0,earned:0,reason:pending.failure,accepted:false};
   else outcome=this.change('result',pending.proof,true);
+  const won=!!(outcome.accepted&&outcome.success),first=won&&!before.completed;
+  if(won)this.game.pad?.onStory({success:true,first,newStars:Math.max(0,(outcome.stars||0)-(before.stars||0))});
   this.result={mission,proof:pending.proof,...outcome};
   if(!outcome.accepted)this.result.success=false;
   this.active=false;$('career-hud').hidden=true;this.game.returnCareerMenu();this.chapter=mission.chapter;this.focusMission=mission.id;this.renderCareer();this.scrollEvent();
+  const j=this.game.juice;if(!j||!won)return;
+  const cheer=()=>{if(outcome.unlockedRide){j.pop(getRide(outcome.unlockedRide).name,'New car in your garage','win');j.confetti(150);}else if(outcome.stars===3)j.confetti(90);this.game.pad.render('career');};
+  if(first)j.cutscene(careerDialogue(this.state,mission.id,true),{title:mission.title,kicker:'Event complete',done:cheer});else cheer();
  }
  updateHud(){
   if(!this.active||!this.run)return;const r=this.run,m=this.activeMission,g=this.game;
@@ -165,7 +183,6 @@ export class StoryCareerClient {
   $('career-result-unlock').textContent=r.unlockedRide?getRide(r.unlockedRide).name+' unlocked · waiting in your workshop':r.success?'Medals saved. Replays award only newly improved medals.':'Existing medals and credits are preserved. There is no fuel timer.';
   $('career-result-next').hidden=!r.success;$('career-result-next').querySelector('strong').textContent=m.index===MISSIONS.length-1?'YOUR STORY TOUR':'NEXT RIDE';
  }
- scrollEvent(){const target=this.result?$('career-result'):$('career-event');target?.scrollIntoView({block:'nearest',behavior:'instant'});}
  renderWorkshop(){
   const s=this.state,ride=getRide(s.selectedRide),car=buildCareerCar(ride.car,s);$('career-workshop-credits').textContent=s.credits.toLocaleString();
   $('career-workshop-h').textContent=ride.name;$('career-ride-description').textContent=ride.tagline;

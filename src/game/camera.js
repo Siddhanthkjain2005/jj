@@ -38,10 +38,11 @@ export class CameraRig {
       const manual=Number.isFinite(s.lobbyAngle)?s.lobbyAngle:0;
       const angle=.69+manual+(reduced?0:Math.sin(this.lobbyTime*.16)*.04),aspect=s.aspect || 1;
       const portrait=aspect<.9,compact=aspect<1.35;
-      const distance=portrait?16.8:compact?10.5:9.8,side=compact?0:.95;
-      eye=[Math.sin(angle)*distance,portrait?5.3:3.0,Math.cos(angle)*distance];
-      tgt=[Math.cos(angle)*side,portrait?-1.7:-.45,-Math.sin(angle)*side];
-      fov=(portrait?45:compact?44:40)*DEG;
+      // Low, long-lens framing like a car photographer on the wet quay.
+      const distance=portrait?15.5:compact?9.4:8.4,side=compact?0:(Number.isFinite(s.lobbySide)?s.lobbySide:.95);
+      eye=[Math.sin(angle)*distance,portrait?4.2:1.38,Math.cos(angle)*distance];
+      tgt=[Math.cos(angle)*side,portrait?-.6:.5,-Math.sin(angle)*side];
+      fov=(portrait?44:compact?40:34)*DEG;
       this.lastMode=mode;this.snapNext=true;this._set(eye,tgt,fov);return this.out;
     }
     if (mode === 'photo') {
@@ -54,7 +55,7 @@ export class CameraRig {
       const r = mode === 'title' ? 8.5 : 7.4, h = mode === 'title' ? 2.1 : 1.6;
       eye = [pose.x + Math.sin(this.orbit) * r, h, pose.z + Math.cos(this.orbit) * r];
       // Menus sit on the left, so on wide screens aim left of the car to frame it right of centre.
-      const side = (s.aspect || 1) > 1.3 ? (mode === 'title' ? 2.6 : 1.7) : 0;
+      const side = (s.aspect || 1) > 1.3 ? (Number.isFinite(s.orbitSide) ? s.orbitSide : mode === 'title' ? 2.6 : 1.7) : 0;
       const fx = -Math.sin(this.orbit), fz = -Math.cos(this.orbit); // camera forward (towards the car)
       tgt = [pose.x - fz * side, mode === 'title' ? 0.9 : 0.55, pose.z + fx * side];
       fov = (mode === 'title' ? 48 : 40) * DEG;

@@ -1,6 +1,67 @@
-# VELOCITYVERSE — The Openline 0.6
+# VELOCITYVERSE 0.8 — Neon Coast
 
 *Working title, not yet cleared for trademarks or store names.*
+
+## What changed in 0.8 (11 November 2026)
+
+**Interface.** The menus were rebuilt on the Neon Coast concepts in `design/neon-coast-20261111/`: five destinations
+(Home, Story, Garage, World, Crew) over the live 3D car and circuit, a single lime primary action per screen, and the
+motion timings from the concept storyboard (home reveal, press feedback, garage sweep, route trace, start shutter,
+reward reveal) driven by GSAP. Reduced-motion settings switch all of it off. Android is locked to landscape.
+
+**Story.** Twelve events in four acts (Act 4, "The open season", is new, with Juno Venn, Patch and Veska). Every event
+opens with a character cutscene, then an event-ready screen with the setup and crew-chief choice, and ends with a
+star reveal and a debrief scene.
+
+**Every menu feature now feeds the racing.**
+- *Garage*: three cars; four upgrade systems with three stages each that change the real vehicle model; paint, photo
+  mode, and a Tune tab whose bench test drives the exact car you race. Rivals keep their own cars, so upgrades are a
+  real advantage.
+- *World*: the three circuits with mastery stars and section grades taken from your own valid laps, quick race, time
+  trial, free drive, three cups scored from real finishing orders, and Maela's driving school with bronze, silver and
+  gold medals.
+- *Crew*: Neri, Tavi, Maela and Sola each have a bond that grows from what you do and gives a real bonus; each bond
+  level opens more of their story.
+- *Home*: three daily goals with a streak bonus; *Profile*: trophies, cups and best laps.
+- One wallet (credits) and one driver level across everything. Existing 0.7 saves keep their car, circuit, parts and
+  school passes.
+
+**Look.** The showroom is now a rainy night quay: a wet concrete floor that mirrors the car and a lit skyline (windows,
+neon signs, searchlights, out-of-focus street lights), neon columns, tyre stacks and a tool chest. Races run under a
+storm sky with falling rain, splashes, rain ripples on a wet road, spray from the rear tyres and a blinking rain light
+on every car. Every frame goes through a camera grade with lens dirt, halation and grain. Screen changes glitch, headings
+decode, the game opens on a title sequence, and the main buttons carry a light sweep. Settings › Weather switches the
+rain off (it is visual only; grip does not change). Reduced motion turns the glitch, decode and title sequence off.
+
+**Driving.** One fix in the automatic gearbox: wheelspin alone can no longer trigger an upshift. Before this, a
+powerful car could hunt between second and third gear out of slow corners and lose all drive (the Vanta GT took
+about seven seconds to reach 100 km/h on the bench with a small torque increase; it now takes 3.8). All 34 physics
+checks still pass.
+
+## Build and test
+
+| What | Command |
+| --- | --- |
+| Play in a browser | open `dist/velocityverse.html` |
+| Rebuild the game file | `npm run build` |
+| Play Store bundle and installable APK | double-click `Build Android Release.command`, or `npm run build:release` — see [docs/PLAY_STORE.md](docs/PLAY_STORE.md) |
+| Logic and physics tests | `npm test` (includes 16 progression checks and the 34 physics checks) |
+| Menu and race flow in a real browser | `npm run test:paddock` (12 checks) |
+
+Verified in this update: `npm test` suites and the 12-check browser flow passed in headless Chrome with software
+WebGL at 915×412, and the signed release (`release/VelocityVerse-0.8.0.aab` and `.apk`, version code 8, target API 36)
+built on this Mac with the bundled game file byte-identical to the tested `dist/velocityverse.html`. **Not verified:**
+anything on a physical phone, and frame rate or battery use (the rain and reflections cost GPU time; Settings ›
+Graphics and Settings › Weather are the levers if a phone struggles). The older browser tests that drive the 0.7
+menus (`smoke`, `test:app`, `test:features`, `test:career`, `test:story`, `test:responsive`, `test:visual`) have not
+been updated for the new screens and will fail on their old selectors.
+
+The 3D car, circuits and city are still the procedural prototype art. The concept images are a target, not a
+screenshot; this build does not claim parity with any commercial racing game.
+
+---
+
+# History: The Openline 0.6 and earlier
 
 ## New in Android 0.6
 
