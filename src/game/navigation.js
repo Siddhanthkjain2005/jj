@@ -1,7 +1,7 @@
 // Android/WebView back navigation. Returning false delegates root-exit policy to the native shell.
 // This module never exits the app, changes the vehicle, or inserts fake entries in browser history.
 const ROOTS = new Set(['title', 'hub']);
-const SAFE_HISTORY = new Set(['hub', 'garage', 'event', 'onboard', 'academy', 'customize', 'lab', 'explorer', 'team', 'records', 'story', 'universe', 'career', 'workshop', 'world']);
+const SAFE_HISTORY = new Set(['hub', 'garage', 'event', 'onboard', 'academy', 'customize', 'lab', 'explorer', 'team', 'records', 'story', 'universe', 'career', 'workshop', 'world', 'time-portal']);
 const SESSION_BOUNDARIES = new Set(['none', 'pause', 'lesson', 'results']);
 
 function visible(element) {

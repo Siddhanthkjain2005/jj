@@ -79,7 +79,9 @@ export class AIDriver {
     const ref = this.steering.speedRef;
     this.raw.steer = clamp(delta * (ref + u) / (ref * veh.car.steerLock), -1, 1);
     this.raw.brake = extraBrake; this.raw.throttle = 0;
-    this.assists.speedScale = this.pace * paceMul * (Math.abs(this.offset) > 1.2 ? 0.97 : 1);
+    // Early cars need more reserve for transients than the steady-state line predicts.
+    const historicalMargin = veh.car.history?.year <= 1954 ? .52 + .27 * track.world.surfaces.asphalt.mu : 1;
+    this.assists.speedScale = this.pace * paceMul * historicalMargin * (Math.abs(this.offset) > 1.2 ? 0.97 : 1);
     // --- stuck detection (race control resets the car if it cannot get going for 4 s) ---
     this.stuck = u < 1.5 ? this.stuck + dt : 0;
     if (this.stuck > 4) { this.needsReset = true; this.stuck = 0; }

@@ -23,6 +23,9 @@ export const STAND_ZONE = [40, 412]; // main straight: grandstands and canopies 
 export function buildWorld(track) {
   const mb = new MeshBuilder(), fence = new MeshBuilder();
   const N = track.n, hw = track.halfWidth, def = track.def, L = track.length;
+  const archive = def.archive;
+  const landscape = archive === 'archive_road';
+  const modern = archive === 'archive_test';
   const rnd = mulberry32(20261108);
   const P = (i, d, y) => [track.x[i] + track.nx[i] * d, y, track.z[i] + track.nz[i] * d];
   const inStands = (s) => s > STAND_ZONE[0] && s < STAND_ZONE[1];
@@ -65,7 +68,13 @@ export function buildWorld(track) {
         edge = hw + w;
       }
       const bI = side > 0 ? track.barrierR[i] : track.barrierL[i], bJ = side > 0 ? track.barrierR[j] : track.barrierL[j];
-      mb.quad(P(i, side * edge, 0.002), P(i, side * (bI - 0.5), 0.002), P(j, side * (bJ - 0.5), 0.002), P(j, side * edge, 0.002), RUNOFF, 2, [0, 1, 0]);
+      const shoulder = archive ? (modern ? [.09,.11,.14,0] : landscape ? [.12,.18,.10,0] : [.26,.23,.15,0]) : RUNOFF;
+      mb.quad(P(i, side * edge, 0.002), P(i, side * (bI - 0.5), 0.002), P(j, side * (bJ - 0.5), 0.002), P(j, side * edge, 0.002), shoulder, 2, [0, 1, 0]);
+      if (archive && !modern) {
+        const wall = landscape ? [.22,.24,.22,0] : [.30,.23,.15,0];
+        mb.quad(P(i, side * bI, 0), P(i, side * bI, .70), P(j, side * bJ, .70), P(j, side * bJ, 0), wall, 19);
+        continue;
+      }
       mb.quad(P(i, side * (bI - 0.5), 0.004), P(i, side * (bI - 0.3), 0.004), P(j, side * (bJ - 0.3), 0.004), P(j, side * (bJ - 0.5), 0.004), n(NEON.cyan, 0.45), 5, [0, 1, 0]);
       // barrier wall (floodlit concrete), its light strip and cap
       mb.quad(P(i, side * bI, 0), P(i, side * bI, 1.05), P(j, side * bJ, 1.05), P(j, side * bJ, 0), CONCRETE, 19);
@@ -76,14 +85,14 @@ export function buildWorld(track) {
       fence.quad(P(i, side * (bI + 0.12), 1.1), P(j, side * (bJ + 0.12), 1.1), P(j, side * (bJ + 0.12), 3.05), P(i, side * (bI + 0.12), 3.05), n([0.55, 0.7, 0.9], 1), 9, null, [[si, 0], [sj, 0], [sj, 1], [si, 1]]);
     }
   }
-  for (const side of [-1, 1]) for (let i = 0; i < N; i++) { // fence top rail
+  if (!archive || modern) for (const side of [-1, 1]) for (let i = 0; i < N; i++) { // fence top rail
     const j = (i + 1) % N, bI = side > 0 ? track.barrierR[i] : track.barrierL[i], bJ = side > 0 ? track.barrierR[j] : track.barrierL[j];
     mb.quad(P(i, side * (bI + 0.1), 3.05), P(j, side * (bJ + 0.1), 3.05), P(j, side * (bJ + 0.1), 3.12), P(i, side * (bI + 0.1), 3.12), METAL, 14);
   }
 
   // Expansion joints, reflector studs, drain grates and service access seams.
   // These are flush visual details, never unmodelled bumps in the driving surface.
-  for(let ss=0;ss<L;ss+=12){
+  if (!archive || modern) for(let ss=0;ss<L;ss+=12){
     const p=track.pointAt(ss,0,{}),i=p.i,sy=Math.sin(p.heading),co=Math.cos(p.heading);
     const V=(d,along,y)=>[p.x+track.nx[i]*d+track.tx[i]*along,y,p.z+track.nz[i]*d+track.tz[i]*along];
     for(const side of [-1,1]){
@@ -108,7 +117,7 @@ export function buildWorld(track) {
   // ---- start/finish: chequered line, grid slots, gantry with five start lights and a screen ----
   const sp = track.pointAt(def.lineS, 0, {}), si0 = sp.i;
   const at = (dd, dz, y) => [sp.x + track.nx[si0] * dd + track.tx[si0] * dz, y, sp.z + track.nz[si0] * dd + track.tz[si0] * dz];
-  for (let row = 0; row < 2; row++) for (let k = 0; k < 24; k++) {
+  for (let row = 0; row < 2; row++) for (let k = 0; k < (archive ? Math.floor(hw * 4) : 24); k++) {
     const white = (row + k) % 2 === 0, x0 = -hw + k * 0.5;
     mb.quad(at(x0, row * 0.5, 0.008), at(x0 + 0.5, row * 0.5, 0.008), at(x0 + 0.5, row * 0.5 + 0.5, 0.008), at(x0, row * 0.5 + 0.5, 0.008), white ? [0.9, 0.92, 0.95, 0] : [0.02, 0.02, 0.025, 0], 19, [0, 1, 0]);
   }
@@ -131,6 +140,30 @@ export function buildWorld(track) {
     const ex = Math.cos(a) * r, ez = -Math.sin(a) * r;
     const v = (u, w2) => mb.vert(c[0] + ex * u, c[1] + r * w2, c[2] + ez * u, -Math.sin(a), 0, -Math.cos(a), [1, 0.05, 0.08, 1], 20, k + 0.5, row);
     const a0 = v(-1, -1), b0 = v(1, -1), c0 = v(1, 1), d0 = v(-1, 1); mb.i.push(a0, b0, c0, a0, c0, d0);
+  }
+
+  if (archive) {
+    const terrain = landscape ? [.095,.135,.074,0] : modern ? [.075,.085,.096,0] : [.19,.17,.105,0];
+    mb.quad([-1800,-.035,-1800],[-1800,-.035,1800],[1800,-.035,1800],[1800,-.035,-1800],terrain,2,[0,1,0]);
+    for (let s = 24; s < L - 15; s += landscape ? 9 : 28) {
+      const position = track.pointAt(s, 0, {});
+      const offset = track.barrierL[position.i] + (landscape ? 8 : 11);
+      const p = track.pointAt(s, -offset, {});
+      if (landscape) {
+        const height = 6 + rnd() * 10;
+        mb.box(p.x, height * .25, p.z, .35, height * .5, .35, [.16,.10,.06],19);
+        mb.loftY(p.x,p.z,0,[[height*.25,1.8,1.8,2],[height*.63,2.65,2.65,2],[height,.05,.05,2]],7,[.12,.25,.13],23);
+      } else if (s < (modern ? 270 : 210)) {
+        const color = modern ? [.25,.31,.36] : [.40,.31,.21];
+        mb.boxYaw(p.x, 2.9, p.z, 10, 5.8, 20, p.heading, color,19);
+        mb.boxYaw(p.x, 5.9, p.z, 10.8, .28, 20.5, p.heading, [.16,.19,.20],14);
+      }
+    }
+    // Keep a degenerate-free mesh for the renderer's shared water and fence draws.
+    const water = new MeshBuilder();
+    water.quad([-2,-2,-2],[-2,-2,2],[2,-2,2],[2,-2,-2],[0,0,0,0],2,[0,1,0]);
+    if (!modern) fence.quad([-2,-3,-2],[-2,-3,2],[-2,-2,2],[-2,-2,-2],[0,0,0,0],9);
+    return { world: mb, water, fence, artStats: { archive } };
   }
 
   // ---- pit building (left of the straight, before the line) ----

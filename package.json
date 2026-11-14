@@ -23,7 +23,9 @@
     "test:story": "node tests/openline.mjs && node tests/openline_flow.mjs",
     "test:career": "node tests/career_mode.mjs && node tests/rides_circuits.mjs && node tests/career_flow.mjs",
     "test:paddock": "node tests/paddock_flow.mjs",
-    "build:release": "bash tools/android-release.sh"
+    "build:release": "bash tools/android-release.sh",
+    "test:history": "node tests/time_portal.mjs && node tests/history_physics.mjs",
+    "test:history-browser": "node tests/time_portal_browser.mjs"
   },
   "license": "UNLICENSED",
   "devDependencies": {

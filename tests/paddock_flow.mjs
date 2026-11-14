@@ -5,6 +5,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 let chromium;
 try { ({ chromium } = await import('playwright')); } catch (e) { ({ chromium } = await import('/opt/npm-tools/node_modules/playwright/index.mjs')); }
 const chrome = process.env.CHROME_PATH || ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '/usr/bin/google-chrome', '/usr/bin/chromium'].find(p => fs.existsSync(p));
@@ -33,7 +34,7 @@ try {
   const page = await ctx.newPage(); page.setDefaultTimeout(60000);
   page.on('pageerror', e => report.errors.push(String(e))); page.on('console', m => { if (m.type() === 'error') report.errors.push('console: ' + m.text()); });
   await page.addInitScript(f => { if (!localStorage.getItem('velocityverse.m0.save')) localStorage.setItem('velocityverse.m0.save', JSON.stringify(f)); }, fixture);
-  await page.goto('file://' + path.resolve('dist/velocityverse.html'));
+  await page.goto(pathToFileURL(path.resolve('dist/velocityverse.html')).href);
   await page.waitForFunction(() => window.__vv?.renderer && window.__vv?.pad && window.__vv?.juice);
   report.gsap = await page.evaluate(() => window.gsap?.version || null);
   await page.evaluate(BOT);

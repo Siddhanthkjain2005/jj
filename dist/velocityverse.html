@@ -1294,6 +1294,67 @@ body.reduce-motion .mo,body.reduce-motion #pd-pop.on,body.reduce-motion .nc-go::
 body.reduce-motion .nc-go.shine::before{animation:none;display:none}
 
 </style>
+<style>
+#scr-time-portal {
+  z-index: 12;
+  padding: clamp(8px, 2vw, 28px);
+  background: radial-gradient(ellipse at 80% 0%, #365047, transparent 56%), linear-gradient(140deg, #10232b, #080f17 65%);
+  color: #f1f0df;
+}
+.tp-shell { width: min(1260px, 100%); max-height: 100%; overflow: auto; margin: auto; border: 1px solid #83999066; background: #0c1c24e8; }
+.tp-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: clamp(12px, 3vw, 30px); }
+.tp-header h1 { font: 700 clamp(2.5rem, 7vw, 5.7rem)/.88 var(--font-display, sans-serif); letter-spacing: -.025em; text-transform: uppercase; margin: .25em 0 0; }
+.tp-header em { color: #d6ed99; font-style: normal; }
+.tp-header nav, .tp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.tp-kicker { color: #bbd89c; font-size: .66rem; font-weight: 700; letter-spacing: .13em; }
+.tp-tabs { display: grid; grid-template-columns: repeat(4, 1fr); background: #08151d; border-block: 1px solid #668c7d66; }
+.tp-tabs button, .tp-era-list button { border: 1px solid transparent; border-radius: 0; background: none; color: #b5c6bf; font: inherit; text-align: left; padding: 9px 12px; cursor: pointer; }
+.tp-tabs button[aria-pressed=true], .tp-era-list button[aria-pressed=true] { background: #24443e; color: #e7f2cd; border-color: #b4d584; }
+.tp-content { padding: clamp(10px, 2vw, 22px); }
+.tp-columns { display: grid; grid-template-columns: minmax(230px, 1fr) minmax(0, 1.65fr); align-items: start; gap: 14px; }
+.tp-panel { min-width: 0; border: 1px solid #668c7d55; background: #11262ecc; padding: clamp(12px, 2vw, 22px); }
+.tp-panel h2, .tp-panel h3 { font-family: var(--font-display, sans-serif); line-height: 1.05; text-transform: uppercase; margin: .4em 0; }
+.tp-panel h2 { font-size: clamp(1.65rem, 3vw, 2.75rem); }
+.tp-panel h3 { font-size: clamp(1.3rem, 2.5vw, 2rem); }
+.tp-panel .tp-year { color: #d6ed99; font-size: clamp(3.5rem, 9vw, 8rem); margin: .13em 0 0; }
+.tp-panel p { line-height: 1.55; margin: 10px 0; }
+.tp-era-list { display: grid; gap: 3px; }
+.tp-era-list button { display: grid; grid-template-columns: 6em minmax(0,1fr); border-bottom-color: #60817b40; align-items: center; }
+.tp-era-list span { color: #c8db9e; font-size: .72em; }
+.tp-entry { border-top: 1px solid #718c8070; padding: 14px 0; margin-top: 12px; }
+.tp-entry a, .tp-panel > a { display: inline-block; padding: 10px 7px 10px 0; color: #cee99a; text-underline-offset: .18em; }
+.tp-fields { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
+.tp-panel label { display: block; color: #dce6cc; font-size: .85em; }
+.tp-panel select { display: block; width: 100%; margin: 5px 0 12px; padding: 8px; font: inherit; color: #f1f0df; background: #091a21; border: 1px solid #819f90; }
+.tp-panel option { background: #091a21; }
+.tp-shell button, .tp-shell select, #tp-hud button { min-height: 44px; }
+.tp-shell button:focus-visible, .tp-shell select:focus-visible, .tp-shell a:focus-visible, #tp-hud button:focus-visible { outline: 2px solid #d4ee9a; outline-offset: 2px; }
+.tp-actions { margin-top: 14px; }
+.tp-note { color: #acc1b8; font-size: .83em; }
+.tp-specs { display: grid; grid-template-columns: 1fr 1.3fr; gap: 8px; margin: 15px 0; }
+.tp-specs dt { color: #acc1b8; }
+.tp-specs dd { margin: 0; }
+.tp-chapters { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
+#tp-metrics table { width: 100%; border-collapse: collapse; margin-top: 14px; font-variant-numeric: tabular-nums; }
+#tp-metrics td, #tp-metrics th { text-align: left; padding: 10px 4px; border-bottom: 1px solid #718c8070; }
+.tp-garage-link, .tp-world-link { position: absolute; right: 0; bottom: 0; z-index: 2; }
+.tp-world-link { right: auto; left: 0; }
+.tp-hud { position: fixed; z-index: 8; top: 12%; left: 50%; transform: translateX(-50%); max-width: 55vw; background: #091920ec; border: 1px solid #84ab91; padding: 5px 8px; text-align: center; color: #edf2df; font-size: .72rem; font-variant-numeric: tabular-nums; }
+.tp-hud[hidden], .tp-hud [hidden] { display: none; }
+.tp-controls { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
+.tp-controls button { background: #17343c; color: #e3f0d3; border: 1px solid #6e9183; padding: 5px 9px; font: inherit; }
+.tp-controls button[aria-pressed=true] { color: #132225; background: #d6ed99; }
+.tp-analog { font-family: Georgia, serif; color: #f1d29d; }
+@media (max-width: 680px) {
+  .tp-columns { grid-template-columns: 1fr; }
+  .tp-columns > aside { order: 2; }
+  .tp-chapters { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .tp-tabs button { padding: 5px; font-size: .78rem; }
+  .tp-header nav { flex-direction: column; }
+}
+@media (max-height: 490px) { .tp-header { padding: 9px 14px; } .tp-header h1 { font-size: 2.4rem; } }
+
+</style>
 </head>
 <body>
 <canvas id="gl" aria-label="3D view of the car and circuit"></canvas>
@@ -1609,6 +1670,7 @@ body.reduce-motion .nc-go.shine::before{animation:none;display:none}
 
 
 </script>
+
 <script>
 "use strict";
 // VELOCITYVERSE Milestone 0 bundle, built 0.8.0. Source: src/ (see README).
@@ -1845,6 +1907,824 @@ const RIDES=freeze([
 function getRide(id){return RIDES.find(r=>r.id===id)||RIDES[0];}
 
 return { RIDES, getRide };
+})();
+
+// ---- sim/history-rides.js ----
+const __m_sim_history_rides = (() => {
+// Original cars inspired by documented engineering transitions. Numbers below tune the
+// shared Vehicle model. Historical source links support the architecture, not the tuning.
+const { CAR_VX1 } = __m_sim_data;
+const { DEG } = __m_sim_units;
+function historicCar(year, name, profile) {
+  const { variant, body, layout, cylinders, tyres, transmission, widths, focus, reference, source, tech, paint, ...physical } = profile;
+  const id = `hist_${year}${variant ? `_${variant}` : ''}`;
+  return {
+    ...CAR_VX1,
+    ...physical,
+    id,
+    name,
+    summary: focus,
+    bodyStyle: body,
+    tire: { ...CAR_VX1.tire, ...physical.tire },
+    susp: { ...CAR_VX1.susp, ...physical.susp },
+    gearbox: { ...CAR_VX1.gearbox, ...physical.gearbox },
+    liveries: [{ id: `archive_${id}`, name: 'Archive livery', primary: paint[0], secondary: paint[1], accent: paint[2] }],
+    provenance: {
+      mass: 'T', geometry: 'F', inertia: 'E', wheels: 'T', steering: 'T', suspension: 'T',
+      tirePeak: 'T', tireShape: 'T', relaxation: 'T', rollingResistance: 'T', lowSpeedDamping: 'T',
+      engine: 'T', gearing: 'T', drivetrainLoss: 'E', diff: 'T', brakes: 'T', aero: 'T',
+    },
+    history: {
+      year, body, layout, cylinders, tyres, transmission, focus, tech,
+      historicalReference: reference,
+      source,
+      wheelWidthFront: widths[0],
+      wheelWidthRear: widths[1],
+    },
+  };
+}
+
+const HISTORY_RIDES = {
+  hist_1950: historicCar(1950, 'Aureline S8', {
+    body: 'cigar', layout: 'Front-engine supercharged straight-eight', cylinders: 8,
+    tyres: 'Narrow cross-ply', transmission: 'Four-speed manual pattern', widths: [.16, .19],
+    focus: 'Manage wheelspin and brake early in a tall, softly sprung front-engine car with no wings.',
+    reference: 'Alfa Romeo Tipo 158',
+    source: 'https://www.media.stellantis.com/em-en/heritage-hub-italy/press/the-legendary-alfa-romeo-158-celebrates-the-brand-s-return-to-formula-1-at-the-inauguration-of-the-fia-hall-of-fame',
+    paint: [[.43, .035, .12], [.94, .80, .61], [.66, .48, .31]],
+    mass: 765, cgHeight: .47, wheelbase: 2.48, frontWeight: .56,
+    trackFront: 1.32, trackRear: 1.30, yawInertia: 940, pitchInertia: 815, rollInertia: 285,
+    wheelRadius: .365, wheelInertiaFront: 1.15, wheelInertiaRear: 1.65, steerLock: 28 * DEG, steerRate: 2.5,
+    susp: { kF: 31000, kR: 33000, cBumpF: 2600, cRebF: 3250, cBumpR: 2900, cRebR: 3650, travel: .116, arbF: 4800, arbR: 2600 },
+    tire: { mu: .99, nominalLoad: 1750, loadSens: .16, peakSlip: .16, peakAngle: 11 * DEG, falloff: .67, relaxLat: .58, rollRes: .018 },
+    engine: { idleRpm: 1250, launchRpm: 4450, limiterRpm: 8500, maxRpm: 8800,
+      curve: [[1250, 87], [2800, 142], [4400, 196], [6000, 246], [7400, 270], [8300, 260], [8800, 240]],
+      frictionBase: 14, frictionPerRpm: .0031 },
+    gearbox: { ratios: [2.72, 1.85, 1.36, 1], final: 4.18, shiftTime: .33, autoUpRpm: 8070, autoDownRpm: 4450 },
+    diff: { preload: 12, lockPower: .13, lockCoast: .08 },
+    brakes: { maxTorque: 3020, bias: .57 },
+    aero: { cdA: .79, clA: 0, balance: .50 },
+    tech: { throttleSeconds: .15 },
+  }),
+  hist_1952: historicCar(1952, 'Canto F2', {
+    body: 'f2', layout: 'Front-engine naturally aspirated 2-litre inline-four', cylinders: 4,
+    tyres: 'Slender cross-ply', transmission: 'Four-speed manual pattern', widths: [.145, .17],
+    focus: 'Maintain momentum in a lighter car inspired by the Formula 2 machinery used for the 1952 Championship Grands Prix.',
+    reference: 'Ferrari 500 F2',
+    source: 'https://cdn.ferrari.com/cms/network/media/pdf/pr_90_years_eng_fin.pdf',
+    paint: [[.60, .31, .10], [.91, .85, .68], [.20, .41, .48]],
+    mass: 626, cgHeight: .432, wheelbase: 2.19, frontWeight: .53,
+    trackFront: 1.25, trackRear: 1.23, yawInertia: 670, pitchInertia: 600, rollInertia: 210,
+    wheelRadius: .351, wheelInertiaFront: .91, wheelInertiaRear: 1.25, steerLock: 28 * DEG, steerRate: 2.95,
+    susp: { kF: 31000, kR: 29500, cBumpF: 2300, cRebF: 3050, cBumpR: 2460, cRebR: 3300, travel: .106, arbF: 5100, arbR: 2900 },
+    tire: { mu: 1.015, nominalLoad: 1530, loadSens: .147, peakSlip: .155, peakAngle: 10.7 * DEG, falloff: .70, relaxLat: .54, rollRes: .017 },
+    engine: { idleRpm: 1100, launchRpm: 4390, limiterRpm: 7250, maxRpm: 7510,
+      curve: [[1100, 68], [2750, 117], [4300, 155], [5400, 172], [6400, 175], [7130, 169], [7510, 148]],
+      frictionBase: 12, frictionPerRpm: .0028 },
+    gearbox: { ratios: [2.94, 2.09, 1.55, 1.17], final: 3.65, shiftTime: .29, autoUpRpm: 6940, autoDownRpm: 3850 },
+    diff: { preload: 14, lockPower: .12, lockCoast: .08 },
+    brakes: { maxTorque: 3020, bias: .55 },
+    aero: { cdA: .72, clA: 0, balance: .50 },
+    tech: { throttleSeconds: .095 },
+  }),
+  hist_1954: historicCar(1954, 'Silhouette S54', {
+    body: 'streamliner', layout: 'Front-engine naturally aspirated 2.5-litre straight-eight', cylinders: 8,
+    tyres: 'Cross-ply beneath wheel fairings', transmission: 'Five-speed manual pattern', widths: [.175, .205],
+    focus: 'Use the low-drag body on long straights and leave room for the heavier car in tighter turns.',
+    reference: 'Mercedes-Benz W 196 R streamliner',
+    source: 'https://media.mercedes-benz.com/en/article/0ee71ec7-80ea-46c6-a0d4-c41b3f168a96',
+    paint: [[.37, .48, .51], [.11, .35, .38], [.96, .71, .40]],
+    mass: 805, cgHeight: .423, wheelbase: 2.40, frontWeight: .542,
+    trackFront: 1.34, trackRear: 1.36, yawInertia: 940, pitchInertia: 830, rollInertia: 290,
+    wheelRadius: .356, wheelInertiaFront: 1.10, wheelInertiaRear: 1.55, steerLock: 23 * DEG, steerRate: 2.60,
+    susp: { kF: 39500, kR: 41100, cBumpF: 2870, cRebF: 3530, cBumpR: 3160, cRebR: 3880, travel: .100, arbF: 7200, arbR: 4200 },
+    tire: { mu: 1.045, nominalLoad: 1950, loadSens: .15, peakSlip: .15, peakAngle: 10.5 * DEG, falloff: .71, relaxLat: .53, rollRes: .016 },
+    engine: { idleRpm: 1250, launchRpm: 5140, limiterRpm: 8780, maxRpm: 9050,
+      curve: [[1250, 64], [2900, 124], [4700, 179], [6500, 217], [7850, 231], [8600, 224], [9050, 200]],
+      frictionBase: 13, frictionPerRpm: .0030 },
+    gearbox: { ratios: [3.05, 2.20, 1.65, 1.29, 1.02], final: 3.95, shiftTime: .27, autoUpRpm: 8470, autoDownRpm: 4700 },
+    diff: { preload: 20, lockPower: .14, lockCoast: .09 },
+    brakes: { maxTorque: 3500, bias: .56 },
+    aero: { cdA: .53, clA: 0, balance: .50 },
+    tech: { throttleSeconds: .09 },
+  }),
+  hist_1959: historicCar(1959, 'Switchback R59', {
+    body: 'rear', layout: 'Rear-mid-engine naturally aspirated inline-four', cylinders: 4,
+    tyres: 'Narrow treaded cross-ply', transmission: 'Four-speed manual pattern', widths: [.18, .22],
+    focus: 'Compare rearward mass and quicker rotation with the long front-engine layout of 1950.',
+    reference: 'Cooper-Climax T51',
+    source: 'https://www.formula1.com/en/latest/article/5-times-f1-teams-got-the-new-regulations-wrong.1odf2dnvDZkY5uYTaqRYfp',
+    paint: [[.16, .26, .53], [.82, .88, .90], [.71, .55, .20]],
+    mass: 575, cgHeight: .385, wheelbase: 2.27, frontWeight: .40,
+    trackFront: 1.26, trackRear: 1.26, yawInertia: 570, pitchInertia: 520, rollInertia: 170,
+    wheelRadius: .345, wheelInertiaFront: .79, wheelInertiaRear: 1.12, steerLock: 27 * DEG, steerRate: 3.7,
+    susp: { kF: 35500, kR: 40500, cBumpF: 2370, cRebF: 3170, cBumpR: 2710, cRebR: 3550, travel: .090, arbF: 7700, arbR: 4800 },
+    tire: { mu: 1.11, nominalLoad: 1450, loadSens: .135, peakSlip: .15, peakAngle: 10 * DEG, falloff: .72, relaxLat: .51, rollRes: .016 },
+    engine: { idleRpm: 1180, launchRpm: 4480, limiterRpm: 6900, maxRpm: 7100,
+      curve: [[1180, 67], [2700, 134], [4300, 191], [5650, 228], [6500, 231], [7100, 203]],
+      frictionBase: 13, frictionPerRpm: .0030 },
+    gearbox: { ratios: [2.74, 1.86, 1.37, 1.05], final: 3.62, shiftTime: .28, autoUpRpm: 6650, autoDownRpm: 3640 },
+    diff: { preload: 19, lockPower: .16, lockCoast: .10 },
+    brakes: { maxTorque: 3650, bias: .54 },
+    aero: { cdA: .69, clA: .015, balance: .45 },
+    tech: { throttleSeconds: .084 },
+  }),
+  hist_1962: historicCar(1962, 'Mistral M15', {
+    body: 'monocoque', layout: 'Mid-engine naturally aspirated 1.5-litre V8', cylinders: 8,
+    tyres: 'Narrow treaded bias-ply', transmission: 'Five-speed manual pattern', widths: [.19, .22],
+    focus: 'Carry momentum in a light, rear-weighted monocoque with direct steering and mechanical grip.',
+    reference: 'Lotus Type 25',
+    source: 'https://www.lotuscars.com/fr-CA/lotus-story/race-cars/type-25',
+    paint: [[.035, .36, .32], [.90, .72, .18], [.83, .91, .82]],
+    mass: 515, cgHeight: .34, wheelbase: 2.31, frontWeight: .41,
+    trackFront: 1.28, trackRear: 1.31, yawInertia: 465, pitchInertia: 435, rollInertia: 138,
+    wheelRadius: .345, wheelInertiaFront: .76, wheelInertiaRear: 1.04, steerLock: 26 * DEG, steerRate: 4.4,
+    susp: { kF: 42500, kR: 48500, cBumpF: 2500, cRebF: 3600, cBumpR: 2700, cRebR: 3900, travel: .085, arbF: 11000, arbR: 7600 },
+    tire: { mu: 1.18, nominalLoad: 1300, loadSens: .12, peakSlip: .14, peakAngle: 9 * DEG, falloff: .77, relaxLat: .45, rollRes: .015 },
+    engine: { idleRpm: 1650, launchRpm: 5550, limiterRpm: 10000, maxRpm: 10200,
+      curve: [[1650, 44], [3700, 70], [5500, 91], [7100, 116], [8500, 135], [9700, 133], [10200, 122]],
+      frictionBase: 11, frictionPerRpm: .0027 },
+    gearbox: { ratios: [3.45, 2.49, 1.87, 1.49, 1.24], final: 4.18, shiftTime: .23, autoUpRpm: 9660, autoDownRpm: 5200 },
+    diff: { preload: 28, lockPower: .19, lockCoast: .11 },
+    brakes: { maxTorque: 4100, bias: .55 },
+    aero: { cdA: .62, clA: .05, balance: .48 },
+    tech: { throttleSeconds: .065 },
+  }),
+  hist_1970: historicCar(1970, 'Keel W70', {
+    body: 'wing', layout: 'Mid-engine naturally aspirated 3-litre V8', cylinders: 8,
+    tyres: 'Wide treaded bias-ply', transmission: 'Five-speed manual pattern', widths: [.25, .35],
+    focus: 'Use fixed wing load in fast bends while learning how little it helps at hairpin speeds.',
+    reference: 'Lotus Type 72',
+    source: 'https://www.lotuscars.com/en/lotus-story/race-cars/type-72?channel=app',
+    paint: [[.32, .075, .26], [.79, .88, .72], [.95, .55, .28]],
+    mass: 601, cgHeight: .33, wheelbase: 2.54, frontWeight: .41,
+    trackFront: 1.55, trackRear: 1.50, yawInertia: 690, pitchInertia: 615, rollInertia: 205,
+    wheelRadius: .33, wheelInertiaFront: .81, wheelInertiaRear: 1.37, steerLock: 25 * DEG, steerRate: 3.8,
+    susp: { kF: 69000, kR: 77500, cBumpF: 3970, cRebF: 4860, cBumpR: 4280, cRebR: 5550, travel: .074, arbF: 22400, arbR: 15900 },
+    tire: { mu: 1.35, nominalLoad: 1520, loadSens: .117, peakSlip: .131, peakAngle: 8.6 * DEG, falloff: .74, relaxLat: .45, rollRes: .015 },
+    engine: { idleRpm: 1780, launchRpm: 5830, limiterRpm: 10000, maxRpm: 10400,
+      curve: [[1780, 116], [4200, 177], [5800, 230], [7500, 281], [9000, 303], [9900, 288], [10400, 263]],
+      frictionBase: 17, frictionPerRpm: .0033 },
+    gearbox: { ratios: [3.20, 2.38, 1.82, 1.49, 1.24], final: 3.54, shiftTime: .21, autoUpRpm: 9610, autoDownRpm: 5800 },
+    diff: { preload: 40, lockPower: .25, lockCoast: .14 },
+    brakes: { maxTorque: 5180, bias: .56 },
+    aero: { cdA: .81, clA: .83, balance: .38 },
+    tech: { throttleSeconds: .070 },
+  }),
+  hist_1978: historicCar(1978, 'Venturi G78', {
+    body: 'ground', layout: 'Mid-engine naturally aspirated 3-litre V8', cylinders: 8,
+    tyres: 'Wide slicks', transmission: 'Five-speed manual pattern', widths: [.26, .41],
+    focus: 'Preserve a stable ride height so the underbody can generate grip through fast corners.',
+    reference: 'Lotus Type 79',
+    source: 'https://www.lotuscars.com/en-US/lotus-story/race-cars/type-79',
+    paint: [[.12, .18, .33], [.94, .62, .22], [.63, .85, .94]],
+    mass: 645, cgHeight: .315, wheelbase: 2.72, frontWeight: .42,
+    trackFront: 1.68, trackRear: 1.58, yawInertia: 755, pitchInertia: 668, rollInertia: 232,
+    wheelRadius: .335, wheelInertiaFront: .86, wheelInertiaRear: 1.54, steerLock: 23 * DEG, steerRate: 3.6,
+    susp: { kF: 113000, kR: 123000, cBumpF: 5100, cRebF: 6800, cBumpR: 5600, cRebR: 7300, travel: .062, arbF: 38000, arbR: 27000 },
+    tire: { mu: 1.53, nominalLoad: 1750, loadSens: .105, peakSlip: .12, peakAngle: 7.5 * DEG, falloff: .76, relaxLat: .42, rollRes: .014 },
+    engine: { idleRpm: 1950, launchRpm: 6150, limiterRpm: 10950, maxRpm: 11200,
+      curve: [[1950, 133], [4300, 185], [6000, 226], [8000, 273], [9600, 309], [10700, 301], [11200, 277]],
+      frictionBase: 19, frictionPerRpm: .0037 },
+    gearbox: { ratios: [3.15, 2.42, 1.88, 1.53, 1.24], final: 3.42, shiftTime: .19, autoUpRpm: 10500, autoDownRpm: 6860 },
+    diff: { preload: 53, lockPower: .30, lockCoast: .20 },
+    brakes: { maxTorque: 6380, bias: .55 },
+    aero: { cdA: .84, clA: 2.35, balance: .44 },
+    tech: { throttleSeconds: .075, ground: { idealHeight: .048, falloffHeight: .048, fraction: .76 } },
+  }),
+  hist_1978_fan: historicCar(1978, 'Vortex F12', {
+    variant: 'fan', body: 'fan', layout: 'Mid-engine naturally aspirated 3-litre flat-twelve', cylinders: 12,
+    tyres: 'Wide slicks', transmission: 'Six-speed manual pattern', widths: [.26, .41],
+    focus: 'Feel suction build with engine speed, even when the car is moving too slowly for much wing load.',
+    reference: 'Brabham BT46B fan car',
+    source: 'https://www.formula1.com/en/latest/article/from-a-six-wheeled-car-to-the-flip-flop-wing-8-of-the-wildest-tech.1GRhOeOV4saRcrbvxWYMtG.1GRhOeOV4saRcrbvxWYMtG',
+    paint: [[.14, .29, .26], [.85, .46, .19], [.92, .86, .72]],
+    mass: 688, cgHeight: .298, wheelbase: 2.68, frontWeight: .425,
+    trackFront: 1.66, trackRear: 1.58, yawInertia: 808, pitchInertia: 704, rollInertia: 238,
+    wheelRadius: .335, wheelInertiaFront: .88, wheelInertiaRear: 1.52, steerLock: 24 * DEG, steerRate: 3.75,
+    susp: { kF: 111000, kR: 121000, cBumpF: 5400, cRebF: 6850, cBumpR: 5820, cRebR: 7600, travel: .061, arbF: 40000, arbR: 28400 },
+    tire: { mu: 1.52, nominalLoad: 1890, loadSens: .11, peakSlip: .118, peakAngle: 7.5 * DEG, falloff: .75, relaxLat: .40, rollRes: .014 },
+    engine: { idleRpm: 2150, launchRpm: 6350, limiterRpm: 11730, maxRpm: 12000,
+      curve: [[2150, 126], [4000, 194], [6000, 241], [7900, 278], [9700, 313], [11300, 299], [12000, 265]],
+      frictionBase: 21, frictionPerRpm: .0037 },
+    gearbox: { ratios: [3.43, 2.59, 2.06, 1.71, 1.46, 1.26], final: 3.54, shiftTime: .18, autoUpRpm: 11270, autoDownRpm: 6840 },
+    diff: { preload: 54, lockPower: .30, lockCoast: .19 },
+    brakes: { maxTorque: 6910, bias: .56 },
+    aero: { cdA: .99, clA: 1.43, balance: .46 },
+    tech: { throttleSeconds: .068, fan: { maxDownforceN: 3150, rampSeconds: .27 } },
+  }),
+  hist_1986: historicCar(1986, 'Sable T86', {
+    body: 'turbo', layout: 'Mid-engine 1.5-litre twin-turbo V6', cylinders: 6,
+    tyres: 'Wide high-slip slicks', transmission: 'Six-speed manual pattern', widths: [.28, .40],
+    focus: 'Feed the throttle in before boost arrives and manage the sharp increase in torque on corner exit.',
+    reference: 'Williams FW11 Honda',
+    source: 'https://www.formula1.com/en/latest/article/tech-tuesday-under-the-bodywork-of-1986s-best-f1-car-the-williams-fw11.4vqZ7cKhqMhfYgA6mwXYiu',
+    paint: [[.37, .12, .55], [.90, .41, .12], [.87, .83, .94]],
+    mass: 645, cgHeight: .305, wheelbase: 2.79, frontWeight: .42,
+    trackFront: 1.72, trackRear: 1.60, yawInertia: 840, pitchInertia: 715, rollInertia: 245,
+    wheelRadius: .335, wheelInertiaFront: .86, wheelInertiaRear: 1.45, steerLock: 23 * DEG, steerRate: 3.8,
+    susp: { kF: 105000, kR: 118000, cBumpF: 5100, cRebF: 6600, cBumpR: 5700, cRebR: 7350, travel: .069, arbF: 34000, arbR: 23000 },
+    tire: { mu: 1.55, nominalLoad: 1800, loadSens: .11, peakSlip: .125, peakAngle: 7.7 * DEG, falloff: .71, relaxLat: .39, rollRes: .014 },
+    engine: { idleRpm: 2100, launchRpm: 7350, limiterRpm: 12250, maxRpm: 12500,
+      curve: [[2100, 98], [4200, 193], [6200, 334], [7900, 479], [9500, 553], [11000, 561], [12100, 516], [12500, 467]],
+      frictionBase: 18, frictionPerRpm: .0039 },
+    gearbox: { ratios: [3.35, 2.58, 2.07, 1.70, 1.45, 1.24], final: 3.30, shiftTime: .18, autoUpRpm: 11750, autoDownRpm: 7200 },
+    diff: { preload: 48, lockPower: .37, lockCoast: .17 },
+    brakes: { maxTorque: 7700, bias: .57 },
+    aero: { cdA: 1.04, clA: 2.10, balance: .43 },
+    tech: { throttleSeconds: .065, turbo: { spoolSeconds: .70, decaySeconds: .27, offBoostFraction: .37 } },
+  }),
+  hist_1992: historicCar(1992, 'Datum A92', {
+    body: 'active92', layout: 'Mid-engine naturally aspirated 3.5-litre V10', cylinders: 10,
+    tyres: 'Wide slicks', transmission: 'Six-speed semi-automatic paddles', widths: [.29, .39],
+    focus: 'Feel an active suspension system resist pitch and heave as the aerodynamic load rises.',
+    reference: 'Williams FW14B',
+    source: 'https://www.williamsf1.com/articles/d807f8a4-e045-4277-994e-f9a872101cfe/atlassian-williams-f1-team-our-journey?scrollto=e8054892',
+    paint: [[.12, .38, .25], [.92, .86, .63], [.93, .37, .20]],
+    mass: 655, cgHeight: .30, wheelbase: 2.92, frontWeight: .43,
+    trackFront: 1.74, trackRear: 1.61, yawInertia: 875, pitchInertia: 734, rollInertia: 244,
+    wheelRadius: .33, wheelInertiaFront: .89, wheelInertiaRear: 1.42, steerLock: 23 * DEG, steerRate: 4.2,
+    susp: { kF: 109000, kR: 117000, cBumpF: 4700, cRebF: 6200, cBumpR: 5300, cRebR: 6800, travel: .066, arbF: 39000, arbR: 26000 },
+    tire: { mu: 1.64, nominalLoad: 1980, loadSens: .106, peakSlip: .116, peakAngle: 7.25 * DEG, falloff: .75, relaxLat: .37 },
+    engine: { idleRpm: 2800, launchRpm: 8350, limiterRpm: 14500, maxRpm: 14800,
+      curve: [[2800, 101], [5500, 175], [7400, 228], [9000, 278], [11300, 332], [13100, 361], [14300, 343], [14800, 311]],
+      frictionBase: 21, frictionPerRpm: .0036 },
+    gearbox: { ratios: [3.88, 2.98, 2.35, 1.93, 1.63, 1.40], final: 3.62, shiftTime: .091, autoUpRpm: 14000, autoDownRpm: 8380 },
+    diff: { preload: 52, lockPower: .30, lockCoast: .17 },
+    brakes: { maxTorque: 8600, bias: .57 },
+    aero: { cdA: .99, clA: 2.95, balance: .43 },
+    tech: { throttleSeconds: .054, activeSuspension: { stiffness: 115000, damping: 1800, maxForce: 2800 } },
+  }),
+  hist_2004: historicCar(2004, 'Pulse V10', {
+    body: 'v10', layout: 'Mid-engine naturally aspirated 3-litre V10', cylinders: 10,
+    tyres: 'Grooved dry tyres', transmission: 'Seven-speed sequential paddles', widths: [.30, .38],
+    focus: 'Keep the V10 in its upper rev range with close ratios and sharp paddle shifts.',
+    reference: 'Ferrari F2004',
+    source: 'https://www.formula1.com/en/latest/article/for-the-record-the-stories-behind-the-f1-calendars-quickest-laps.48fIV6ZLRCosOk46UUKUyA',
+    paint: [[.74, .21, .035], [.87, .93, .82], [.08, .18, .29]],
+    mass: 645, cgHeight: .285, wheelbase: 3.07, frontWeight: .44,
+    trackFront: 1.49, trackRear: 1.42, yawInertia: 855, pitchInertia: 715, rollInertia: 207,
+    wheelRadius: .325, wheelInertiaFront: .85, wheelInertiaRear: 1.33, steerLock: 23 * DEG, steerRate: 4.8,
+    susp: { kF: 142000, kR: 156000, cBumpF: 5900, cRebF: 7400, cBumpR: 6700, cRebR: 8400, travel: .049, arbF: 49000, arbR: 32000 },
+    tire: { mu: 1.66, nominalLoad: 2100, loadSens: .115, peakSlip: .104, peakAngle: 6.9 * DEG, falloff: .73, relaxLat: .36 },
+    engine: { idleRpm: 3650, launchRpm: 10500, limiterRpm: 18450, maxRpm: 18800,
+      curve: [[3650, 85], [6800, 160], [10200, 215], [12800, 269], [15100, 315], [17200, 349], [18200, 335], [18800, 307]],
+      frictionBase: 23, frictionPerRpm: .0038 },
+    gearbox: { ratios: [4.67, 3.92, 3.31, 2.81, 2.40, 2.06, 1.80], final: 3.53, shiftTime: .065, autoUpRpm: 18000, autoDownRpm: 11600 },
+    diff: { preload: 54, lockPower: .32, lockCoast: .19 },
+    brakes: { maxTorque: 10400, bias: .57 },
+    aero: { cdA: 1.09, clA: 3.31, balance: .43 },
+    tech: { throttleSeconds: .037 },
+  }),
+  hist_2006: historicCar(2006, 'Flint V8', {
+    body: 'v8', layout: 'Mid-engine naturally aspirated 2.4-litre V8', cylinders: 8,
+    tyres: 'Grooved dry tyres', transmission: 'Seven-speed sequential paddles', widths: [.30, .38],
+    focus: 'Keep the smaller V8 on song with close ratios and carry corner speed when torque is scarce.',
+    reference: 'Renault R26 and its RS26 V8',
+    source: 'https://theoriginals.renault.com/en/f1-r26-03',
+    paint: [[.37, .12, .10], [.20, .78, .73], [.95, .78, .48]],
+    mass: 650, cgHeight: .278, wheelbase: 3.11, frontWeight: .43,
+    trackFront: 1.49, trackRear: 1.45, yawInertia: 865, pitchInertia: 739, rollInertia: 210,
+    wheelRadius: .329, wheelInertiaFront: .87, wheelInertiaRear: 1.36, steerLock: 22.5 * DEG, steerRate: 4.7,
+    susp: { kF: 151000, kR: 164000, cBumpF: 6200, cRebF: 7550, cBumpR: 6900, cRebR: 8400, travel: .050, arbF: 48500, arbR: 31900 },
+    tire: { mu: 1.69, nominalLoad: 2130, loadSens: .110, peakSlip: .102, peakAngle: 6.8 * DEG, falloff: .74, relaxLat: .35 },
+    engine: { idleRpm: 3900, launchRpm: 10800, limiterRpm: 19300, maxRpm: 19600,
+      curve: [[3900, 72], [7000, 122], [10000, 183], [12900, 225], [15400, 259], [17700, 283], [19000, 273], [19600, 249]],
+      frictionBase: 20, frictionPerRpm: .0036 },
+    gearbox: { ratios: [4.78, 4.09, 3.49, 2.98, 2.56, 2.21, 1.91], final: 3.61, shiftTime: .061, autoUpRpm: 18900, autoDownRpm: 12400 },
+    diff: { preload: 55, lockPower: .31, lockCoast: .19 },
+    brakes: { maxTorque: 10500, bias: .58 },
+    aero: { cdA: 1.04, clA: 3.40, balance: .44 },
+    tech: { throttleSeconds: .034 },
+  }),
+  hist_2014: historicCar(2014, 'Vector H14', {
+    body: 'hybrid', layout: 'Mid-engine 1.6-litre turbo-hybrid V6', cylinders: 6,
+    tyres: 'Modern slicks', transmission: 'Eight-speed sequential paddles', widths: [.305, .385],
+    focus: 'Recover energy during braking and deploy it to support the turbocharged engine on exit.',
+    reference: 'Mercedes F1 W05 Hybrid and the 2014 hybrid rules',
+    source: 'https://www.mercedesamgf1.com/news/the-past-six-new-f1-eras-what-changed-and-what-happened',
+    paint: [[.12, .39, .45], [.84, .92, .97], [.79, .95, .29]],
+    mass: 715, cgHeight: .29, wheelbase: 3.38, frontWeight: .45,
+    trackFront: 1.52, trackRear: 1.48, yawInertia: 1010, pitchInertia: 831, rollInertia: 240,
+    wheelRadius: .334, wheelInertiaFront: .93, wheelInertiaRear: 1.34, steerLock: 22 * DEG, steerRate: 4.1,
+    susp: { kF: 149000, kR: 163000, cBumpF: 6400, cRebF: 7900, cBumpR: 7100, cRebR: 8800, travel: .050, arbF: 47000, arbR: 30000 },
+    tire: { mu: 1.74, nominalLoad: 2200, loadSens: .10, peakSlip: .10, peakAngle: 6.7 * DEG, falloff: .77, relaxLat: .33 },
+    engine: { idleRpm: 3000, launchRpm: 6700, limiterRpm: 12450, maxRpm: 13000,
+      curve: [[3000, 149], [4700, 247], [6200, 364], [8000, 431], [9850, 445], [11300, 420], [12500, 391], [13000, 352]],
+      frictionBase: 20, frictionPerRpm: .0032 },
+    gearbox: { ratios: [4.45, 3.54, 2.91, 2.45, 2.10, 1.83, 1.60, 1.40], final: 2.95, shiftTime: .045, autoUpRpm: 11900, autoDownRpm: 7300 },
+    diff: { preload: 66, lockPower: .32, lockCoast: .17 },
+    brakes: { maxTorque: 10650, bias: .59 },
+    aero: { cdA: .93, clA: 2.90, balance: .43 },
+    tech: { throttleSeconds: .045, turbo: { spoolSeconds: .25, decaySeconds: .15, offBoostFraction: .67 }, hybrid: { capacityKJ: 4000, deployKW: 120, harvestKW: 105 } },
+  }),
+  hist_2018: historicCar(2018, 'Broadline H18', {
+    body: 'wide', layout: 'Mid-engine 1.6-litre turbo-hybrid V6', cylinders: 6,
+    tyres: 'Wide 13-inch-wheel-era slicks', transmission: 'Eight-speed sequential paddles', widths: [.306, .405],
+    focus: 'Use wider tyres and high wing load through quick bends. The cockpit adds a halo and the hybrid still rewards planned deployment.',
+    reference: 'Mercedes-AMG F1 W09 EQ Power+',
+    source: 'https://www.mercedesamgf1.com/news/news-mercedes-apprentices-meet-hrh-prince-harry',
+    paint: [[.23, .16, .38], [.72, .83, .88], [.90, .41, .30]],
+    mass: 758, cgHeight: .286, wheelbase: 3.62, frontWeight: .455,
+    trackFront: 1.66, trackRear: 1.59, yawInertia: 1150, pitchInertia: 1010, rollInertia: 279,
+    wheelRadius: .338, wheelInertiaFront: .97, wheelInertiaRear: 1.43, steerLock: 21.9 * DEG, steerRate: 4.2,
+    susp: { kF: 176000, kR: 189000, cBumpF: 7200, cRebF: 8940, cBumpR: 7930, cRebR: 9660, travel: .044, arbF: 55000, arbR: 35500 },
+    tire: { mu: 1.87, nominalLoad: 2330, loadSens: .107, peakSlip: .098, peakAngle: 6.6 * DEG, falloff: .76, relaxLat: .32 },
+    engine: { idleRpm: 2900, launchRpm: 6880, limiterRpm: 12600, maxRpm: 12900,
+      curve: [[2900, 151], [4300, 261], [6400, 374], [8250, 440], [10000, 454], [11500, 442], [12500, 412], [12900, 380]],
+      frictionBase: 20, frictionPerRpm: .0033 },
+    gearbox: { ratios: [4.42, 3.58, 2.96, 2.51, 2.16, 1.89, 1.66, 1.45], final: 3.00, shiftTime: .043, autoUpRpm: 12150, autoDownRpm: 7450 },
+    diff: { preload: 68, lockPower: .33, lockCoast: .19 },
+    brakes: { maxTorque: 11500, bias: .59 },
+    aero: { cdA: 1.13, clA: 3.52, balance: .44 },
+    tech: {
+      throttleSeconds: .043,
+      turbo: { spoolSeconds: .225, decaySeconds: .142, offBoostFraction: .69 },
+      hybrid: { capacityKJ: 4000, deployKW: 120, harvestKW: 112 },
+    },
+  }),
+  hist_2022: historicCar(2022, 'Undertow F22', {
+    body: 'floor22', layout: 'Mid-engine 1.6-litre turbo-hybrid V6', cylinders: 6,
+    tyres: 'Wide 18-inch-wheel-era slicks', transmission: 'Eight-speed sequential paddles', widths: [.315, .405],
+    focus: 'Balance the high-load underfloor and the weight of a modern hybrid car on kerbs and under braking.',
+    reference: 'Red Bull RB18 and the 2022 technical reset',
+    source: 'https://www.formula1.com/en/latest/article/10-things-you-need-to-know-about-the-all-new-2022-f1-car.4OLg8DrXyzHzdoGrbqp6ye',
+    paint: [[.11, .31, .46], [.85, .57, .31], [.94, .91, .72]],
+    mass: 824, cgHeight: .302, wheelbase: 3.57, frontWeight: .45,
+    trackFront: 1.64, trackRear: 1.57, yawInertia: 1180, pitchInertia: 1060, rollInertia: 301,
+    wheelRadius: .36, wheelInertiaFront: 1.09, wheelInertiaRear: 1.51, steerLock: 21.8 * DEG, steerRate: 4.0,
+    susp: { kF: 184000, kR: 197000, cBumpF: 7600, cRebF: 9150, cBumpR: 8450, cRebR: 10000, travel: .045, arbF: 57500, arbR: 36500 },
+    tire: { mu: 1.79, nominalLoad: 2450, loadSens: .106, peakSlip: .10, peakAngle: 6.5 * DEG, falloff: .75, relaxLat: .32 },
+    engine: { idleRpm: 2850, launchRpm: 6900, limiterRpm: 12800, maxRpm: 13200,
+      curve: [[2850, 153], [4500, 266], [6500, 376], [8500, 450], [10000, 460], [11800, 435], [12800, 398], [13200, 365]],
+      frictionBase: 20, frictionPerRpm: .0031 },
+    gearbox: { ratios: [4.46, 3.61, 2.99, 2.54, 2.18, 1.90, 1.67, 1.47], final: 3.06, shiftTime: .043, autoUpRpm: 12320, autoDownRpm: 7600 },
+    diff: { preload: 67, lockPower: .33, lockCoast: .18 },
+    brakes: { maxTorque: 12200, bias: .58 },
+    aero: { cdA: 1.09, clA: 3.88, balance: .43 },
+    tech: {
+      throttleSeconds: .043,
+      turbo: { spoolSeconds: .23, decaySeconds: .15, offBoostFraction: .70 },
+      ground: { idealHeight: .038, falloffHeight: .037, fraction: .66 },
+      hybrid: { capacityKJ: 4000, deployKW: 120, harvestKW: 115 },
+    },
+  }),
+  hist_2026: historicCar(2026, 'Helix A26', {
+    body: 'active', layout: 'Mid-engine 1.6-litre turbo-hybrid V6', cylinders: 6,
+    tyres: 'Narrower modern slicks', transmission: 'Eight-speed sequential paddles', widths: [.28, .36],
+    focus: 'Trade wing load for lower drag on the straight and choose where to spend the larger electrical reserve.',
+    reference: '2026 Formula 1 technical regulations, FIA Section C Issue 21',
+    source: 'https://www.fia.com/system/files/documents/fia_2026_f1_regulations_-_section_c_technical_-_iss_21_-_2026-10-19.pdf',
+    paint: [[.12, .21, .44], [.70, .93, .28], [.90, .92, .85]],
+    mass: 795, cgHeight: .30, wheelbase: 3.33, frontWeight: .46,
+    trackFront: 1.55, trackRear: 1.51, yawInertia: 1060, pitchInertia: 880, rollInertia: 254,
+    wheelRadius: .351, wheelInertiaFront: 1.02, wheelInertiaRear: 1.43, steerLock: 23 * DEG, steerRate: 4.6,
+    susp: { kF: 158000, kR: 171000, cBumpF: 6600, cRebF: 8100, cBumpR: 7500, cRebR: 9300, travel: .050, arbF: 51000, arbR: 32500 },
+    tire: { mu: 1.72, nominalLoad: 2350, loadSens: .10, peakSlip: .098, peakAngle: 6.4 * DEG, falloff: .76, relaxLat: .32 },
+    engine: { idleRpm: 2800, launchRpm: 6400, limiterRpm: 12400, maxRpm: 12800,
+      curve: [[2800, 128], [4500, 225], [6200, 301], [8200, 353], [10200, 368], [11700, 331], [12400, 302], [12800, 274]],
+      frictionBase: 19, frictionPerRpm: .0031 },
+    gearbox: { ratios: [4.52, 3.61, 2.98, 2.53, 2.19, 1.92, 1.69, 1.49], final: 2.95, shiftTime: .04, autoUpRpm: 11900, autoDownRpm: 7450 },
+    diff: { preload: 62, lockPower: .31, lockCoast: .18 },
+    brakes: { maxTorque: 11400, bias: .59 },
+    aero: { cdA: 1.02, clA: 3.19, balance: .44 },
+    tech: {
+      throttleSeconds: .045,
+      turbo: { spoolSeconds: .30, decaySeconds: .15, offBoostFraction: .62 },
+      ground: { idealHeight: .044, falloffHeight: .054, fraction: .43 },
+      hybrid: { capacityKJ: 4000, deployKW: 350, harvestKW: 240 },
+      activeAero: { straightDragMultiplier: .67, straightDownforceMultiplier: .69 },
+    },
+  }),
+};
+
+return { HISTORY_RIDES };
+})();
+
+// ---- sim/history-data.js ----
+const __m_sim_history_data = (() => {
+// Historical reference only. Fictional vehicle dynamics and assets are defined separately.
+// Season/chassis associations are indexed against F1DB v2026.20.0 (CC BY 4.0).
+// Formula 1's season results corroborate participation, not unpublished technical figures.
+const INDEX = 'https://github.com/f1db/f1db/releases/tag/v2026.20.0';
+const RESULTS = 'https://www.formula1.com/en/results/';
+const FIA_2026_TECHNICAL = 'https://www.fia.com/system/files/documents/fia_2026_f1_regulations_-_section_c_technical_-_iss_21_-_2026-10-19.pdf';
+const FIA_2026_SPORTING = 'https://www.fia.com/system/files/documents/fia_2026_f1_regulations_-_section_b_sporting_-_iss_09_-_2026-10-01.pdf';
+const FIA_2026_TERMS = 'https://corp.formula1.com/f1-2026-regulations-terminology-update/';
+const FIA_HISTORIC = 'https://www.fia.com/sites/default/files/appendix_k_2025_2.pdf';
+const LOTUS = 'https://www.lotuscars.com/en-GB/lotus-story/about-lotus?channel=app';
+const WILLIAMS = 'https://www.williamsf1.com/articles/29f7b359-e78b-447f-8033-69a923721d6f/riccardo-patrese-reunites-with-williams-icons';
+const FERRARI = 'https://www.ferrari.com/content/dam/ferrari-fcom/old/pdf/pr_90_years_eng_fin.pdf';
+const EARLY_AERO = 'https://www.formula1.com/en/latest/article/re-writing-the-f1-rule-book-part-1-from-wing-cars-to-flat-bottoms.EJZ73Lnn0c6EgcMKMAWOU';
+const EXPERIMENTS = 'https://www.formula1.com/en/latest/article/from-the-six-wheeled-tyrrell-to-the-dual-rear-wing-ferrari-10-of-the.1uvMU2qhHxAphWRhgjxwCj';
+const MERCEDES_ERAS = 'https://www.mercedesamgf1.com/news/the-past-six-new-f1-eras-what-changed-and-what-happened';
+const RULE_CHANGES = 'https://www.formula1.com/en/latest/article/the-key-regulation-changes-in-f1-history-and-the-teams-that-nailed-them.2iq8c5E6S1HOffT5PBLl6i';
+
+const HISTORY_ERAS = [
+  { id:'birth', from:1947, to:1953, title:'The birth of formula racing', summary:'Post-war formula racing preceded the 1950 World Championship. In 1952 and 1953 the championship Grands Prix used Formula 2 rules, with Indianapolis retaining its own rules.', source:FIA_HISTORIC },
+  { id:'classic', from:1954, to:1960, title:'Classic Grand Prix machines', summary:'The 2.5-litre era encompassed both front-mounted and rear-mounted engines. Enclosed wheel streamlining was a specialized option at high-speed tracks.', source:'https://group.mercedes-benz.com/company/tradition/company-history/history-aerodynamic.html' },
+  { id:'lightweight', from:1961, to:1967, title:'The lightweight revolution', summary:'Rear-engine packaging and stressed-skin monocoques marked the 1.5-litre period. The naturally aspirated displacement ceiling increased to 3 litres in 1966.', source:LOTUS },
+  { id:'wings', from:1968, to:1976, title:'The aerodynamic revolution', summary:'Wings, wedge bodies and revised radiator placement changed how teams generated and packaged aerodynamic grip.', source:LOTUS },
+  { id:'ground_effect', from:1977, to:1982, title:'Ground effect and early turbo power', summary:'Underbody tunnels and skirts increased aerodynamic load. The same period saw early turbo competition and the arrival of carbon composite monocoques.', source:EARLY_AERO },
+  { id:'turbo', from:1983, to:1988, title:'The turbo years', summary:'Flat-bottom rules changed aerodynamic design. Turbo output depended on the car, session and year, and late-era limits constrained boost pressure and fuel.', source:EARLY_AERO },
+  { id:'electronics', from:1989, to:1997, title:'Naturally aspirated power and electronics', summary:'The post-turbo field included V8, V10 and V12 engines. Some teams used active suspension before its prohibition for 1994.', source:RULE_CHANGES },
+  { id:'v10', from:1998, to:2005, title:'High-revving V10s', summary:'The 1998 rules brought narrower cars and grooved dry tyres. High-revving naturally aspirated V10s became the dominant engine configuration.', source:RULE_CHANGES },
+  { id:'v8', from:2006, to:2013, title:'V8s and advanced aerodynamics', summary:'The main engine formula became 2.4-litre V8. Slicks and optional KERS arrived in 2009, and DRS entered competition in 2011.', source:MERCEDES_ERAS },
+  { id:'hybrid', from:2014, to:2016, title:'The turbo-hybrid revolution', summary:'The power unit paired a turbocharged 1.6-litre V6 with kinetic and turbo-shaft energy recovery. Energy and fuel use became central to race strategy.', source:MERCEDES_ERAS },
+  { id:'wide_hybrid', from:2017, to:2021, title:'Wide, high-downforce hybrids', summary:'Wider bodies and tyres arrived in 2017. The Halo became mandatory in 2018 while the turbo-hybrid power unit formula continued.', source:MERCEDES_ERAS },
+  { id:'modern_floor', from:2022, to:2025, title:'Modern ground effect', summary:'Underfloor tunnels returned as a major downforce source. The new 18-inch wheels changed tyre construction and aerodynamic packaging.', source:MERCEDES_ERAS },
+  { id:'active_aero', from:2026, to:2026, title:'Active aerodynamics and electrical strategy', summary:'Front and rear wing adjustment, a larger electrical contribution and removal of the MGU-H changed the balance of mechanical and electrical power. Straight and Corner modes control aerodynamic configuration. Boost, Overtake and Recharge address energy use under separate rules.', source:FIA_2026_TECHNICAL },
+];
+
+const HISTORY_RULES_2026 = {
+  verified: '2026-11-13',
+  technicalIssue: 21,
+  sportingIssue: 9,
+  sources: [FIA_2026_TECHNICAL, FIA_2026_SPORTING, FIA_2026_TERMS],
+  facts: [
+    'The ERS-K absolute electrical DC limit is 350 kW. The propulsion limit also depends on speed and mode, with specified Race or Sprint power-limited sectors subject to lower curves (C5.2.7–8).',
+    'Driver-adjustable bodywork is restricted to authorized activation zones and has a partial-activation provision for Low Grip Conditions (B7.1).',
+    'In Low Grip Conditions, Boost may only prevent a reduction in maximum driver power demand. Overtake is disabled (B7.2).',
+    'The FIA supplies competition-specific energy and activation parameters. The 350 kW limit is a ceiling, not a constant wheel-power figure.',
+  ],
+};
+
+// The chassis identifiers allow every selection to be checked against the dated entry index.
+const SEASONS = [
+  [1950, 'alfa_158_1950', 'alfa-romeo-158', 'Alfa Romeo 158', 'Alfa Romeo'],
+  [1951, 'alfa_159_1951', 'alfa-romeo-159', 'Alfa Romeo 159', 'Alfa Romeo'],
+  [1952, 'ferrari_500_1952', 'ferrari-500', 'Ferrari 500 F2', 'Ferrari'],
+  [1953, 'ferrari_500_1953', 'ferrari-500', 'Ferrari 500 F2', 'Ferrari'],
+  [1954, 'mercedes_w196_streamlined_1954', 'mercedes-w196', 'Mercedes-Benz W 196 R Streamliner', 'Mercedes'],
+  [1955, 'mercedes_w196_open_1955', 'mercedes-w196', 'Mercedes-Benz W 196 R Open Wheel', 'Mercedes'],
+  [1956, 'ferrari_d50_1956', null, 'Ferrari D50', 'Ferrari'],
+  [1957, 'maserati_250f_1957', 'maserati-250f', 'Maserati 250F', 'Maserati'],
+  [1958, 'vanwall_vw5_1958', 'vanwall-vw-5', 'Vanwall VW5', 'Vanwall'],
+  [1959, 'cooper_t51_1959', 'cooper-t51', 'Cooper T51', 'Climax'],
+  [1960, 'lotus_18_1960', 'lotus-18', 'Lotus 18', 'Climax'],
+  [1961, 'ferrari_156_1961', 'ferrari-156', 'Ferrari 156', 'Ferrari'],
+  [1962, 'lotus_25_1962', 'lotus-25', 'Lotus 25', 'Climax'],
+  [1963, 'lotus_25_1963', 'lotus-25', 'Lotus 25', 'Climax'],
+  [1964, 'ferrari_158_1964', 'ferrari-158', 'Ferrari 158', 'Ferrari'],
+  [1965, 'honda_ra272_1965', 'honda-ra272', 'Honda RA272', 'Honda'],
+  [1966, 'brabham_bt19_1966', 'brabham-bt19', 'Brabham BT19', 'Repco'],
+  [1967, 'lotus_49_1967', 'lotus-49', 'Lotus 49', 'Ford Cosworth'],
+  [1968, 'lotus_49b_1968', 'lotus-49b', 'Lotus 49B', 'Ford Cosworth'],
+  [1969, 'matra_ms80_1969', 'matra-ms80', 'Matra MS80', 'Ford Cosworth'],
+  [1970, 'lotus_72_1970', 'lotus-72c', 'Lotus 72', 'Ford Cosworth'],
+  [1971, 'tyrrell_003_1971', 'tyrrell-003', 'Tyrrell 003', 'Ford Cosworth'],
+  [1972, 'lotus_72d_1972', 'lotus-72d', 'Lotus 72D', 'Ford Cosworth'],
+  [1973, 'mclaren_m23_1973', 'mclaren-m23', 'McLaren M23', 'Ford Cosworth'],
+  [1974, 'brabham_bt44_1974', 'brabham-bt44', 'Brabham BT44', 'Ford Cosworth'],
+  [1975, 'ferrari_312t_1975', 'ferrari-312t', 'Ferrari 312T', 'Ferrari'],
+  [1976, 'tyrrell_p34_1976', 'tyrrell-p34', 'Tyrrell P34', 'Ford Cosworth'],
+  [1977, 'lotus_78_1977', 'lotus-78', 'Lotus 78', 'Ford Cosworth'],
+  [1978, 'lotus_79_1978', 'lotus-79', 'Lotus 79', 'Ford Cosworth'],
+  [1979, 'ferrari_312t4_1979', 'ferrari-312t4', 'Ferrari 312T4', 'Ferrari'],
+  [1980, 'williams_fw07b_1980', 'williams-fw07b', 'Williams FW07B', 'Ford Cosworth'],
+  [1981, 'mclaren_mp4_1_1981', 'mclaren-mp4-1', 'McLaren MP4/1', 'Ford Cosworth'],
+  [1982, 'renault_re30b_1982', 'renault-re30b', 'Renault RE30B', 'Renault'],
+  [1983, 'brabham_bt52_1983', 'brabham-bt52', 'Brabham BT52', 'BMW'],
+  [1984, 'mclaren_mp4_2_1984', 'mclaren-mp4-2', 'McLaren MP4/2', 'TAG Porsche'],
+  [1985, 'lotus_97t_1985', 'lotus-97t', 'Lotus 97T', 'Renault'],
+  [1986, 'williams_fw11_1986', 'williams-fw11', 'Williams FW11', 'Honda'],
+  [1987, 'williams_fw11b_1987', 'williams-fw11b', 'Williams FW11B', 'Honda'],
+  [1988, 'mclaren_mp4_4_1988', 'mclaren-mp4-4', 'McLaren MP4/4', 'Honda'],
+  [1989, 'mclaren_mp4_5_1989', 'mclaren-mp4-5', 'McLaren MP4/5', 'Honda'],
+  [1990, 'ferrari_641_1990', 'ferrari-641', 'Ferrari 641', 'Ferrari'],
+  [1991, 'jordan_191_1991', 'jordan-191', 'Jordan 191', 'Ford Cosworth'],
+  [1992, 'williams_fw14b_1992', 'williams-fw14b', 'Williams FW14B', 'Renault'],
+  [1993, 'williams_fw15c_1993', 'williams-fw15c', 'Williams FW15C', 'Renault'],
+  [1994, 'benetton_b194_1994', 'benetton-b194', 'Benetton B194', 'Ford Cosworth'],
+  [1995, 'ferrari_412t2_1995', 'ferrari-412t2', 'Ferrari 412 T2', 'Ferrari'],
+  [1996, 'williams_fw18_1996', 'williams-fw18', 'Williams FW18', 'Renault'],
+  [1997, 'ferrari_f310b_1997', 'ferrari-f310b', 'Ferrari F310B', 'Ferrari'],
+  [1998, 'mclaren_mp4_13_1998', 'mclaren-mp4-13', 'McLaren MP4/13', 'Mercedes'],
+  [1999, 'ferrari_f399_1999', 'ferrari-f399', 'Ferrari F399', 'Ferrari'],
+  [2000, 'ferrari_f1_2000_2000', 'ferrari-f1-2000', 'Ferrari F1-2000', 'Ferrari'],
+  [2001, 'ferrari_f2001_2001', 'ferrari-f2001', 'Ferrari F2001', 'Ferrari'],
+  [2002, 'ferrari_f2002_2002', 'ferrari-f2002', 'Ferrari F2002', 'Ferrari'],
+  [2003, 'williams_fw25_2003', 'williams-fw25', 'Williams FW25', 'BMW'],
+  [2004, 'ferrari_f2004_2004', 'ferrari-f2004', 'Ferrari F2004', 'Ferrari'],
+  [2005, 'renault_r25_2005', 'renault-r25', 'Renault R25', 'Renault'],
+  [2006, 'renault_r26_2006', 'renault-r26', 'Renault R26', 'Renault'],
+  [2007, 'ferrari_f2007_2007', 'ferrari-f2007', 'Ferrari F2007', 'Ferrari'],
+  [2008, 'mclaren_mp4_23_2008', 'mclaren-mp4-23', 'McLaren MP4-23', 'Mercedes'],
+  [2009, 'brawn_bgp001_2009', 'brawn-bgp-001', 'Brawn BGP 001', 'Mercedes'],
+  [2010, 'red_bull_rb6_2010', 'red-bull-rb6', 'Red Bull RB6', 'Renault'],
+  [2011, 'red_bull_rb7_2011', 'red-bull-rb7', 'Red Bull RB7', 'Renault'],
+  [2012, 'red_bull_rb8_2012', 'red-bull-rb8', 'Red Bull RB8', 'Renault'],
+  [2013, 'red_bull_rb9_2013', 'red-bull-rb9', 'Red Bull RB9', 'Renault'],
+  [2014, 'mercedes_w05_2014', 'mercedes-f1-w05', 'Mercedes F1 W05 Hybrid', 'Mercedes'],
+  [2015, 'mercedes_w06_2015', 'mercedes-f1-w06', 'Mercedes F1 W06 Hybrid', 'Mercedes'],
+  [2016, 'mercedes_w07_2016', 'mercedes-f1-w07', 'Mercedes F1 W07 Hybrid', 'Mercedes'],
+  [2017, 'ferrari_sf70h_2017', 'ferrari-sf70h', 'Ferrari SF70H', 'Ferrari'],
+  [2018, 'mercedes_w09_2018', 'mercedes-f1-w09', 'Mercedes W09', 'Mercedes'],
+  [2019, 'mercedes_w10_2019', 'mercedes-f1-w10', 'Mercedes W10', 'Mercedes'],
+  [2020, 'mercedes_w11_2020', 'mercedes-f1-w11', 'Mercedes W11', 'Mercedes'],
+  [2021, 'red_bull_rb16b_2021', 'red-bull-rb16b', 'Red Bull RB16B', 'Honda'],
+  [2022, 'red_bull_rb18_2022', 'red-bull-rb18', 'Red Bull RB18', 'Red Bull Powertrains'],
+  [2023, 'red_bull_rb19_2023', 'red-bull-rb19', 'Red Bull RB19', 'Honda RBPT'],
+  [2024, 'mclaren_mcl38_2024', 'mclaren-mcl38', 'McLaren MCL38', 'Mercedes'],
+  [2025, 'mclaren_mcl39_2025', 'mclaren-mcl39', 'McLaren MCL39', 'Mercedes'],
+  [2026, 'mclaren_mcl40_2026', 'mclaren-mcl40', 'McLaren MCL40', 'Mercedes'],
+];
+
+const VARIANTS = [
+  [1948, 'maserati_4clt48_1948', 'maserati-4clt-48', 'Maserati 4CLT/48', 'Maserati'],
+  [1950, 'talbot_t26c_1950', 'talbot-lago-t26c', 'Talbot-Lago T26C', 'Talbot-Lago'],
+  [1951, 'ferrari_375_1951', 'ferrari-375', 'Ferrari 375 F1', 'Ferrari'],
+  [1951, 'brm_p15_1951', 'brm-p15', 'BRM P15', 'BRM'],
+  [1953, 'maserati_a6gcm_1953', 'maserati-a6gcm', 'Maserati A6GCM', 'Maserati'],
+  [1954, 'mercedes_w196_open_1954', 'mercedes-w196', 'Mercedes-Benz W 196 R Open Wheel', 'Mercedes'],
+  [1955, 'lancia_d50_1955', 'lancia-d50', 'Lancia D50', 'Lancia'],
+  [1958, 'cooper_t43_1958', 'cooper-t43', 'Cooper T43', 'Climax'],
+  [1962, 'brm_p57_1962', 'brm-p57', 'BRM P57', 'BRM'],
+  [1965, 'lotus_33_1965', 'lotus-33', 'Lotus 33', 'Climax'],
+  [1970, 'ferrari_312b_1970', 'ferrari-312b', 'Ferrari 312B', 'Ferrari'],
+  [1971, 'lotus_56b_1971', 'lotus-56b', 'Lotus 56B', 'Pratt & Whitney'],
+  [1977, 'renault_rs01_1977', 'renault-rs01', 'Renault RS01', 'Renault'],
+  [1978, 'brabham_bt46b_1978', 'brabham-bt46b', 'Brabham BT46B', 'Alfa Romeo'],
+  [1979, 'williams_fw07_1979', 'williams-fw07', 'Williams FW07', 'Ford Cosworth'],
+  [1980, 'brabham_bt49_1980', 'brabham-bt49', 'Brabham BT49', 'Ford Cosworth'],
+  [1981, 'lotus_88_1981', 'lotus-88', 'Lotus 88', 'Ford Cosworth'],
+  [1987, 'ferrari_f1_87_1987', 'ferrari-f1-87', 'Ferrari F1-87', 'Ferrari'],
+  [2004, 'williams_fw26_2004', 'williams-fw26', 'Williams FW26', 'BMW'],
+  [2005, 'mclaren_mp4_20_2005', 'mclaren-mp4-20', 'McLaren MP4-20', 'Mercedes'],
+  [2009, 'red_bull_rb5_2009', 'red-bull-rb5', 'Red Bull RB5', 'Renault'],
+  [2015, 'ferrari_sf15t_2015', 'ferrari-sf15-t', 'Ferrari SF15-T', 'Ferrari'],
+  [2017, 'mercedes_w08_2017', 'mercedes-f1-w08', 'Mercedes W08', 'Mercedes'],
+  [2022, 'ferrari_f1_75_2022', 'ferrari-f1-75', 'Ferrari F1-75', 'Ferrari'],
+  [2022, 'mercedes_w13_2022', 'mercedes-f1-w13', 'Mercedes W13', 'Mercedes'],
+];
+
+// Names in the reference index are separate from the original vehicles used in the simulation.
+const FOUNDATION = [
+  ['alfa_158_1950','Front-engine supercharged racer'],
+  ['ferrari_500_1952','Formula 2 championship racer'],
+  ['mercedes_w196_streamlined_1954','Streamlined front-engine racer'],
+  ['cooper_t51_1959','Rear-engine racer'],
+  ['lotus_25_1962','Lightweight monocoque racer'],
+  ['lotus_49_1967','Naturally aspirated three-litre racer'],
+  ['lotus_72_1970','Early winged racer'],
+  ['lotus_56b_1971','Four-wheel-drive turbine experiment'],
+  ['tyrrell_p34_1976','Six-wheel racer'],
+  ['lotus_79_1978','Ground-effect racer'],
+  ['brabham_bt46b_1978','Fan-assisted racer'],
+  ['williams_fw11_1986','High-boost turbo racer'],
+  ['mclaren_mp4_4_1988','Late-turbo racer'],
+  ['williams_fw14b_1992','Active-suspension racer'],
+  ['ferrari_412t2_1995','Naturally aspirated V12 racer'],
+  ['ferrari_f2004_2004','High-revving V10 racer'],
+  ['renault_r26_2006','Naturally aspirated V8 racer'],
+  ['brawn_bgp001_2009','Double-diffuser racer'],
+  ['red_bull_rb7_2011','High-downforce V8 racer'],
+  ['mercedes_w05_2014','First-generation turbo-hybrid racer'],
+  ['mercedes_w09_2018','Wide hybrid with Halo'],
+  ['mercedes_w11_2020','Advanced turbo-hybrid racer'],
+  ['red_bull_rb18_2022','Ground-effect hybrid racer'],
+  ['mclaren_mcl38_2024','Mature ground-effect racer'],
+  ['mclaren_mcl40_2026','Active-aero turbo-hybrid racer'],
+];
+
+const NOTES = {
+  maserati_4clt48_1948: {
+    source:'https://api.goodwood.com/grr/event-coverage/goodwood-revival/maserati-spotters-guide-for-the-2026-goodwood-revival/', sourceLabel:'Goodwood event archive',
+    summary:'Reg Parnell won the first Goodwood Trophy in a 4CLT in 1948. This post-war Grand Prix car predates the World Championship.',
+    specs:{ enginePlacement:'Front', architecture:'Tubular frame' },
+  },
+  alfa_158_1950: {
+    source:'https://www.media.stellantis.com/em-en/alfa-romeo/press/65-years-ago-the-first-victory-of-alfa-romeo-in-formula-1',
+    sourceLabel:'Alfa Romeo heritage',
+    summary:'Nino Farina won the first championship race at Silverstone. Alfa Romeo identifies the 1,479 cc inline-eight and reports nearly 300 hp for that Silverstone specification. Output evolved over the season.',
+    specs:{ enginePlacement:'Front', engineLayout:'Inline-eight', displacementCc:1479, aspiration:'Supercharged', power:'Nearly 300 hp at the 1950 Silverstone race, manufacturer retrospective' },
+  },
+  alfa_159_1951: {
+    source:'https://www.media.stellantis.com/uk-en/alfa-romeo/press/alfa-romeo-gp-tipo-159-alfetta-to-appear-at-f1-british-grand-prix', sourceLabel:'Alfa Romeo heritage',
+    summary:'Fangio won the 1951 title in the evolved Alfetta. Alfa Romeo retired from the championship after the season.',
+    specs:{ enginePlacement:'Front', displacementCc:1479 },
+  },
+  ferrari_500_1952: { source:FERRARI, sourceLabel:'Ferrari heritage', summary:'Alberto Ascari won the first of two consecutive titles with the Ferrari 500 F2. This was a Formula 2 chassis competing in a championship Grand Prix season.' },
+  ferrari_500_1953: { source:FERRARI, sourceLabel:'Ferrari heritage', summary:'Ascari took a second consecutive championship with the 500 F2. This entry describes its 1953 campaign.' },
+  mercedes_w196_streamlined_1954: {
+    source:'https://media.mercedes-benz.com/en/article/29004d7c-53c6-4531-89b1-4bf163ec3b8e', sourceLabel:'Mercedes-Benz Classic',
+    summary:'The streamlined W 196 R took a one-two on its debut at Reims in July 1954. Mercedes also fielded a separate open-wheel body for other circuits.',
+    specs:{ enginePlacement:'Front', engineLayout:'Inline-eight', displacementCc:2497, aspiration:'Naturally aspirated', power:'188–213 kW for W 196 R specifications spanning 1954–1955' },
+  },
+  mercedes_w196_open_1955: { source:'https://group.mercedes-benz.com/company/tradition/company-history/history-aerodynamic.html', sourceLabel:'Mercedes-Benz heritage', summary:'The open-wheel variant offered a clear view of the front wheels and was used alongside the streamliner.' },
+  ferrari_d50_1956: { source:FERRARI, sourceLabel:'Ferrari heritage', summary:'Fangio won the 1956 drivers’ title in Ferrari’s development of the Lancia D50.' },
+  maserati_250f_1957: { source:'https://www.maserati.com/es/es/mundo-maserati/stories-of-audacity/f-tributo/racing-roots', sourceLabel:'Maserati heritage', summary:'Fangio took the 1957 title with the 250F. This entry describes the front-engine inline-six version. Maserati also experimented with a V12 during the season.', specs:{enginePlacement:'Front'} },
+  cooper_t43_1958: { source:'https://www.formula1.com/en/latest/article/7-incredible-season-openers-from-each-decade-of-f1.1MwMFvzoqBQPYAuVutrzbh', sourceLabel:'Formula 1 season history', summary:'Stirling Moss won the 1958 Argentine Grand Prix in a rear-engine Cooper T43. This entry represents the two-litre configuration used there.', specs:{enginePlacement:'Rear-mid'} },
+  cooper_t51_1959: { source:'https://www.formula1.com/en/latest/article/5-times-f1-teams-got-the-new-regulations-wrong.1odf2dnvDZkY5uYTaqRYfp', sourceLabel:'Formula 1 technical history', summary:'This is the 2.5-litre championship version of the T51. The engine sat behind the driver and the lighter rear-engine package displaced the front-engine designs that had dominated the previous decade.', specs:{enginePlacement:'Rear-mid'} },
+  lotus_25_1962: { source:'https://www.lotuscars.com/en-CA/lotus-story/race-cars/type-25', sourceLabel:'Lotus Type 25 archive', summary:'The Type 25’s aluminium monocoque replaced a separate spaceframe with a load-bearing shell. Jim Clark raced it in 1962 and took the drivers’ title in 1963.', specs:{ enginePlacement:'Rear-mid', architecture:'Riveted aluminium monocoque', transmission:'ZF manual', gears:5, cockpit:'Reclined seating with exposed cockpit' } },
+  lotus_25_1963: { source:LOTUS, sourceLabel:'Lotus heritage', summary:'Jim Clark and Lotus earned both 1963 championship titles with the Type 25.' },
+  ferrari_158_1964: { source:'https://www.ferrari.com/en-EN/formula1/158-f1', sourceLabel:'Ferrari car archive', summary:'Ferrari used the 158 V8 alongside other engine configurations. Its model designation is separate from Alfa Romeo’s pre-war-derived 158.', specs:{enginePlacement:'Rear-mid'} },
+  honda_ra272_1965: { source:'https://honda.racing/features/tsunoda-mexicogp-ra272-60th', sourceLabel:'Honda Collection Hall account', summary:'Richie Ginther took Honda’s first Formula 1 win at the Mexican Grand Prix in the 1.5-litre V12 RA272.' },
+  lotus_49_1967: { source:LOTUS, sourceLabel:'Lotus heritage', summary:'Lotus introduced the Ford Cosworth DFV in the Type 49, mounting the V8 as a structural part of the car.', specs:{ enginePlacement:'Rear-mid', engineLayout:'V8', aspiration:'Naturally aspirated', displacementCc:2993 } },
+  lotus_49b_1968: { source:LOTUS, sourceLabel:'Lotus heritage', summary:'The 49 lineage saw Formula 1’s first aerofoil experiments. Its 1968 configuration shows how wings began to influence setup and vehicle appearance.' },
+  matra_ms80_1969: { source:'https://www.motorsportmagazine.com/archive/article/june-1969/26/the-monaco-grand-prix-4/', sourceLabel:'Contemporary Monaco GP race report', summary:'The MS80 used the Ford Cosworth V8. The contemporary Monaco report records its changing aerofoils and nose configurations.' },
+  lotus_72_1970: { source:LOTUS, sourceLabel:'Lotus heritage', summary:'The Type 72 combined a wedge silhouette, radiators mounted between the axles and multi-element wings.' },
+  lotus_56b_1971: { source:EXPERIMENTS, sourceLabel:'Formula 1 technical history', summary:'A Pratt & Whitney turbine powered four wheels through a single-speed system. It entered three championship Grands Prix, with eighth place at Monza its best finish.', specs:{ engineLayout:'Gas turbine', aspiration:'Turbine', drivenWheels:4, gears:1 }, competition:'Championship and non-championship experimental entries' },
+  tyrrell_p34_1976: { source:EXPERIMENTS, sourceLabel:'Formula 1 technical history', summary:'Four small steerable front wheels and two conventional rear wheels reduced front tyre exposure. Jody Scheckter won the 1976 Swedish Grand Prix in the P34.', specs:{ architecture:'Six wheels, four steerable front wheels', drivenWheels:2 } },
+  lotus_78_1977: { source:EARLY_AERO, sourceLabel:'Formula 1 technical history', summary:'Shaped sidepod undersides and skirts limited pressure leakage, making the underfloor a major source of load.' },
+  renault_rs01_1977: { source:RULE_CHANGES, sourceLabel:'Formula 1 technical history', summary:'Renault brought a turbocharged engine into championship Formula 1 with the RS01 in 1977. The early car struggled with reliability while the technology developed.' },
+  lotus_79_1978: { source:'https://www.formula1.com/en/latest/article/tech-tuesday-the-lotus-79-f1s-ground-effect-marvel.sAD9PXt7mC8iMSwwe6CCw', sourceLabel:'Formula 1 technical history', summary:'Venturi tunnels and skirts improved floor performance. Ride height and floor sealing affected the aerodynamic platform.', specs:{ enginePlacement:'Rear-mid', engineLayout:'V8', aspiration:'Naturally aspirated', aero:'Venturi tunnels and side skirts' } },
+  brabham_bt46b_1978: { source:EXPERIMENTS, sourceLabel:'Formula 1 technical history', summary:'An engine-driven fan lowered underfloor pressure. The BT46B won on its sole championship appearance in Sweden and the team withdrew it afterward.', specs:{ engineLayout:'Flat-12', aero:'Engine-driven fan and skirt sealing' }, competition:'One championship appearance' },
+  mclaren_mp4_1_1981: { source:'https://www.formula1.com/en/latest/article/the-75-best-drivers-cars-innovations-teams-and-key-figures-in-f1-history.6VcYXd7l9aI6fysNWtxFja', sourceLabel:'Formula 1 technical history', summary:'The carbon-fibre monocoque proved competitive and demonstrated the material’s structural potential in racing.', specs:{ architecture:'Carbon-fibre composite monocoque' } },
+  lotus_88_1981: { source:'https://www.lotuscars.com/en-CA/lotus-story/race-cars/type-88', sourceLabel:'Lotus heritage', summary:'Lotus attempted to separate the aerodynamic structure from the sprung driver and mechanical chassis. The concept never started a championship race.', competition:'Prototype presented at events without a championship start' },
+  williams_fw11_1986: { source:'https://honda.racing/features/reuniting-champions-the-story-of-the-restoration-of-hondas-williams-fw11', sourceLabel:'Honda FW11 restoration archive', summary:'Honda’s 1.5-litre RA166E twin-turbo V6 helped the FW11 earn the 1986 constructors’ title. Period output depended on boost setting and session.', specs:{ engineLayout:'V6', aspiration:'Twin-turbocharged' }, sources:[WILLIAMS] },
+  williams_fw11b_1987: { source:WILLIAMS, sourceLabel:'Williams Heritage', summary:'The FW11B evolved the Honda-powered FW11 for the 1987 season.' },
+  williams_fw14b_1992: { source:WILLIAMS, sourceLabel:'Williams Heritage', summary:'The FW14B’s active suspension helped manage its aerodynamic platform as load changed. The system belongs to specific cars from this period.', specs:{ engineLayout:'V10', aspiration:'Naturally aspirated', suspension:'Active hydraulic suspension' } },
+  williams_fw15c_1993: { source:'https://www.formula1.com/en/latest/article/tech-tuesday-wizardry-behind-williams-fw15c.6IzOXYuuPYOWyaaGGS4AgS', sourceLabel:'Formula 1 technical history', summary:'Active ride-height control and electronic assistance were central to the FW15C. Several such systems were prohibited for 1994.', specs:{suspension:'Active hydraulic suspension',transmission:'Semi-automatic paddle shift',electronicAssists:'Traction control and later-season ABS'} },
+  ferrari_f2004_2004: { source:FERRARI, sourceLabel:'Ferrari heritage', summary:'Michael Schumacher took his final title in the F2004. Its high-revving V10 and grooved dry tyres illustrate the established 2004 formula.', specs:{ tyreType:'Grooved dry-weather tyres' }, sources:['https://www.formula1.com/en/latest/article/exclusive-from-trendsetters-to-title-winners-ross-brawn-reveals-his.6FIAnV6e71kvi8PVInIuPo'] },
+  brawn_bgp001_2009: { source:MERCEDES_ERAS, sourceLabel:'Mercedes-AMG team archive', summary:'The first-year Brawn team won the 2009 titles. Its double diffuser increased underfloor extraction within the team’s reading of the rules.', specs:{ engineLayout:'V8', aspiration:'Naturally aspirated', aero:'Double diffuser' } },
+  red_bull_rb7_2011: { source:'https://www.formula1.com/en/latest/article/fia-thursday-press-conference-germany-2019.4zUg7WebFN9CcdCm4W9qvF', sourceLabel:'FIA press conference with Sebastian Vettel', summary:'Vettel describes the RB7’s exhaust-fed aerodynamic load and the changes in setup and technique needed to use it.', specs:{aero:'Exhaust-blown diffuser'} },
+  mercedes_w05_2014: { source:'https://www.mercedesamgf1.com/news/how-mercedes-mastered-a-new-era-ten-years-on-from-our-first-f1-constructors', sourceLabel:'Mercedes-AMG team archive', summary:'Mercedes won its first constructors’ title as a works team with the W05, powered by the new turbo-hybrid design.', specs:{ engineLayout:'V6', displacementCc:1600, aspiration:'Turbocharged', gears:8, energy:'MGU-K and MGU-H' } },
+  mercedes_w11_2020: { source:'https://www.formula1.com/en/latest/article/tech-tuesday-how-ferrari-and-hamilton-pushed-mercedes-to-create-the.1zMRmGDpJtpDXrlZBbjIs9.1zMRmGDpJtpDXrlZBbjIs9', sourceLabel:'Formula 1 technical history', summary:'The W11 combined a long wheelbase with aerodynamic development and driver-operated Dual Axis Steering, which changed front toe for tyre management.', specs:{steering:'Dual Axis Steering system'} },
+  mclaren_mcl38_2024: { source:'https://www.mclaren.com/racing/formula-1/2024/mclaren-mcl38-technical-specification/', sourceLabel:'McLaren MCL38 technical specification', summary:'The MCL38 used the Mercedes M14 turbo-hybrid, 18-inch wheels and an adjustable rear DRS wing. McLaren lists 798 kg including the driver and excluding fuel.', specs:{massKg:798, engineLayout:'90° V6', rpmLimit:15000, gears:8, tyreType:'Pirelli slick, intermediate and wet tyres on 18-inch wheels',energy:'MGU-K and MGU-H',aero:'Underfloor tunnels and rear-wing DRS'} },
+  mclaren_mcl40_2026: {
+    source:'https://www.mclaren.com/racing/formula-1/2026/what-is-the-technical-specification-of-our-2026-formula-1/', sourceLabel:'McLaren MCL40 technical specification',
+    summary:'McLaren’s published chassis pairs adjustable front and rear flaps with the Mercedes M17 1.6-litre turbo V6 and an MGU-K. October FIA rules govern mode eligibility and the electrical limits.',
+    specs:{ engineLayout:'90° V6', displacementCc:1600, aspiration:'Turbocharged', gears:8, transmission:'Electro-hydraulic seamless shift', drivenWheels:2, tyreType:'18-inch wheels with slick, intermediate or wet tyres', energy:'MGU-K with 350 kW DC ceiling subject to FIA operating limits', aero:'Adjustable front and rear wing flaps', brakes:'Carbon-carbon discs with rear brake-by-wire' },
+    sources:[FIA_2026_TECHNICAL,FIA_2026_SPORTING,FIA_2026_TERMS],
+  },
+};
+
+// Nominal engine classes from the pinned season entrant engine index.
+// When the entrant group includes multiple engines, the source note identifies the chosen specification.
+const ENGINE_CLASSES = [
+  [1.5, 'Inline-eight', 'Supercharged', [
+    'alfa_158_1950', 'alfa_159_1951',
+  ]],
+  [4.5, 'Inline-six', 'Naturally aspirated', [
+    'talbot_t26c_1950',
+  ]],
+  [4.5, 'V12', 'Naturally aspirated', [
+    'ferrari_375_1951',
+  ]],
+  [1.5, 'V16', 'Supercharged', [
+    'brm_p15_1951',
+  ]],
+  [2.0, 'Inline-six', 'Naturally aspirated', [
+    'maserati_a6gcm_1953',
+  ]],
+  [2.5, 'Inline-eight', 'Naturally aspirated', [
+    'mercedes_w196_streamlined_1954', 'mercedes_w196_open_1954', 'mercedes_w196_open_1955',
+  ]],
+  [2.5, 'V8', 'Naturally aspirated', [
+    'lancia_d50_1955', 'ferrari_d50_1956',
+  ]],
+  [2.5, 'Inline-four', 'Naturally aspirated', [
+    'vanwall_vw5_1958', 'lotus_18_1960', 'cooper_t51_1959',
+  ]],
+  [1.5, 'V6', 'Naturally aspirated', [
+    'ferrari_156_1961',
+  ]],
+  [1.5, 'V8', 'Naturally aspirated', [
+    'lotus_25_1962', 'brm_p57_1962', 'lotus_25_1963', 'lotus_33_1965',
+    'ferrari_158_1964',
+  ]],
+  [1.5, 'V12', 'Naturally aspirated', [
+    'honda_ra272_1965',
+  ]],
+  [3.0, 'V8', 'Naturally aspirated', [
+    'brabham_bt19_1966', 'lotus_49b_1968', 'lotus_72_1970', 'tyrrell_003_1971',
+    'lotus_72d_1972', 'mclaren_m23_1973', 'brabham_bt44_1974', 'tyrrell_p34_1976',
+    'lotus_78_1977', 'lotus_79_1978', 'williams_fw07_1979', 'williams_fw07b_1980',
+    'brabham_bt49_1980', 'mclaren_mp4_1_1981', 'lotus_88_1981', 'lotus_49_1967',
+    'matra_ms80_1969',
+  ]],
+  [3.0, 'Flat-12', 'Naturally aspirated', [
+    'ferrari_312b_1970', 'ferrari_312t_1975', 'brabham_bt46b_1978', 'ferrari_312t4_1979',
+  ]],
+  [1.5, 'V6', 'Turbocharged', [
+    'renault_rs01_1977', 'renault_re30b_1982', 'mclaren_mp4_2_1984', 'lotus_97t_1985',
+    'williams_fw11_1986', 'williams_fw11b_1987', 'ferrari_f1_87_1987', 'mclaren_mp4_4_1988',
+  ]],
+  [1.5, 'Inline-four', 'Turbocharged', [
+    'brabham_bt52_1983',
+  ]],
+  [3.5, 'V10', 'Naturally aspirated', [
+    'mclaren_mp4_5_1989', 'williams_fw14b_1992', 'williams_fw15c_1993',
+  ]],
+  [3.5, 'V12', 'Naturally aspirated', [
+    'ferrari_641_1990',
+  ]],
+  [3.5, 'V8', 'Naturally aspirated', [
+    'jordan_191_1991', 'benetton_b194_1994',
+  ]],
+  [3.0, 'V12', 'Naturally aspirated', [
+    'ferrari_412t2_1995',
+  ]],
+  [3.0, 'V10', 'Naturally aspirated', [
+    'williams_fw18_1996', 'ferrari_f310b_1997', 'mclaren_mp4_13_1998', 'ferrari_f399_1999',
+    'ferrari_f1_2000_2000', 'ferrari_f2001_2001', 'ferrari_f2002_2002', 'williams_fw25_2003',
+    'ferrari_f2004_2004', 'williams_fw26_2004', 'renault_r25_2005', 'mclaren_mp4_20_2005',
+  ]],
+  [2.4, 'V8', 'Naturally aspirated', [
+    'renault_r26_2006', 'ferrari_f2007_2007', 'mclaren_mp4_23_2008', 'brawn_bgp001_2009',
+    'red_bull_rb5_2009', 'red_bull_rb6_2010', 'red_bull_rb7_2011', 'red_bull_rb8_2012',
+    'red_bull_rb9_2013',
+  ]],
+  [1.6, 'V6', 'Turbocharged hybrid', [
+    'mercedes_w05_2014', 'mercedes_w06_2015', 'ferrari_sf15t_2015', 'mercedes_w07_2016',
+    'ferrari_sf70h_2017', 'mercedes_w08_2017', 'mercedes_w09_2018', 'mercedes_w10_2019',
+    'mercedes_w11_2020', 'red_bull_rb16b_2021', 'red_bull_rb18_2022', 'ferrari_f1_75_2022',
+    'mercedes_w13_2022', 'red_bull_rb19_2023', 'mclaren_mcl38_2024', 'mclaren_mcl39_2025',
+    'mclaren_mcl40_2026',
+  ]],
+  [1.5, 'Inline-four', 'Supercharged', [
+    'maserati_4clt48_1948',
+  ]],
+  [2.0, 'Inline-four', 'Naturally aspirated', [
+    'ferrari_500_1952', 'ferrari_500_1953', 'cooper_t43_1958',
+  ]],
+  [2.5, 'Inline-six', 'Naturally aspirated', [
+    'maserati_250f_1957',
+  ]],
+];
+
+const ENGINES_BY_ID = new Map(ENGINE_CLASSES.flatMap(([nominalDisplacementL, engineLayout, aspiration, ids]) =>
+  ids.map(id => [id, {nominalDisplacementL, engineLayout, aspiration}])));
+
+const UNKNOWN_SPECS = {
+  architecture:null, enginePlacement:null, engineLayout:null, displacementCc:null, nominalDisplacementL:null, aspiration:null,
+  power:null, torque:null, torqueCurve:null, rpmLimit:null, transmission:null, gears:null, drivenWheels:null,
+  massKg:null, dimensions:null, wheelbase:null, trackWidth:null, tyreType:null, drag:null, aero:null,
+  brakes:null, suspension:null, steering:null, fuel:null, energy:null, electronicAssists:null,
+  cockpit:null, sound:null, geometry:null,
+};
+
+function historicalEntry([year, id, chassisIndexId, name, engineManufacturer], representative) {
+  const era = HISTORY_ERAS.find(item => year >= item.from && year <= item.to);
+  const note = NOTES[id] || {};
+  const foundation = FOUNDATION.find(([entryId]) => entryId === id);
+  const seasonSource = year >= 1950 ? `${RESULTS}${year}/races` : null;
+  const formula = year < 1950 ? 'Post-war Grand Prix formula' : year === 1952 || year === 1953 ? 'Formula 2' : 'Formula 1';
+  const source = note.source || (year < 1950 ? FIA_HISTORIC : INDEX);
+  const sources = [
+    ...((note.sources || []).map(url => ({ url, label:'Additional historical source' }))),
+    ...(seasonSource ? [{ url:seasonSource, label:`${year} official race results` }] : []),
+    ...(source !== INDEX && chassisIndexId ? [{ url:INDEX, label:'F1DB season and chassis index (CC BY 4.0)' }] : []),
+  ];
+  return {
+    id, year, season: year >= 1950 ? year : null, name, era:era.id, representative,
+    constructor: name.startsWith('Alfa Romeo') ? 'Alfa Romeo' : name.startsWith('Mercedes-Benz') ? 'Mercedes-Benz' : name.startsWith('Red Bull') ? 'Red Bull Racing' : name.startsWith('Talbot-Lago') ? 'Talbot-Lago' : name.split(' ')[0],
+    engineManufacturer, chassisIndexId, formula,
+    competition:note.competition || (year >= 1950 ? 'World Championship entry' : 'Pre-championship Grand Prix racing'),
+    source,
+    sourceLabel:note.sourceLabel || (year < 1950 ? 'FIA historic formula classification' : 'F1DB season and chassis index'),
+    seasonSource, indexSource:INDEX, sources,
+    summary:note.summary || `${name} competed in the ${year} championship with ${engineManufacturer} power. ${era.summary}`,
+    historicalSpecs:{ ...UNKNOWN_SPECS, ...ENGINES_BY_ID.get(id), ...note.specs },
+    confidence:note.source ? 'Manufacturer or official historical account for documented details' : 'Season/chassis index with unpublished technical values omitted',
+    foundation:foundation?.[1] || null,
+    referenceType:'catalogue',
+  };
+}
+
+const HISTORY_CATALOGUE = [
+  ...SEASONS.map(row => historicalEntry(row, true)),
+  ...VARIANTS.map(row => historicalEntry(row, false)),
+].sort((a,b) => a.year - b.year || Number(b.representative) - Number(a.representative));
+
+const HISTORY_FOUNDATION = FOUNDATION.map(([id, architecture]) => ({ id, architecture }));
+
+return { HISTORY_ERAS, HISTORY_RULES_2026, HISTORY_CATALOGUE, HISTORY_FOUNDATION };
+})();
+
+// ---- sim/history-circuits.js ----
+const __m_sim_history_circuits = (() => {
+const { TRACK_HARBOR, WORLDS } = __m_sim_data;
+// Original closed courses. Opposing straights and equal quarter turns close analytically.
+function historicalVenue(id, name, width, long, short, radius, detail, condition) {
+  const shape = [['S', long], ['R', radius, 90], ['S', short], ['R', radius, 90]];
+  const grip = { dry: 1, damp: .82, rain: .66 }[condition] ?? 1;
+  const world = { ...WORLDS.lumen_harbor, surfaces: {
+    asphalt: { ...WORLDS.lumen_harbor.surfaces.asphalt, mu: grip },
+    curb: { ...WORLDS.lumen_harbor.surfaces.curb, mu: .91 * grip },
+    runoff: { ...WORLDS.lumen_harbor.surfaces.runoff, mu: .55 * Math.sqrt(grip) },
+  } };
+  return { id, name, detail, world, track: {
+    ...TRACK_HARBOR, id, name, width, archive: id, start: { x: 0, z: -100, heading: 0 },
+    lineS: 145, gridS: 75, segments: [...shape, ...shape],
+    curbMaxRadius: 0, curbExtend: 0, runoffStraight: width - 3, runoffCorner: width + 2,
+  } };
+}
+
+const HISTORY_VENUES = [
+  { id: 'archive_airfield', name: 'West Apron', description: 'An airfield-inspired course with long straights and broad turns.' },
+  { id: 'archive_road', name: 'Foundry Road', description: 'A compact closed road course for braking and change of direction.' },
+  { id: 'archive_test', name: 'Meridian Proving Ground', description: 'A wider test course with long energy deployment zones.' },
+];
+
+function historyCircuit(id, condition = 'dry') {
+  if (id === 'archive_road') return historicalVenue(id, 'Foundry Road', 10, 245, 85, 37, HISTORY_VENUES[1].description, condition);
+  if (id === 'archive_test') return historicalVenue(id, 'Meridian Proving Ground', 16, 520, 125, 79, HISTORY_VENUES[2].description, condition);
+  return historicalVenue('archive_airfield', 'West Apron', 13, 410, 170, 65, HISTORY_VENUES[0].description, condition);
+}
+
+return { HISTORY_VENUES, historyCircuit };
 })();
 
 // ---- sim/circuits.js ----
@@ -2142,9 +3022,11 @@ class Track {
     // Speed profile with a conservative grip estimate so assists are safe
     const m = car.mass, g = this.world.gravity, rho = this.world.airDensity;
     const mu = car.tire.mu * 0.86 * this.world.surfaces.asphalt.mu;
-    const kDown = 0.5 * rho * car.aero.clA, kDrag = 0.5 * rho * car.aero.cdA;
-    const powerW = 400000 * car.gearbox.efficiency; // approximate peak wheel power (fictional engine, see data)
-    const vTop = 95;
+    const historical = car.history;
+    const kDown = 0.5 * rho * car.aero.clA * (historical?.tech?.ground ? .77 : 1), kDrag = 0.5 * rho * car.aero.cdA;
+    const peak = historical ? Math.max(...car.engine.curve.map(([rpm, torque]) => rpm * torque * Math.PI / 30)) : 400000;
+    const powerW = peak * car.gearbox.efficiency;
+    const vTop = historical ? Math.min(105, car.engine.limiterRpm * Math.PI / 30 * car.wheelRadius / (car.gearbox.ratios.at(-1) * car.gearbox.final)) : 95;
     const v = new Float64Array(N);
     for (let i = 0; i < N; i++) {
       const k = Math.abs(kapS[i]);
@@ -2155,7 +3037,8 @@ class Track {
       for (let n = 0; n < N; n++) { // backward pass: braking
         const i = (N - 1 - n + N) % N, j = (i + 1) % N;
         const vj = v[j];
-        const aBrake = mu * (g + (kDown * vj * vj) / m) + (kDrag * vj * vj) / m;
+        const tireBrake = mu * (g + (kDown * vj * vj) / m);
+        const aBrake = (historical ? Math.min(tireBrake, car.brakes.maxTorque / (m * car.wheelRadius)) : tireBrake) + (kDrag * vj * vj) / m;
         const vmax = Math.sqrt(vj * vj + 2 * aBrake * 0.85 * dsl[i]);
         if (v[i] > vmax) v[i] = vmax;
       }
@@ -2256,6 +3139,17 @@ class Vehicle {
     this.aLong = 0; this.aLat = 0; this.drag = 0; this.downF = 0; this.downR = 0;
     this.lastImpact = 0; this.impactCount = 0; this.collidingSteps = 0;
     this.dragScale = 1; this.downScale = 1; this.slip = 0; this.bottoming = 0; this.carHits.length = 0;
+    const technology = this.car.history?.tech;
+    this.enginePedal = 0;
+    this.turboSpool = 0;
+    this.energyKJ = technology?.hybrid?.capacityKJ ?? 0;
+    this.electricKW = 0;
+    this.recoveredKJ = 0;
+    this.deployedKJ = 0;
+    this.straightMode = false;
+    this.floorEfficiency = 1;
+    this.fanSpeed = 0;
+    this.fanAngle = 0;
     const c = this.car, g = this.world.gravity;
     for (const w of this.wheels) {
       const front = w.i < 2;
@@ -2345,10 +3239,22 @@ class Vehicle {
     ratio = this.gearRatio(this.gear);
     rpmLocked = Math.abs(wDriven * ratio) * RADS_TO_RPM;
 
-    let throttle = clamp(ctl.throttle, 0, 1) * this.tcsFactor * this.escCut;
+    const technology = c.history?.tech;
+    const pedal = clamp(ctl.throttle, 0, 1);
+    const response = technology?.throttleSeconds;
+    this.enginePedal = response ? this.enginePedal + (pedal - this.enginePedal) * (1 - Math.exp(-dt / response)) : pedal;
+    let throttle = this.enginePedal * this.tcsFactor * this.escCut;
     if (rpmLocked >= eng.limiterRpm) this.limiter = true;
     if (this.limiter) { if (rpmLocked < eng.limiterRpm - 200) this.limiter = false; else throttle = 0; }
 
+    const turbo = technology?.turbo;
+    if (turbo) {
+      const target = throttle * clamp((this.rpm / eng.limiterRpm - .25) / .37, 0, 1);
+      const time = target > this.turboSpool ? turbo.spoolSeconds : turbo.decaySeconds;
+      this.turboSpool += (target - this.turboSpool) * (1 - Math.exp(-dt / time));
+    }
+    const hybrid = technology?.hybrid;
+    this.electricKW = 0;
     let wheelTorque = 0;
     if (this.gear === 0 || this.shiftTimer > 0) {
       const target = eng.idleRpm + clamp(ctl.throttle, 0, 1) * (eng.limiterRpm - eng.idleRpm) * 0.85;
@@ -2360,13 +3266,25 @@ class Vehicle {
       if (rpmLocked < slipTarget && throttle > 0.01) { rpmEff = slipTarget; this.clutchSlip = true; }
       else if (rpmLocked < eng.idleRpm) { rpmEff = eng.idleRpm; this.clutchSlip = true; }
       else { rpmEff = rpmLocked; this.clutchSlip = false; }
-      const Tcurve = tableLookup(eng.curve, rpmEff);
+      const boost = turbo ? turbo.offBoostFraction + (1 - turbo.offBoostFraction) * this.turboSpool : 1;
+      const Tcurve = tableLookup(eng.curve, rpmEff) * boost;
       const Tfric = eng.frictionBase + eng.frictionPerRpm * rpmEff;
       // Net engine torque: the full-load curve scaled by throttle, blending into closed-throttle engine
       // braking below 5% pedal so small openings still produce drive (continuous at 5%).
       let Te = throttle * Tcurve - Math.max(0, 1 - throttle / 0.05) * Tfric;
       if (this.clutchSlip && Te < 0) Te = 0; // a slipping clutch transmits no engine braking
       wheelTorque = Te * ratio * (Te > 0 ? gb.efficiency : 1);
+      if (hybrid && this.gear > 0 && u > 10 && throttle > .64 && !this.limiter && ctl.deployEnergy !== false) {
+        // An axle power model with a speed taper and a finite store, in kW and kJ.
+        const speedKmh = u * 3.6;
+        const normal2026 = speedKmh >= 345 ? 0 : speedKmh >= 340 ? 6900 - 20 * speedKmh : 1800 - 5 * speedKmh;
+        const maxKW = technology.activeAero ? Math.min(hybrid.deployKW, normal2026) : hybrid.deployKW * clamp((102 - u) / 27, 0, 1);
+        this.electricKW = Math.min(maxKW * throttle, this.energyKJ / dt);
+        const used = this.electricKW * dt;
+        this.energyKJ -= used;
+        this.deployedKJ += used;
+        wheelTorque += this.electricKW * 1000 * c.wheelRadius / u;
+      }
       this.rpm = rpmEff;
       this.engineTorque = Te;
     }
@@ -2466,6 +3384,8 @@ class Vehicle {
         if (comp > s.travel) f += s.bumpStopK * (comp - s.travel);
         f += (rate > 0 ? (front ? s.cBumpF : s.cBumpR) : (front ? s.cRebF : s.cRebR)) * rate;
       }
+      const levelling = c.history?.tech?.activeSuspension;
+      if (levelling && comp > 0) f += clamp(d * levelling.stiffness + rate * levelling.damping, -levelling.maxForce, levelling.maxForce);
       F[i] = f;
       wh.comp = comp; wh.travelRel = comp - wh.compStatic;
     }
@@ -2477,9 +3397,31 @@ class Vehicle {
 
     // Aerodynamics
     const q = 0.5 * rho * u * u;
-    const down = c.aero.clA * q * this.downScale;
+    const tech = c.history?.tech;
+    const floor = tech?.ground;
+    if (floor) {
+      const clearance = floor.idealHeight + .019 - this.h - Math.abs(this.pitch) * .45;
+      const offset = (clearance - floor.idealHeight) / floor.falloffHeight;
+      this.floorEfficiency = clearance <= .008 ? .13 : .22 + .78 * Math.exp(-offset * offset);
+    }
+    const active = tech?.activeAero;
+    if (active) {
+      const sample = w[0].proj.i;
+      const segment = this.track.segments[this.track.seg[sample]];
+      const beforeCorner = this.track.seg[(sample + Math.ceil(Math.max(40, u * .85) / 1.5)) % this.track.n] === this.track.seg[sample];
+      this.straightMode = ctl.enableStraight !== false && segment?.kind === 'S' && segment.len >= 135 && beforeCorner && u > 25 && ctl.throttle > .65 && ctl.brake < .05 && Math.abs(this.steerAngle) < .048;
+    }
+    const floorFactor = floor ? 1 - floor.fraction * (1 - this.floorEfficiency) : 1;
+    const fan = tech?.fan;
+    if (fan) {
+      const target = clamp((this.rpm / c.engine.limiterRpm) * 1.5, .18, 1);
+      this.fanSpeed += (target - this.fanSpeed) * (1 - Math.exp(-dt / fan.rampSeconds));
+      this.fanAngle = (this.fanAngle + this.fanSpeed * 85 * dt) % (2 * Math.PI);
+    }
+    const suction = fan ? fan.maxDownforceN * this.fanSpeed ** 2 : 0;
+    const down = c.aero.clA * q * this.downScale * floorFactor * (this.straightMode ? active.straightDownforceMultiplier : 1) + suction;
     this.downF = down * c.aero.balance; this.downR = down * (1 - c.aero.balance);
-    const dragMag = 0.5 * rho * c.aero.cdA * speed * speed * this.dragScale;
+    const dragMag = 0.5 * rho * c.aero.cdA * speed * speed * this.dragScale * (this.straightMode ? active.straightDragMultiplier : 1);
     this.drag = dragMag;
     const dragX = speed > 1e-6 ? dragMag * this.vx / speed : 0;
     const dragZ = speed > 1e-6 ? dragMag * this.vz / speed : 0;
@@ -2491,6 +3433,9 @@ class Vehicle {
     const bf = c.brakes.maxTorque * c.brakes.bias / 2, br = c.brakes.maxTorque * (1 - c.brakes.bias) / 2;
     const nSub = this.wheelSubsteps, dts = dt / nSub;
     const brakeCmd = clamp(ctl.brake, 0, 1);
+    const hybrid = tech?.hybrid;
+    // Recovered energy is a bounded fraction of actual rear-axle braking work.
+    const recoverableKW = hybrid && u > 4 ? hybrid.harvestKW * brakeCmd : 0;
     for (const wh of w) {
       const i = wh.i, front = i < 2;
       const steer = front ? this.steerAngle : 0;
@@ -2553,6 +3498,13 @@ class Vehicle {
       const Fr = fx * wh._sd + fy * wh._cd, Ff = fx * wh._cd - fy * wh._sd;
       sumFr += Fr; sumFf += Ff;
       Mz += this.cz[wh.i] * Fr - this.cx[wh.i] * Ff;
+    }
+    if (recoverableKW > 0) {
+      const rearBrakingKW = Math.max(0, -(w[RL].fx + w[RR].fx) * u / 1000);
+      const recovered = Math.min(recoverableKW, rearBrakingKW * .65, (hybrid.capacityKJ - this.energyKJ) / dt) * dt;
+      this.energyKJ += recovered;
+      this.recoveredKJ += recovered;
+      this.electricKW = -recovered / dt;
     }
     this.sumFf = sumFf; this.sumFr = sumFr;
 
@@ -3220,7 +4172,9 @@ class AIDriver {
     const ref = this.steering.speedRef;
     this.raw.steer = clamp(delta * (ref + u) / (ref * veh.car.steerLock), -1, 1);
     this.raw.brake = extraBrake; this.raw.throttle = 0;
-    this.assists.speedScale = this.pace * paceMul * (Math.abs(this.offset) > 1.2 ? 0.97 : 1);
+    // Early cars need more reserve for transients than the steady-state line predicts.
+    const historicalMargin = veh.car.history?.year <= 1954 ? .52 + .27 * track.world.surfaces.asphalt.mu : 1;
+    this.assists.speedScale = this.pace * paceMul * historicalMargin * (Math.abs(this.offset) > 1.2 ? 0.97 : 1);
     // --- stuck detection (race control resets the car if it cannot get going for 4 s) ---
     this.stuck = u < 1.5 ? this.stuck + dt : 0;
     if (this.stuck > 4) { this.needsReset = true; this.stuck = 0; }
@@ -3540,15 +4494,21 @@ function benchCar(car) {
   v.reset(50, 0); ctl.throttle = 1; ctl.brake = 0;
   const tT = v.time, tZ = v.z;
   samples.top.push(sample(v, tT, tZ));
-  let top = 0, ref = 0, quarter = null;
+  let top = 0, ref = 0, quarter = null, stable = 0;
   for (let i = 0; i < 120 * 60; i++) {
     v.step(DT, ctl);
     top = Math.max(top, v.forwardSpeed);
     if (quarter === null && v.z - tZ >= 400) quarter = v.time - tT;
     if (i % 60 === 59) {
       samples.top.push(sample(v, tT, tZ));
-      if (i > 120 * 12 && v.forwardSpeed - ref < 0.03) break; // the car has stopped gaining speed
-      ref = v.forwardSpeed;
+      if (car.history) {
+        stable = top - ref < .03 ? stable + 1 : 0;
+        if (quarter !== null && stable >= 5 && i > 120 * 12) break;
+        ref = top;
+      } else {
+        if (i > 120 * 12 && v.forwardSpeed - ref < 0.03) break;
+        ref = v.forwardSpeed;
+      }
     }
     if (v.z - tZ > 5600) break;
   }
@@ -3934,6 +4894,9 @@ const STAND_ZONE = [40, 412]; // main straight: grandstands and canopies on both
 function buildWorld(track) {
   const mb = new MeshBuilder(), fence = new MeshBuilder();
   const N = track.n, hw = track.halfWidth, def = track.def, L = track.length;
+  const archive = def.archive;
+  const landscape = archive === 'archive_road';
+  const modern = archive === 'archive_test';
   const rnd = mulberry32(20261108);
   const P = (i, d, y) => [track.x[i] + track.nx[i] * d, y, track.z[i] + track.nz[i] * d];
   const inStands = (s) => s > STAND_ZONE[0] && s < STAND_ZONE[1];
@@ -3976,7 +4939,13 @@ function buildWorld(track) {
         edge = hw + w;
       }
       const bI = side > 0 ? track.barrierR[i] : track.barrierL[i], bJ = side > 0 ? track.barrierR[j] : track.barrierL[j];
-      mb.quad(P(i, side * edge, 0.002), P(i, side * (bI - 0.5), 0.002), P(j, side * (bJ - 0.5), 0.002), P(j, side * edge, 0.002), RUNOFF, 2, [0, 1, 0]);
+      const shoulder = archive ? (modern ? [.09,.11,.14,0] : landscape ? [.12,.18,.10,0] : [.26,.23,.15,0]) : RUNOFF;
+      mb.quad(P(i, side * edge, 0.002), P(i, side * (bI - 0.5), 0.002), P(j, side * (bJ - 0.5), 0.002), P(j, side * edge, 0.002), shoulder, 2, [0, 1, 0]);
+      if (archive && !modern) {
+        const wall = landscape ? [.22,.24,.22,0] : [.30,.23,.15,0];
+        mb.quad(P(i, side * bI, 0), P(i, side * bI, .70), P(j, side * bJ, .70), P(j, side * bJ, 0), wall, 19);
+        continue;
+      }
       mb.quad(P(i, side * (bI - 0.5), 0.004), P(i, side * (bI - 0.3), 0.004), P(j, side * (bJ - 0.3), 0.004), P(j, side * (bJ - 0.5), 0.004), n(NEON.cyan, 0.45), 5, [0, 1, 0]);
       // barrier wall (floodlit concrete), its light strip and cap
       mb.quad(P(i, side * bI, 0), P(i, side * bI, 1.05), P(j, side * bJ, 1.05), P(j, side * bJ, 0), CONCRETE, 19);
@@ -3987,14 +4956,14 @@ function buildWorld(track) {
       fence.quad(P(i, side * (bI + 0.12), 1.1), P(j, side * (bJ + 0.12), 1.1), P(j, side * (bJ + 0.12), 3.05), P(i, side * (bI + 0.12), 3.05), n([0.55, 0.7, 0.9], 1), 9, null, [[si, 0], [sj, 0], [sj, 1], [si, 1]]);
     }
   }
-  for (const side of [-1, 1]) for (let i = 0; i < N; i++) { // fence top rail
+  if (!archive || modern) for (const side of [-1, 1]) for (let i = 0; i < N; i++) { // fence top rail
     const j = (i + 1) % N, bI = side > 0 ? track.barrierR[i] : track.barrierL[i], bJ = side > 0 ? track.barrierR[j] : track.barrierL[j];
     mb.quad(P(i, side * (bI + 0.1), 3.05), P(j, side * (bJ + 0.1), 3.05), P(j, side * (bJ + 0.1), 3.12), P(i, side * (bI + 0.1), 3.12), METAL, 14);
   }
 
   // Expansion joints, reflector studs, drain grates and service access seams.
   // These are flush visual details, never unmodelled bumps in the driving surface.
-  for(let ss=0;ss<L;ss+=12){
+  if (!archive || modern) for(let ss=0;ss<L;ss+=12){
     const p=track.pointAt(ss,0,{}),i=p.i,sy=Math.sin(p.heading),co=Math.cos(p.heading);
     const V=(d,along,y)=>[p.x+track.nx[i]*d+track.tx[i]*along,y,p.z+track.nz[i]*d+track.tz[i]*along];
     for(const side of [-1,1]){
@@ -4019,7 +4988,7 @@ function buildWorld(track) {
   // ---- start/finish: chequered line, grid slots, gantry with five start lights and a screen ----
   const sp = track.pointAt(def.lineS, 0, {}), si0 = sp.i;
   const at = (dd, dz, y) => [sp.x + track.nx[si0] * dd + track.tx[si0] * dz, y, sp.z + track.nz[si0] * dd + track.tz[si0] * dz];
-  for (let row = 0; row < 2; row++) for (let k = 0; k < 24; k++) {
+  for (let row = 0; row < 2; row++) for (let k = 0; k < (archive ? Math.floor(hw * 4) : 24); k++) {
     const white = (row + k) % 2 === 0, x0 = -hw + k * 0.5;
     mb.quad(at(x0, row * 0.5, 0.008), at(x0 + 0.5, row * 0.5, 0.008), at(x0 + 0.5, row * 0.5 + 0.5, 0.008), at(x0, row * 0.5 + 0.5, 0.008), white ? [0.9, 0.92, 0.95, 0] : [0.02, 0.02, 0.025, 0], 19, [0, 1, 0]);
   }
@@ -4042,6 +5011,30 @@ function buildWorld(track) {
     const ex = Math.cos(a) * r, ez = -Math.sin(a) * r;
     const v = (u, w2) => mb.vert(c[0] + ex * u, c[1] + r * w2, c[2] + ez * u, -Math.sin(a), 0, -Math.cos(a), [1, 0.05, 0.08, 1], 20, k + 0.5, row);
     const a0 = v(-1, -1), b0 = v(1, -1), c0 = v(1, 1), d0 = v(-1, 1); mb.i.push(a0, b0, c0, a0, c0, d0);
+  }
+
+  if (archive) {
+    const terrain = landscape ? [.095,.135,.074,0] : modern ? [.075,.085,.096,0] : [.19,.17,.105,0];
+    mb.quad([-1800,-.035,-1800],[-1800,-.035,1800],[1800,-.035,1800],[1800,-.035,-1800],terrain,2,[0,1,0]);
+    for (let s = 24; s < L - 15; s += landscape ? 9 : 28) {
+      const position = track.pointAt(s, 0, {});
+      const offset = track.barrierL[position.i] + (landscape ? 8 : 11);
+      const p = track.pointAt(s, -offset, {});
+      if (landscape) {
+        const height = 6 + rnd() * 10;
+        mb.box(p.x, height * .25, p.z, .35, height * .5, .35, [.16,.10,.06],19);
+        mb.loftY(p.x,p.z,0,[[height*.25,1.8,1.8,2],[height*.63,2.65,2.65,2],[height,.05,.05,2]],7,[.12,.25,.13],23);
+      } else if (s < (modern ? 270 : 210)) {
+        const color = modern ? [.25,.31,.36] : [.40,.31,.21];
+        mb.boxYaw(p.x, 2.9, p.z, 10, 5.8, 20, p.heading, color,19);
+        mb.boxYaw(p.x, 5.9, p.z, 10.8, .28, 20.5, p.heading, [.16,.19,.20],14);
+      }
+    }
+    // Keep a degenerate-free mesh for the renderer's shared water and fence draws.
+    const water = new MeshBuilder();
+    water.quad([-2,-2,-2],[-2,-2,2],[2,-2,2],[2,-2,-2],[0,0,0,0],2,[0,1,0]);
+    if (!modern) fence.quad([-2,-3,-2],[-2,-3,2],[-2,-2,2],[-2,-2,-2],[0,0,0,0],9);
+    return { world: mb, water, fence, artStats: { archive } };
   }
 
   // ---- pit building (left of the straight, before the line) ----
@@ -4550,6 +5543,591 @@ function buildRing(r0, r1, col, seg = 96) {
 return { NEON, LANES, STAND_ZONE, buildWorld, buildRacingLine, buildSoftQuad, buildRing };
 })();
 
+// ---- game/history-model.js ----
+const __m_game_history_model = (() => {
+// Original period-inspired bodywork. Coordinates match the existing car meshes (+z forward).
+const { MeshBuilder, STRIDE, circle, framesAlong } = __m_game_gfx;
+const PAINT = 22, METAL = 14, RUBBER = 13, CARBON = 12, GLASS = 15, BRAKE = 16;
+const alloy = [.60, .63, .67], steel = [.34, .37, .40], rubber = [.023, .024, .026];
+const dark = [.035, .042, .047], bronze = [.49, .31, .19];
+const light = [1, .07, .1, .24];
+
+// The centre of each chassis is placed below the physical centre of mass. Longitudinal
+// proportions follow the actual wheelbase, while wheel tracks and radii are set separately.
+const bodies = {
+  cigar: {
+    shell: [[-2.3,.035,.045,.38,2],[-1.88,.21,.20,.43,2],[-1.20,.35,.27,.45,2.2],[-.74,.36,.17,.41,2.2],[-.38,.35,.16,.42,2.3],[-.03,.33,.26,.51,2],[.66,.35,.28,.51,2],[1.44,.33,.25,.48,2],[1.98,.29,.22,.44,2],[2.20,.22,.175,.44,2]],
+    seat: { z: -.64, y: .64, width: .24, dash: 'analog' },
+    wheels: [.16,.19], rim: .67, spokes: 24,
+  },
+  f2: {
+    shell: [[-2.12,.027,.049,.365,2],[-1.74,.15,.153,.396,2],[-1.22,.268,.217,.438,2.4],[-.71,.285,.151,.382,2.6],[-.23,.28,.148,.386,2.6],[.17,.271,.217,.451,2.4],[.69,.25,.231,.454,2.3],[1.39,.246,.192,.413,2.2],[1.92,.225,.164,.382,2.2],[2.07,.147,.115,.376,2]],
+    seat: { z: -.56, y: .545, width: .19, dash: 'analog' },
+    wheels: [.145,.17], rim: .68, spokes: 23,
+  },
+  streamliner: {
+    shell: [[-2.31,.105,.052,.348,2],[-2.04,.246,.127,.354,2.2],[-1.41,.30,.193,.416,2.6],[-.82,.337,.163,.396,2.8],[-.35,.341,.157,.397,2.7],[.05,.32,.25,.506,2.6],[.69,.33,.262,.479,2.7],[1.31,.323,.238,.438,2.7],[2.03,.317,.165,.371,2.5],[2.26,.245,.097,.339,2.2]],
+    seat: { z: -.59, y: .57, width: .20, dash: 'analog' },
+    wheels: [.175,.205], rim: .63, spokes: 10,
+  },
+  rear: {
+    shell: [[-2.02,.038,.05,.36,2],[-1.68,.24,.19,.40,2.2],[-1.16,.30,.21,.43,2.4],[-.64,.30,.16,.40,2.3],[-.36,.29,.115,.33,2.5],[.12,.28,.125,.34,2.5],[.57,.26,.17,.38,2.6],[1.16,.24,.14,.34,2.3],[1.81,.19,.111,.29,2],[2.02,.115,.073,.282,2]],
+    seat: { z: -.18, y: .49, width: .21, dash: 'analog' },
+    wheels: [.18,.22], rim: .65, spokes: 6,
+  },
+  monocoque: {
+    shell: [[-2.01,.09,.085,.35,2],[-1.67,.24,.19,.38,2.3],[-1.07,.29,.24,.43,2.4],[-.67,.29,.13,.34,2.7],[-.17,.29,.14,.34,2.7],[.40,.28,.19,.39,2.6],[.98,.24,.145,.33,2.4],[1.55,.21,.12,.29,2.2],[1.97,.15,.095,.27,2],[2.16,.03,.028,.26,2]],
+    seat: { z: -.35, y: .52, width: .21, dash: 'analog' },
+    wheels: [.19,.22], rim: .64, spokes: 8,
+  },
+  wing: {
+    shell: [[-1.85,.07,.075,.30,2],[-1.55,.18,.14,.33,2.6],[-1.11,.24,.20,.43,2.6],[-.64,.23,.21,.43,2.8],[-.39,.25,.12,.36,3.1],[.18,.27,.12,.36,3.2],[.65,.32,.15,.35,3.4],[1.18,.39,.13,.31,3.5],[1.77,.36,.07,.24,4],[2.11,.28,.044,.196,4]],
+    seat: { z: -.10, y: .51, width: .20, dash: 'analog' },
+    wheels: [.25,.35], rim: .64, spokes: 5,
+  },
+  ground: {
+    shell: [[-1.93,.10,.095,.32,2],[-1.51,.23,.16,.34,2.4],[-.88,.28,.24,.42,3],[-.43,.27,.14,.39,3],[-.02,.26,.14,.39,3],[.53,.26,.19,.40,3],[1.25,.23,.13,.32,3],[1.95,.17,.09,.28,3],[2.30,.10,.06,.23,2.3]],
+    seat: { z: -.22, y: .55, width: .20, dash: 'analog' },
+    wheels: [.26,.41], rim: .62, spokes: 5,
+  },
+  fan: {
+    shell: [[-2.12,.235,.155,.437,3],[-1.61,.308,.20,.40,3.3],[-1.12,.31,.245,.434,3.1],[-.62,.28,.21,.434,3],[-.29,.279,.13,.385,3], [.27,.276,.135,.385,3.3],[.69,.271,.171,.396,3.5],[1.30,.253,.116,.322,3.6],[1.94,.23,.076,.252,3.7],[2.23,.18,.059,.224,3.7]],
+    seat: { z: -.10, y: .535, width: .205, dash: 'analog' },
+    wheels: [.26,.41], rim: .64, spokes: 6,
+  },
+  turbo: {
+    shell: [[-1.99,.12,.11,.34,2.5],[-1.55,.26,.19,.34,3],[-.80,.32,.22,.42,3],[-.34,.29,.12,.36,3.6],[.12,.27,.115,.36,3.6],[.65,.26,.18,.40,3.3],[1.15,.21,.13,.35,3.3],[1.86,.17,.09,.28,3.5],[2.28,.14,.075,.26,3.5]],
+    seat: { z: -.12, y: .50, width: .21, dash: 'boost' },
+    wheels: [.28,.40], rim: .65, spokes: 6,
+  },
+  active92: {
+    shell: [[-2.08,.074,.093,.32,2],[-1.65,.16,.146,.37,2.3],[-1.09,.26,.205,.46,2.5],[-.62,.31,.235,.49,2.8],[-.26,.30,.125,.47,3.2],[.21,.30,.125,.46,3.3],[.74,.28,.161,.45,3.1],[1.15,.235,.139,.416,3],[1.57,.196,.105,.387,2.6],[2.18,.158,.071,.387,2.4],[2.36,.063,.045,.327,2]],
+    seat: { z: .02, y: .62, width: .20, dash: 'earlyDigital' },
+    wheels: [.29,.39], rim: .63, spokes: 7,
+  },
+  v10: {
+    shell: [[-2.03,.06,.095,.37,2],[-1.66,.15,.16,.42,2.4],[-1.12,.24,.21,.46,2.6],[-.58,.29,.28,.54,2.6],[-.27,.30,.16,.48,3.2],[.15,.31,.16,.46,3.2],[.67,.27,.22,.49,3.1],[1.27,.21,.15,.44,2.6],[1.88,.14,.09,.41,2.4],[2.31,.08,.052,.33,2]],
+    seat: { z: -.07, y: .66, width: .21, dash: 'digital' },
+    wheels: [.30,.38], rim: .61, spokes: 10,
+  },
+  v8: {
+    shell: [[-2.17,.056,.09,.36,2],[-1.75,.14,.165,.43,2.5],[-1.24,.23,.20,.49,2.7],[-.66,.30,.262,.54,2.8],[-.32,.302,.15,.49,3.2],[.18,.29,.147,.47,3.2],[.68,.26,.209,.48,3.2],[1.28,.205,.148,.446,2.8],[1.91,.126,.080,.43,2.6],[2.30,.057,.05,.407,2.4],[2.40,.039,.031,.351,2]],
+    seat: { z: -.07, y: .65, width: .205, dash: 'digital' },
+    wheels: [.30,.38], rim: .62, spokes: 10,
+  },
+  hybrid: {
+    shell: [[-2.10,.055,.13,.38,2.2],[-1.75,.11,.19,.45,2.4],[-1.28,.18,.25,.49,2.6],[-.69,.30,.29,.52,2.6],[-.30,.30,.16,.44,3.2],[.22,.30,.16,.42,3.2],[.77,.27,.23,.47,3.1],[1.29,.22,.14,.39,3.0],[1.98,.17,.07,.29,2.8],[2.37,.11,.055,.25,2.8]],
+    seat: { z: -.09, y: .62, width: .21, dash: 'digital' },
+    wheels: [.305,.385], rim: .61, spokes: 9,
+  },
+  wide: {
+    shell: [[-2.15,.056,.12,.39,2.3],[-1.69,.13,.183,.45,2.6],[-1.16,.23,.249,.52,2.7],[-.62,.314,.257,.56,2.6],[-.32,.317,.16,.455,3.1],[.21,.303,.15,.435,3.1],[.73,.279,.223,.455,3.2],[1.32,.241,.133,.38,3.1],[1.97,.185,.063,.29,2.8],[2.39,.124,.049,.245,2.6]],
+    seat: { z: -.09, y: .65, width: .22, dash: 'digital' },
+    wheels: [.306,.405], rim: .63, spokes: 10,
+  },
+  floor22: {
+    shell: [[-2.15,.081,.119,.405,2.5],[-1.83,.15,.18,.47,2.9],[-1.26,.24,.24,.48,3.3],[-.72,.32,.27,.55,3.5],[-.27,.32,.15,.475,3.3],[.17,.31,.15,.45,3.4],[.67,.31,.20,.46,3.4],[1.31,.26,.12,.39,3],[1.89,.21,.09,.30,3.3],[2.38,.13,.046,.239,3]],
+    seat: { z: -.04, y: .66, width: .22, dash: 'digital' },
+    wheels: [.315,.405], rim: .71, spokes: 8,
+  },
+  active: {
+    shell: [[-2.02,.08,.12,.39,2.2],[-1.73,.15,.17,.42,2.6],[-1.20,.20,.24,.47,3],[-.72,.30,.31,.53,3],[-.32,.29,.155,.46,3.1],[.21,.29,.15,.44,3.1],[.76,.26,.21,.47,3],[1.28,.20,.14,.40,2.9],[1.91,.14,.075,.30,2.6],[2.31,.086,.045,.255,2.4]],
+    seat: { z: -.02, y: .64, width: .21, dash: 'digital' },
+    wheels: [.28,.36], rim: .72, spokes: 8,
+  },
+};
+
+const longitudinalScale = car => car.wheelbase / 3;
+const styleOf = car => car?.history?.body;
+const preWing = style => ['cigar','f2','streamliner','rear','monocoque'].includes(style);
+const earlyAeroStyle = style => ['wing','ground','fan','turbo'].includes(style);
+const hasHalo = style => ['wide','floor22','active'].includes(style);
+
+function historicalEye(car) {
+  const seat = bodies[styleOf(car)]?.seat;
+  if (!seat) return { y: .93, z: .18 };
+  return { y: seat.y + .23, z: (seat.z + .135) * longitudinalScale(car) };
+}
+
+function tube(mesh, points, radius, color, material, sides) {
+  mesh.sweep(framesAlong(points), circle(radius, sides), color, material, true, false);
+}
+
+function loft(mesh, sections, segments, color, material = PAINT, x = 0) {
+  mesh.loft(x, sections, segments, color, material);
+}
+
+// A shallow inverted section with the trailing edge raised. Both ends are closed so the
+// wing reads correctly from the front, cockpit and rear, including in the showroom.
+function wing(mesh, { span, chord, y, z, sweep = .04, rise = .04, angle = .12 }, color, lod) {
+  const stations = lod ? 4 : 12;
+  const thickness = chord * .065;
+  const frames = Array.from({ length: stations + 1 }, (_, i) => {
+    const t = 2 * i / stations - 1;
+    return { p: [t * span / 2, y + rise * t * t, z - sweep * t * t], u: [0,0,1], v: [0,1,0] };
+  });
+  const trailing = angle * chord;
+  mesh.sweep(frames, [
+    [chord*.50,0], [chord*.30,thickness], [-chord*.16,thickness + trailing*.55],
+    [-chord*.50,trailing], [-chord*.15,-thickness*.42 + trailing*.55], [chord*.28,-thickness*.66],
+  ], color, PAINT, true, true);
+}
+
+function radialFace(mesh, x, inner, outer, count, color, material, skew = 0, halfWidth = .035) {
+  for (let i = 0; i < count; i++) {
+    const angle = i * Math.PI * 2 / count;
+    const point = (radius, a) => [x, Math.cos(a) * radius, Math.sin(a) * radius];
+    mesh.quad(point(inner, angle - halfWidth), point(outer, angle + skew - halfWidth),
+      point(outer, angle + skew + halfWidth), point(inner, angle + halfWidth), color, material, [1,0,0]);
+  }
+}
+
+function longitudinalTube(mesh, x, y, z0, z1, radius, color, lod) {
+  tube(mesh, [[x,y,z0],[x,y,z1]], radius, color, METAL, lod ? 5 : 10);
+}
+
+function instrument(mesh, x, y, z, radius, lod, needle = [.90,.43,.22]) {
+  const segments = lod ? 8 : 20;
+  mesh.loft(x, [[z,radius*.99,radius*.99,y,2],[z-.022,radius,radius,y,2]], segments, alloy, METAL);
+  mesh.loft(x, [[z-.024,radius*.86,radius*.86,y,2],[z-.021,radius*.86,radius*.86,y,2]], segments, dark, CARBON);
+  if (!lod) {
+    for (let i = 0; i < 7; i++) {
+      const angle = (i - 3) * .60;
+      mesh.box(x + Math.sin(angle)*radius*.68, y + Math.cos(angle)*radius*.68, z-.026, .004,.006,.003, alloy,METAL);
+    }
+    tube(mesh, [[x,y,z-.028],[x+radius*.43,y+radius*.48,z-.028]], .0025, needle, PAINT, 4);
+  }
+}
+
+function cockpit(mesh, style, trim, accent, lod) {
+  const { z, y, width, dash } = bodies[style].seat;
+  const count = lod ? 8 : 16;
+  const modern = dash === 'digital' || dash === 'earlyDigital';
+  loft(mesh, [[z-.36,.08,.055,y,2],[z-.20,width,.068,y-.017,2.5],[z+.24,width,.06,y-.023,2.4],[z+.43,.08,.033,y-.015,2]], count, dark, CARBON);
+  for (const side of [-1,1]) {
+    tube(mesh, [[side*.09,y+.018,z-.32],[side*width,y+.026,z-.18],[side*width,y+.017,z+.23],[side*.11,y+.018,z+.42]],
+      modern ? .025 : .018, trim, PAINT, lod ? 5 : 8);
+  }
+  mesh.sphere(0,y+.12,z,.124,lod ? 5 : 10,lod ? 8 : 16,accent,PAINT,1.04);
+  loft(mesh, [[z+.074,.105,.034,y+.146,2],[z+.123,.074,.026,y+.15,2]], count, dark, GLASS);
+  if (dash === 'digital') {
+    mesh.box(0,y+.077,z+.38,.255,.103,.05,dark,CARBON);
+    mesh.box(0,y+.098,z+.353,.11,.041,.012,style === 'active' ? [.32,.71,.48] : [.39,.57,.66], GLASS);
+    for (const side of [-1,1]) {
+      mesh.box(side*.112,y+.075,z+.36,.038,.113,.044,rubber,RUBBER);
+      mesh.box(side*.077,y+.101,z+.35,.014,.013,.008,accent,PAINT);
+      mesh.box(side*.09,y+.106,z+.409,.033,.071,.014,alloy,METAL);
+    }
+  } else {
+    const wood = ['cigar','f2','streamliner'].includes(style);
+    const radius = wood ? .155 : .135;
+    const rim = Array.from({length: count + 1}, (_, i) => {
+      const a = i * Math.PI * 2 / count;
+      return [Math.cos(a)*radius,y+.065+Math.sin(a)*radius*.67,z+.31+Math.sin(a)*.054];
+    });
+    tube(mesh,rim,.012,wood ? bronze : rubber,wood ? METAL : RUBBER,lod ? 4 : 7);
+    mesh.box(0,y+.057,z+.315,.24,.014,.014,alloy,METAL);
+    mesh.box(0,y-.001,z+.314,.013,.105,.013,alloy,METAL);
+    if (dash === 'earlyDigital') {
+      mesh.box(0,y+.075,z+.49,.31,.082,.03,dark,CARBON);
+      mesh.box(0,y+.080,z+.468,.14,.040,.012,[.32,.63,.43],GLASS);
+      for (let i = -3; i <= 3; i++) mesh.box(i*.019,y+.109,z+.468,.011,.009,.010,i < 1 ? [.55,.76,.35] : [.89,.42,.19],PAINT);
+    } else {
+      instrument(mesh,0,y+.087,z+.52,.059,lod);
+      instrument(mesh,-.115,y+.061,z+.51,.035,lod);
+      instrument(mesh,.115,y+.061,z+.51,dash === 'boost' ? .044 : .033,lod,[.67,.82,.33]);
+    }
+    tube(mesh,[[.19,y-.06,z+.05],[.21,y+.06,z+.07]],.008,alloy,METAL,5);
+    mesh.sphere(.21,y+.067,z+.071,.020,4,6,dark,CARBON);
+  }
+  if (preWing(style)) {
+    loft(mesh, [[z+.42,.20,.028,y+.035,2.7],[z+.48,.182,.060,y+.051,2.5],[z+.56,.13,.026,y+.036,2.3]], count, [.38,.53,.62],GLASS);
+  }
+  if (style !== 'cigar') {
+    const rear = z-.35;
+    tube(mesh,[[-width,y-.045,rear],[-width*.87,y+.23,rear-.04],[0,y+.30,rear-.061],
+      [width*.87,y+.23,rear-.04],[width,y-.045,rear]], hasHalo(style) ? .034 : .024,
+      preWing(style) ? alloy : dark,preWing(style) ? METAL : CARBON,lod ? 5 : 8);
+  }
+  if (hasHalo(style)) {
+    const front = z+.56;
+    tube(mesh,[[0,y+.05,front+.07],[0,y+.28,front]],.023,dark,CARBON,lod ? 5 : 8);
+    for (const side of [-1,1]) {
+      tube(mesh,[[0,y+.28,front],[side*.20,y+.28,front-.08],[side*.31,y+.26,z+.17],
+        [side*.30,y+.235,z-.17],[side*.26,y+.04,z-.34]],.029,dark,CARBON,lod ? 5 : 8);
+    }
+  }
+}
+
+function suspension(mesh, car, style, lod) {
+  const scale = longitudinalScale(car);
+  const front = car.wheelbase * (1-car.frontWeight) / scale;
+  const rear = -car.wheelbase * car.frontWeight / scale;
+  const radius = car.wheelRadius;
+  const visibleMetal = preWing(style);
+  for (const side of [-1,1]) {
+    for (const [z, track, isFront] of [[front, car.trackFront, true], [rear, car.trackRear, false]]) {
+      const outer = side * (track / 2 - .075);
+      const mount = side * (style === 'cigar' ? .24 : .17);
+      for (const height of [-.095,.080]) {
+        const y = radius + height;
+        const arm = visibleMetal ? alloy : dark;
+        const mat = visibleMetal ? METAL : CARBON;
+        tube(mesh, [[mount,y+.035,z-.27],[outer,y,z],[mount,y+.025,z+.25]], .014, arm, mat, lod ? 4 : 7);
+      }
+      if (!lod) tube(mesh, [[mount,radius+.27,z-.095],[outer*.91,radius-.08,z+.034]], .012, steel, METAL, 7);
+      if (isFront) tube(mesh, [[mount,radius,z+.13],[outer,radius,z+.095]], .011, steel, METAL,lod ? 4 : 6);
+    }
+  }
+}
+
+function preWingBody(mesh, car, style, primary, trim, lod) {
+  if (style === 'streamliner') {
+    const scale = longitudinalScale(car), radius = car.wheelRadius, steps = lod ? 7 : 16;
+    // The outer body is split into wheel arches and shallow lower sill pieces. This
+    // leaves room around the steering tyres and the rear wheel spin meshes.
+    const f = 3*(1-car.frontWeight), r = -3*car.frontWeight;
+    const frontWidth = car.history.wheelWidthFront ?? .175;
+    const rearWidth = car.history.wheelWidthRear ?? .205;
+    for (const side of [-1,1]) {
+      const fairing = [[f,car.trackFront,frontWidth,.065],[r,car.trackRear,rearWidth,.025]];
+      for (const [z,track,width,clearance] of fairing) {
+        const inner = side*(track*.5-width*.5-clearance-.035);
+        const outer = side*(track*.5+width*.5+clearance+.052);
+        const shellRadius = radius + clearance + .06;
+        const point = (x,a,offset=0) => [x,radius+(shellRadius-offset)*Math.cos(a),z+(shellRadius-offset)*Math.sin(a)/scale];
+        const shoulder = angle => [side*.32,.398+.215*Math.cos(angle),z+shellRadius*Math.sin(angle)/scale];
+        for (let i = 0; i < steps; i++) {
+          const a0 = -.5*Math.PI + i*Math.PI/steps, a1 = -.5*Math.PI + (i+1)*Math.PI/steps;
+          mesh.quad(point(inner,a0,.023),point(outer,a0),point(outer,a1),point(inner,a1,.023),primary,PAINT);
+          mesh.quad(shoulder(a0),point(inner,a0,.023),point(inner,a1,.023),shoulder(a1),primary,PAINT);
+          mesh.quad(point(outer,a1),point(outer,a0),point(outer,a0,.023),point(outer,a1,.023),trim,PAINT);
+        }
+      }
+      // The pontoon merges both crowns with the long body along their inner edge.
+      loft(mesh,[[-2.13,.09,.049,.335,2],[-1.82,.219,.158,.40,2.6],[-.79,.229,.155,.414,3.2],
+        [.09,.230,.144,.428,3.3],[.95,.233,.167,.46,3],[1.74,.213,.151,.418,2.6],[2.20,.113,.079,.366,2.4]],lod?10:24,primary,PAINT,side*.421);
+      longitudinalTube(mesh,side*.637,.271,-2.09,-.39,.020,steel,lod);
+    }
+    loft(mesh,[[2.197,.215,.085,.337,2.6],[2.28,.206,.082,.337,2.6],[2.30,.198,.075,.337,2.5]],lod?10:24,trim);
+    loft(mesh,[[2.298,.175,.063,.337,2.5],[2.304,.175,.062,.337,2.5]],lod?10:22,dark,CARBON);
+    return;
+  }
+  if (style === 'f2') {
+    loft(mesh,[[2.05,.134,.107,.376,2],[2.10,.149,.110,.376,2],[2.12,.131,.093,.376,2]],lod?10:24,alloy,METAL);
+    loft(mesh,[[2.117,.117,.078,.376,2],[2.122,.117,.078,.376,2]],lod?10:24,dark,CARBON);
+    for (let k = -4; k <= 4; k++) mesh.box(k*.025,.376,2.124,.007,.116-Math.abs(k)*.01,.008,steel,METAL);
+    longitudinalTube(mesh,.277,.363,-1.88,.68,.028,bronze,lod);
+    for (let i = 0; i < 4; i++) {
+      const z = .43+i*.16;
+      tube(mesh,[[.234,.51,z],[.29,.44,z],[.277,.363,z-.10]],.017,steel,METAL,lod?5:8);
+    }
+    mesh.box(-.13,.637,.34,.113,.018,.20,trim,PAINT);
+    loft(mesh,[[-.06,.039,.01,.674,2],[.68,.038,.011,.685,2],[1.86,.028,.008,.557,2]],lod?6:12,trim);
+    return;
+  }
+  if (style === 'cigar') {
+    // Tall front radiator and long external exhaust give the front-engine car its silhouette.
+    loft(mesh, [[2.19,.200,.157,.44,2.2],[2.218,.204,.159,.44,2.2]],lod ? 10 : 26,alloy,METAL);
+    loft(mesh, [[2.218,.185,.142,.44,2.1],[2.222,.185,.142,.44,2.1]],lod ? 10 : 24,dark,CARBON);
+    for (let k = -5; k <= 5; k++) {
+      const x = .029*k;
+      const height = .265*Math.sqrt(1-(x/.186)**2);
+      mesh.box(x,.44,2.225,.007,height,.009,steel,METAL);
+    }
+    longitudinalTube(mesh,-.343,.47,-1.69,.93,.031,bronze,lod);
+    longitudinalTube(mesh,-.359,.47,-1.80,-1.59,.040,steel,lod);
+    for (let i = 0; i < (lod ? 4 : 9); i++) {
+      mesh.box(.23,.691-.006*i,.46+i*.106,.098,.014,.019,dark,CARBON);
+    }
+    loft(mesh, [[-.04,.043,.012,.774,2],[.62,.048,.014,.803,2],[1.68,.051,.008,.679,2]],lod?6:12,trim);
+    mesh.box(0,.53,-1.69,.16,.018,.21,alloy,METAL);
+  } else if (style === 'rear') {
+    // Compact rear engine under a rounded cover, external headers, and a nose intake
+    // instead of the long front-engine bonnet and exposed radiator grille.
+    loft(mesh,[[-1.65,.135,.056,.569,2],[-1.14,.207,.094,.605,2.2],[-.75,.184,.072,.579,2.3]],lod?8:18,trim);
+    loft(mesh,[[1.90,.139,.078,.284,2],[2.022,.114,.066,.282,2],[2.048,.077,.050,.282,2]],lod?8:18,trim);
+    loft(mesh,[[2.046,.068,.044,.282,2],[2.049,.066,.043,.282,2]],lod?8:18,dark,CARBON);
+    for (const side of [-1,1]) {
+      const x = side*.271;
+      longitudinalTube(mesh,x,.39,-2.12,-1.16,.031,alloy,lod);
+      if (!lod) for (let i = 0; i < 4; i++) {
+        tube(mesh,[[side*.219,.59,-1.38+i*.13],[side*.287,.52,-1.40+i*.11],[x,.40,-1.55+i*.095]],.019,bronze,METAL,6);
+      }
+      mesh.box(side*.216,.637,-1.09,.061,.028,.221,dark,CARBON);
+    }
+  } else {
+    // Mid-engine tail with paired bright exhausts, intake trumpets and a low tapered nose.
+    for (const side of [-1,1]) {
+      longitudinalTube(mesh,side*.19,.42,-2.14,-1.19,.034,alloy,lod);
+      if (!lod) for (let i = 0; i < 4; i++) {
+        tube(mesh, [[side*.168,.58,-1.48+i*.115],[side*.21,.515,-1.53+i*.11],
+          [side*.19,.426,-1.64+i*.10]],.019,bronze,METAL,6);
+      }
+    }
+    loft(mesh,[[2.02,.14,.085,.28,2],[2.15,.103,.060,.268,2],[2.19,.045,.028,.264,2]],lod?8:18,trim);
+    loft(mesh,[[.56,.034,.010,.57,2],[1.10,.036,.010,.465,2],[2.06,.030,.007,.35,2]],lod?6:10,trim);
+    loft(mesh,[[-1.20,.09,.025,.644,2],[-.91,.14,.054,.654,2],[-.78,.105,.05,.649,2]],lod?8:18,primary);
+  }
+}
+
+function earlyAero(mesh, style, primary, trim, accent, lod) {
+  if (style === 'wing') {
+    // Exposed engine and suspension behind the cockpit. Wing height stays below the
+    // tall experimental wings of the preceding seasons.
+    for (const side of [-1,1]) {
+      loft(mesh,[[-1.18,.10,.056,.24,3.2],[-.49,.15,.102,.25,4],[.40,.13,.101,.25,4],[.86,.09,.064,.23,4]],lod?8:16,trim,PAINT,side*.37);
+      mesh.taper(side*.524,-1.01,.57,.025,.028,.136,.181,.155,.190,accent,PAINT);
+      mesh.box(side*.147,.514,-1.12,.193,.122,.49,steel,METAL);
+      for (let i = 0; i < (lod ? 2 : 4); i++) {
+        const z = -.86-i*.114;
+        tube(mesh,[[side*.09,.55,z],[side*.23,.47,z-.09],[side*.265,.381,z-.21]],.02,bronze,METAL,lod?4:7);
+      }
+      longitudinalTube(mesh,side*.254,.382,-1.98,-1.19,.039,alloy,lod);
+      mesh.taper(side*.535,-2.13,-1.76,.029,.024,.595,.858,.655,.824,trim,PAINT);
+      mesh.taper(side*.174,-1.95,-1.58,.027,.035,.35,.76,.34,.57,steel,METAL);
+    }
+    wing(mesh,{span:1.07,chord:.32,y:.738,z:-1.94,rise:0,sweep:0},primary,lod);
+    wing(mesh,{span:1.34,chord:.24,y:.16,z:1.96,rise:.02,sweep:.025},trim,lod);
+    return;
+  }
+  if (style === 'fan') {
+    for (const side of [-1,1]) {
+      loft(mesh,[[-1.49,.13,.092,.27,3],[-1.02,.235,.153,.31,3.7],[-.31,.29,.166,.329,4.2],
+        [.42,.30,.175,.336,4.7],[.91,.244,.123,.296,3.5]],lod?8:20,primary,PAINT,side*.492);
+      mesh.taper(side*.765,-1.32,.79,.047,.043,.04,.195,.047,.176,trim,PAINT);
+      mesh.box(side*.47,.301,.921,.30,.107,.020,dark,CARBON);
+      mesh.taper(side*.65,-2.27,-1.78,.031,.032,.55,.965,.60,.866,trim,PAINT);
+      mesh.taper(side*.26,-2.17,-1.62,.044,.043,.53,.785,.41,.635,steel,METAL);
+    }
+    mesh.taper(0,-1.64,.97,1.58,1.43,.052,.083,.055,.091,dark,CARBON);
+    mesh.taper(0,-2.48,-1.91,.62,.55,.145,.672,.195,.65,primary,PAINT);
+    const centerY = .424, ductZ = -2.502;
+    const segments = lod ? 12 : 32;
+    const ring = (radius,z,i) => [Math.cos(i*Math.PI*2/segments)*radius,centerY+Math.sin(i*Math.PI*2/segments)*radius,z];
+    for (let i = 0; i < segments; i++) {
+      mesh.quad(ring(.269,ductZ,i),ring(.269,ductZ,i+1),ring(.226,ductZ-.022,i+1),ring(.226,ductZ-.022,i),steel,METAL);
+      mesh.quad(ring(.226,ductZ-.022,i),ring(.226,ductZ-.022,i+1),ring(.216,ductZ+.011,i+1),ring(.216,ductZ+.011,i),dark,CARBON);
+    }
+    mesh.loft(0,[[ductZ-.008,.219,.219,centerY,2],[ductZ-.005,.219,.219,centerY,2]],segments,dark,CARBON);
+    wing(mesh,{span:1.27,chord:.39,y:.843,z:-2.04,rise:0,sweep:0},trim,lod);
+    wing(mesh,{span:1.49,chord:.306,y:.154,z:2.14,rise:.038,sweep:.02},accent,lod);
+    return;
+  }
+  const ground = style === 'ground';
+  const podX = ground ? .51 : .49;
+  for (const side of [-1,1]) {
+    const x = side * podX;
+    // Boxy Venturi pods carry visible skirt rails. The turbo model uses shorter wedge
+    // pods and raised radiator mouths to distinguish its later flat-bottom architecture.
+    const profile = ground ? [[-1.45,.16,.12,.26,4],[-1.03,.30,.17,.31,5],[-.28,.31,.19,.33,5],[.75,.29,.17,.31,4],[1.05,.22,.11,.26,3]]
+      : [[-1.29,.11,.11,.29,3],[-.89,.23,.14,.31,3.4],[-.25,.27,.17,.34,4],[.37,.26,.17,.35,4],[.68,.235,.135,.325,3.6]];
+    loft(mesh,profile,lod?8:18,primary,PAINT,x);
+    const nose = ground ? 1.047 : .68;
+    mesh.box(x,.284,nose,.31,.115,.016,dark,CARBON);
+    if (!lod) for (let j = -2; j <= 2; j++) mesh.box(x+j*.051,.283,nose+.011,.012,.099,.012,steel,METAL);
+    if (ground) mesh.taper(side*.78,-1.23,.89,.044,.041,.04,.182,.05,.173,trim,PAINT);
+    else {
+      mesh.taper(side*.67,-1.11,.45,.11,.13,.368,.397,.432,.469,trim,PAINT);
+      for (let j = 0; j < (lod ? 2 : 5); j++) mesh.box(x,.485,.17-j*.119,.19,.019,.042,dark,CARBON);
+      longitudinalTube(mesh,side*.36,.515,-1.49,-.99,.034,bronze,lod);
+    }
+    const wingX = side * (ground ? .62 : .69);
+    mesh.taper(wingX,-2.42,-1.94,.030,.030,.62,1.00,.68,.91,accent,PAINT);
+  }
+  mesh.taper(0,-1.53,.88,1.59,1.48,.055,.087,.061,.090,dark,CARBON);
+  for (const side of [-1,1]) {
+    mesh.taper(side*.26,-2.17,-1.60,.035,.045,.42,.86,.39,.63,steel,METAL);
+  }
+  wing(mesh,{span:ground?1.25:1.39,chord:ground?.43:.36,y:ground?.875:.817,z:-2.14,sweep:0,rise:0,angle:.18},trim,lod);
+  if (!ground) wing(mesh,{span:1.36,chord:.24,y:.945,z:-2.31,sweep:0,rise:0,angle:.24},primary,lod);
+  wing(mesh,{span:ground?1.30:1.57,chord:.30,y:.174,z:2.11,rise:.025,sweep:.022,angle:.10},trim,lod);
+  mesh.box(0,.385,-2.10,.12,.08,.06,light,5);
+}
+
+const contemporary = {
+  active92: { podX:.48, frontSpan:1.53, rearSpan:1.24, frontZ:2.15, rearZ:-2.06, rearHeight:.925, wingRise:.037, airbox:1.04 },
+  v10: { podX:.49, frontSpan:1.61, rearSpan:1.18, frontZ:2.16, rearZ:-2.09, rearHeight:.89, wingRise:.10, airbox:1.02 },
+  v8: { podX:.48, frontSpan:1.62, rearSpan:1.16, frontZ:2.22, rearZ:-2.13, rearHeight:.91, wingRise:.113, airbox:1.035 },
+  hybrid: { podX:.52, frontSpan:1.69, rearSpan:1.04, frontZ:2.22, rearZ:-2.16, rearHeight:1.04, wingRise:.053, airbox:1.08 },
+  wide: { podX:.55, frontSpan:1.83, rearSpan:1.24, frontZ:2.23, rearZ:-2.10, rearHeight:.96, wingRise:.083, airbox:1.07 },
+  floor22: { podX:.55, frontSpan:1.82, rearSpan:1.26, frontZ:2.23, rearZ:-2.11, rearHeight:1.02, wingRise:.075, airbox:1.09 },
+  active: { podX:.52, frontSpan:1.66, rearSpan:1.13, frontZ:2.17, rearZ:-2.11, rearHeight:.99, wingRise:.064, airbox:1.08 },
+};
+
+function modernAero(mesh, style, primary, trim, accent, lod) {
+  const v10 = style === 'v10', active = style === 'active', v8 = style === 'v8';
+  const floor22 = style === 'floor22', earlyDigital = style === 'active92', wide = style === 'wide';
+  const raisedNose = earlyDigital || v10 || v8;
+  const d = contemporary[style];
+  for (const side of [-1,1]) {
+    const x = side * d.podX;
+    // The 2004 concept has raised cooling chimneys. The 2014 volume houses
+    // intercoolers, and the 2026 channels leave a clear undercut above the floor edge.
+    const pod = earlyDigital ? [[-1.43,.071,.06,.267,2],[-1.02,.18,.121,.318,3],[-.44,.225,.134,.34,4],[.27,.24,.148,.36,4],[.72,.221,.118,.34,3.7],[.82,.185,.102,.328,3.6]]
+      : v10 || v8 ? [[-1.45,.048,.039,.28,2],[-1.08,.093,.079,.31,2.6],[-.51,.19,.13,.34,3.2],[.08,.218,.15,.37,3.3],[.49,.205,.142,.375,3.2],[.65,.16,.106,.37,2.8]]
+      : floor22 ? [[-1.47,.096,.058,.263,2.7],[-1.12,.17,.093,.31,3.4],[-.49,.23,.129,.385,4],[.11,.242,.157,.444,4.2],[.59,.224,.137,.445,4],[.81,.175,.085,.425,3.5]]
+      : wide ? [[-1.48,.061,.048,.281,2],[-1.04,.139,.097,.343,3.3],[-.39,.202,.149,.40,3.5],[.16,.235,.165,.437,4],[.59,.222,.134,.449,3.8],[.82,.177,.082,.445,3]]
+      : active ? [[-1.49,.064,.044,.244,2],[-1.07,.114,.08,.292,3],[-.45,.18,.11,.348,3.3],[.20,.214,.123,.41,3.6],[.58,.206,.117,.422,3.5],[.74,.155,.075,.413,3]]
+      : [[-1.49,.047,.041,.29,2],[-1.07,.14,.09,.33,2.6],[-.45,.20,.15,.36,3.3],[.10,.215,.18,.39,3.4],[.55,.207,.151,.408,3.4],[.76,.166,.117,.403,2.7]];
+    loft(mesh,pod,lod?9:21,primary,PAINT,x);
+    const [nose,,height,y] = pod.at(-1);
+    mesh.box(x,y,nose+.005,.239,height*1.45,.016,dark,CARBON);
+    mesh.taper(side*(d.podX+.14),-1.10,.54,.024,.037,.346,.371,.483,.51,trim,PAINT);
+    if (v10) {
+      mesh.taper(side*.48,-.83,-.58,.142,.105,.398,.63,.456,.535,primary,PAINT);
+      mesh.box(side*.48,.617,-.824,.094,.045,.014,dark,CARBON);
+      mesh.taper(side*.58,-1.10,-.62,.065,.050,.42,.57,.39,.46,trim,PAINT);
+    }
+    if (v8) {
+      // Short cooling shoulders and separate mid-body turning vanes for the early V8 shape.
+      mesh.taper(side*.566,-.94,-.53,.092,.077,.374,.598,.412,.562,trim,PAINT);
+      mesh.taper(side*.635,.49,1.02,.018,.025,.094,.403,.111,.35,accent,PAINT);
+      mesh.taper(side*.684,.41,.66,.017,.02,.134,.304,.153,.323,primary,PAINT);
+    }
+    if (earlyDigital) {
+      mesh.taper(side*.365,.31,.71,.027,.019,.103,.43,.127,.356,trim,PAINT);
+      mesh.box(side*.156,.248,1.98,.049,.222,.133,steel,METAL);
+    }
+    if (wide) {
+      mesh.taper(side*.751,.52,1.13,.022,.030,.103,.40,.085,.345,trim,PAINT);
+      mesh.taper(side*.660,.47,.97,.021,.022,.116,.401,.094,.372,dark,CARBON);
+      mesh.taper(side*.805,-1.47,.52,.021,.024,.062,.132,.053,.102,dark,CARBON);
+    }
+    if (floor22) {
+      // Tall floor entries and exposed tunnel fences are independent of the narrow 2026 flaps.
+      mesh.taper(side*.67,.42,1.03,.036,.049,.068,.274,.086,.204,dark,CARBON);
+      mesh.taper(side*.76,.38,.94,.027,.039,.06,.226,.078,.176,trim,PAINT);
+      mesh.taper(side*.86,-1.68,.73,.035,.036,.061,.119,.074,.149,dark,CARBON);
+      mesh.taper(side*.91,1.96,2.40,.035,.031,.084,.27,.112,.245,primary,PAINT);
+    }
+    if (!lod) for (let j = 0; j < 4; j++) mesh.box(x,.49-j*.017,-.26-j*.12,.122,.008,.027,dark,CARBON);
+    mesh.taper(side*d.rearSpan*.50,d.rearZ-.31,d.rearZ+.20,.022,.030,d.rearHeight-.47,d.rearHeight+.12,d.rearHeight-.42,d.rearHeight+.078,primary,PAINT);
+    mesh.taper(side*d.frontSpan*.50,d.frontZ-.22,d.frontZ+.20,.023,.028,.085,.27,.10,.236,trim,PAINT);
+    mesh.taper(side*.72,-1.77,.76,.035,.040,.052,.112,.054,.091,dark,CARBON);
+  }
+  loft(mesh,[[-.95,.061,.068,.75,2],[-.56,.105,.135,.81,2.5],[-.36,.117,.154,.88,2.6],[-.13,.091,.076,d.airbox-.07,2.4]],lod?9:22,primary);
+  loft(mesh,[[-.15,.081,.042,d.airbox-.04,2.5],[-.121,.078,.046,d.airbox-.043,2.4]],lod?8:18,dark,CARBON);
+  mesh.box(0,d.airbox+.02,-.28,.116,.044,.18,trim,PAINT);
+  mesh.taper(0,-1.94,1.19,floor22||wide?1.79:active?1.66:1.51,raisedNose?1.13:1.34,.045,.080,.047,.087,dark,CARBON);
+  mesh.quad([-.55,.264,-2.10],[.55,.264,-2.10],[.49,.085,-1.54],[-.49,.085,-1.54],dark,CARBON);
+  for (const x of [-.36,-.18,.18,.36]) mesh.taper(x,-2.10,-1.54,.018,.014,.061,.26,.053,.090,dark,CARBON);
+  mesh.box(0,.414,-2.11,.11,.08,.042,light,5);
+  longitudinalTube(mesh,0,.549,-2.07,-1.77,.038,alloy,lod);
+  wing(mesh,{span:d.frontSpan,chord:raisedNose?.35:.30,y:raisedNose?.125:.093,z:d.frontZ,rise:d.wingRise,sweep:.065},primary,lod);
+  wing(mesh,{span:d.rearSpan,chord:.32,y:d.rearHeight-.10,z:d.rearZ,rise:.012,sweep:active?.10:.027},trim,lod);
+  if (wide) wing(mesh,{span:1.74,chord:.117,y:.273,z:2.017,rise:.052,sweep:.075,angle:.21},accent,lod);
+  if (!active) {
+    wing(mesh,{span:d.frontSpan*.94,chord:.20,y:raisedNose?.207:.177,z:d.frontZ-.17,rise:d.wingRise,sweep:.055,angle:.23},trim,lod);
+    wing(mesh,{span:d.rearSpan*.96,chord:.21,y:d.rearHeight+.016,z:d.rearZ-.153,rise:.013,angle:.26},accent,lod);
+  }
+}
+
+function scaleLongitudinal(mesh, scale) {
+  for (let i = 0; i < mesh.v.length; i += STRIDE) {
+    mesh.v[i+2] *= scale;
+    const nx = mesh.v[i+3], ny = mesh.v[i+4], nz = mesh.v[i+5] / scale;
+    const length = Math.hypot(nx,ny,nz) || 1;
+    mesh.v[i+3] = nx / length;
+    mesh.v[i+4] = ny / length;
+    mesh.v[i+5] = nz / length;
+  }
+  return mesh;
+}
+
+function buildHistoricalBody(car, livery, lod = 0) {
+  const style = styleOf(car);
+  const body = bodies[style];
+  if (!body) throw new Error(`Unknown historical body style: ${style}`);
+  const mesh = new MeshBuilder();
+  const { primary, secondary: trim, accent } = livery;
+  loft(mesh,body.shell,lod?11:28,primary);
+  if (preWing(style)) preWingBody(mesh,car,style,primary,trim,lod);
+  else if (earlyAeroStyle(style)) earlyAero(mesh,style,primary,trim,accent,lod);
+  else modernAero(mesh,style,primary,trim,accent,lod);
+  cockpit(mesh,style,trim,accent,lod);
+  suspension(mesh,car,style,lod);
+  return scaleLongitudinal(mesh,longitudinalScale(car));
+}
+
+function buildHistoricalFlaps(car, livery, lod = 0) {
+  if (styleOf(car) !== 'active') return [];
+  const d = contemporary.active;
+  const scale = longitudinalScale(car);
+  const front = new MeshBuilder(), rear = new MeshBuilder();
+  wing(front,{span:d.frontSpan*.94,chord:.19,y:0,z:0,sweep:.059,rise:d.wingRise,angle:.21},livery.secondary,lod);
+  wing(rear,{span:d.rearSpan*.95,chord:.22,y:0,z:0,sweep:.09,rise:.015,angle:.23},livery.accent,lod);
+  return [
+    {mesh:scaleLongitudinal(front,scale),y:.165,z:(d.frontZ-.171)*scale},
+    {mesh:scaleLongitudinal(rear,scale),y:d.rearHeight+.021,z:(d.rearZ-.139)*scale},
+  ];
+}
+
+function buildHistoricalFan(car, livery, lod = 0) {
+  if (styleOf(car) !== 'fan') return null;
+  const mesh = new MeshBuilder(), blades = lod ? 7 : 11;
+  for (let i = 0; i < blades; i++) {
+    const angle = i * Math.PI * 2 / blades;
+    const point = (r,a,z) => [r*Math.cos(angle+a),r*Math.sin(angle+a),z];
+    mesh.quad(point(.046,-.24,-.003),point(.216,.115,-.021),point(.216,.282,-.012),point(.048,.22,.008),alloy,METAL);
+  }
+  mesh.sphere(0,0,-.012,.060,lod?4:7,lod?8:15,livery.accent,PAINT);
+  return { mesh,y:.424,z:-2.532*longitudinalScale(car) };
+}
+
+function buildHistoricalWheel(car, front, side, lod = 0) {
+  const style = styleOf(car);
+  const body = bodies[style];
+  const radius = car.wheelRadius;
+  const width = front ? (car.history.wheelWidthFront ?? body.wheels[0]) : (car.history.wheelWidthRear ?? body.wheels[1]);
+  const w = width / 2, bead = radius * body.rim;
+  const count = lod ? 14 : 36;
+  const mesh = new MeshBuilder();
+  const crossPly = preWing(style);
+  const shoulder = crossPly ? width*.28 : width*.16;
+  const tread = [[-w,bead],[-w-.005,radius*.83],[-w+shoulder*.40,radius*.963],[-w+shoulder,radius]];
+  const colors = tread.map(() => rubber);
+  if ((style === 'v10' || style === 'v8') && !lod) for (const fraction of [-.27,-.09,.09,.27]) {
+    const center = fraction * width;
+    tread.push([center-.009,radius],[center-.005,radius-.006],[center+.005,radius-.006],[center+.009,radius]);
+    colors.push(rubber,[.011,.012,.013],[.011,.012,.013],rubber);
+  }
+  tread.push([w-shoulder,radius],[w-shoulder*.40,radius*.963],[w+.005,radius*.83],[w,bead]);
+  colors.push(rubber,rubber,rubber,rubber);
+  mesh.lathe(tread,count,rubber,RUBBER,colors);
+  if (crossPly && !lod) {
+    for (let i = 0; i < 24; i++) {
+      const angle = i * Math.PI / 12;
+      const p = (x,a) => [x,Math.cos(a)*radius*1.001,Math.sin(a)*radius*1.001];
+      mesh.quad(p(-w*.50,angle-.025),p(0,angle+.042),p(0,angle+.062),p(-w*.50,angle-.007),[.009,.01,.012],RUBBER);
+      mesh.quad(p(0,angle+.042),p(w*.50,angle-.025),p(w*.50,angle-.007),p(0,angle+.062),[.009,.01,.012],RUBBER);
+    }
+  }
+  mesh.lathe([[-w+.013,bead*.96],[w-.018,bead*.96],[w-.009,bead],[w+.001,bead*.945],[w-.019,bead*.875]],count,alloy,METAL);
+  if (style === 'cigar' || style === 'f2') {
+    // Wire wheels expose the inboard drum. The spoke meshes stay part of the moving wheel.
+    mesh.lathe([[-w*.72,0],[-w*.72,bead*.64],[-w*.31,bead*.64],[-w*.31,0]],count,steel,METAL);
+    radialFace(mesh,w-.016,bead*.16,bead*.94,lod?12:body.spokes,alloy,METAL,.43,.017);
+    if (!lod) radialFace(mesh,w-.032,bead*.17,bead*.93,body.spokes,steel,METAL,-.41,.016);
+  } else if (style === 'floor22') {
+    // The visually distinctive 18-inch-era outer wheel cover stays part of the wheel mesh.
+    mesh.lathe([[w-.018,bead*.98],[w+.008,bead*.95],[w+.018,bead*.72],[w+.021,bead*.18],[w+.021,0]],count,[.25,.27,.30],METAL);
+    radialFace(mesh,w+.023,bead*.23,bead*.81,5,[.047,.050,.056],CARBON,.22,.09);
+  } else {
+    mesh.lathe([[-w*.70,0],[-w*.70,bead*.72],[-w*.43,bead*.72],[-w*.43,0]],count,steel,BRAKE);
+    radialFace(mesh,w-.018,bead*.17,bead*.94,body.spokes,style === 'active' ? steel : alloy,METAL,.10,.111);
+  }
+  mesh.lathe([[w-.023,bead*.26],[w+.011,bead*.20],[w+.018,bead*.11],[w+.018,0]],lod?8:16,steel,METAL);
+  if (side < 0) for (let i = 0; i < mesh.v.length; i += STRIDE) {
+    mesh.v[i] *= -1;
+    mesh.v[i+3] *= -1;
+  }
+  return mesh;
+}
+
+return { historicalEye, buildHistoricalBody, buildHistoricalFlaps, buildHistoricalFan, buildHistoricalWheel };
+})();
+
 // ---- game/carmodel.js ----
 const __m_game_carmodel = (() => {
 // VELOCITYVERSE client: procedural VX-1 single-seater (original design; temporary art until the Unity model).
@@ -4557,6 +6135,7 @@ const __m_game_carmodel = (() => {
 // (axle along x) so the renderer can steer, spin and move them with the suspension.
 // Materials: 22 car paint (clear-coated) · 5 emissive · 12 carbon · 13 rubber · 14 metal · 15 glass · 16 brake disc (glows with heat)
 const { MeshBuilder, framesAlong, bezier, circle } = __m_game_gfx;
+const { buildHistoricalBody } = __m_game_history_model;
 const CARBON = [0.035, 0.037, 0.045, 0], DARK = [0.012, 0.012, 0.016, 0], TI = [0.42, 0.44, 0.48, 0];
 const RED = [1.0, 0.05, 0.10, 0.35];
 const IVORY = [0.82, 0.85, 0.86, 0], ALLOY = [0.49, 0.53, 0.57, 0];
@@ -4605,8 +6184,14 @@ function body(mb, cx, sections, seg, col, mat = 0) {
 // Every material-0 vertex in a car mesh is paint: switch it to the clear-coat paint material (22).
 function paint(mb) { for (let k = 0; k < mb.n; k++) if (mb.v[k * 13 + 10] === 0) mb.v[k * 13 + 10] = 22; return mb; }
 
-function buildCarLOD0(car, livery) { return paint(car.bodyStyle==='gt'?clubGT(car,livery,false):car.bodyStyle==='sprint'?clubSprint(car,livery,false):carLOD0(car, livery)); }
-function buildCarLOD1(car, livery) { return paint(car.bodyStyle==='gt'?clubGT(car,livery,true):car.bodyStyle==='sprint'?clubSprint(car,livery,true):carLOD1(car, livery)); }
+function buildCarLOD0(car, livery) {
+  if (car.history?.body) return buildHistoricalBody(car, livery, 0);
+  return paint(car.bodyStyle==='gt'?clubGT(car,livery,false):car.bodyStyle==='sprint'?clubSprint(car,livery,false):carLOD0(car, livery));
+}
+function buildCarLOD1(car, livery) {
+  if (car.history?.body) return buildHistoricalBody(car, livery, 1);
+  return paint(car.bodyStyle==='gt'?clubGT(car,livery,true):car.bodyStyle==='sprint'?clubSprint(car,livery,true):carLOD1(car, livery));
+}
 
 
 // The club rides have their own body construction, not a livery on the VX-1.
@@ -5130,6 +6715,7 @@ const __m_game_renderer = (() => {
 const { M4, MeshBuilder, compile, upload, dynamicMesh } = __m_game_gfx;
 const { buildWorld, buildRacingLine, buildSoftQuad, buildRing, NEON, LANES } = __m_game_world;
 const { buildCarLOD0, buildCarLOD1, buildWheel } = __m_game_carmodel;
+const { buildHistoricalWheel, buildHistoricalFlaps, buildHistoricalFan } = __m_game_history_model;
 const { FX } = __m_game_fx;
 const { ASPHALT_URL } = __m_game_assets;
 const QUALITY = {
@@ -5749,6 +7335,8 @@ class Renderer {
     const sp = track.pointAt(track.def.lineS, 0, {});
     this.L = { moon: norm([0.35, 0.72, -0.6]), moonCol: [0.70, 0.78, 0.94], sky: [0.10, 0.14, 0.22], gnd: [0.025, 0.03, 0.042], fog: [0.035, 0.055, 0.09], fogD: 1 / 2300,
       sun: norm([Math.sin(sp.heading), 0.02, Math.cos(sp.heading)]), sunCol: [0.72, 0.36, 0.18], flood: 0.45 };
+    if (track.def.archive === 'archive_airfield') Object.assign(this.L, { moonCol: [.93,.82,.62], sky: [.25,.21,.18], fog: [.16,.12,.09], sunCol: [1.05,.60,.29], fogD: 1 / 1850 });
+    if (track.def.archive === 'archive_road') Object.assign(this.L, { moonCol: [.77,.89,.75], sky: [.17,.23,.20], fog: [.09,.15,.12], sunCol: [.58,.66,.50], fogD: 1 / 1400 });
     this.triangles = this.worldMesh.tris + this.waterMesh.tris + this.fenceMesh.tris;
     this.drawCalls = 0; this.targets = null; this.qName = 'high'; this.q = QUALITY.high;
     this.signTex = this._makeSign();
@@ -5873,20 +7461,25 @@ class Renderer {
   setQuality(name) { if (QUALITY[name] && name !== this.qName) { this.qName = name; this.q = QUALITY[name]; this._freeTargets(); this._freeProbe(); this._freeShadow(); } }
 
   // Car meshes per livery (LOD0/LOD1 bodies, four wheels each, underglow) — built once and cached.
-  carModel(livery) {
-    let m = this.models.get(livery.id);
+  carModel(livery, car = this.car) {
+    const key = car.history ? `${car.id}:${livery.id}` : livery.id;
+    let m = this.models.get(key);
     if (m) return m;
-    const gl = this.gl, c = this.car, stripe = livery.stripe || [0.95, 0.12, 0.12];
-    const wheels = (lod) => [[0.30, -1], [0.30, 1], [0.38, -1], [0.38, 1]].map(([w, s]) => upload(gl, buildWheel(w, s, livery.secondary, stripe, lod)));
-    m = { livery, lod0: upload(gl, buildCarLOD0(c, livery)), lod1: upload(gl, buildCarLOD1(c, livery)), wheels: wheels(0), wheelsLod: wheels(1),
+    const gl = this.gl, stripe = livery.stripe || [0.95, 0.12, 0.12];
+    const wheels = lod => [[.30, -1], [.30, 1], [.38, -1], [.38, 1]].map(([width, side], index) => upload(gl, car.history ? buildHistoricalWheel(car, index < 2, side, lod) : buildWheel(width, side, livery.secondary, stripe, lod)));
+    const flaps = car.history ? buildHistoricalFlaps(car, livery, 1).map(flap => ({ ...flap, mesh: upload(gl, flap.mesh) })) : [];
+    const fanPart = car.history && buildHistoricalFan(car, livery, 1);
+    const fan = fanPart ? { ...fanPart, mesh: upload(gl, fanPart.mesh) } : null;
+    m = { car, livery, flaps, fan, lod0: upload(gl, buildCarLOD0(car, livery)), lod1: upload(gl, buildCarLOD1(car, livery)), wheels: wheels(0), wheelsLod: wheels(1),
       glow: upload(gl, buildSoftQuad(1.2, 2.8, 0.02, [...livery.accent, 0.09])), trail: { tail: [1.0, 0.06, 0.16], tip: livery.secondary } };
-    this.models.set(livery.id, m);
+    this.models.set(key, m);
     return m;
   }
 
   invalidateModel(id) {
     const m=this.models.get(id);if(!m)return;const gl=this.gl;
-    for(const mesh of [m.lod0,m.lod1,m.glow,...m.wheels,...m.wheelsLod]){gl.deleteBuffer(mesh.vb);gl.deleteBuffer(mesh.ib);gl.deleteVertexArray(mesh.vao);}
+    for(const mesh of [m.lod0,m.lod1,m.glow,...m.wheels,...m.wheelsLod,...m.flaps.map(flap=>flap.mesh)]){gl.deleteBuffer(mesh.vb);gl.deleteBuffer(mesh.ib);gl.deleteVertexArray(mesh.vao);}
+    if (m.fan) { gl.deleteBuffer(m.fan.mesh.vb); gl.deleteBuffer(m.fan.mesh.ib); gl.deleteVertexArray(m.fan.mesh.vao); }
     this.models.delete(id);
   }
   resize(pixelRatio) {
@@ -6092,14 +7685,29 @@ class Renderer {
   }
   // car: { pose, model, brakes[4] (0..1 glow), ghost }
   _drawCar(prog, car, eye, lodFar) {
-    const c = this.car, p = car.pose, mdl = car.model, a = c.wheelbase * (1 - c.frontWeight), b = c.wheelbase * c.frontWeight;
+    const p = car.pose, mdl = car.model, c = mdl.car, a = c.wheelbase * (1 - c.frontWeight), b = c.wheelbase * c.frontWeight;
     const far = lodFar || Math.hypot(p.x - eye[0], p.z - eye[2]) > 45, ghost = car.ghost;
     this._draw(prog, far ? mdl.lod1 : mdl.lod0, M4.fromPose(this.model, p.x, ghost ? 0 : -p.h, p.z, p.yaw, ghost ? 0 : p.pitch, ghost ? 0 : p.roll));
+    if (mdl.flaps.length || mdl.fan) {
+      this.flapBody ||= M4.create();
+      this.flapLocal ||= M4.create();
+      this.flapBody.set(this.model);
+      for (const flap of mdl.flaps) {
+        M4.fromPose(this.flapLocal, 0, flap.y, flap.z, 0, car.straightMode ? -.20 : 0, 0);
+        M4.mul(this.model, this.flapBody, this.flapLocal);
+        this._draw(prog, flap.mesh, this.model);
+      }
+      if (mdl.fan) {
+        M4.fromPose(this.flapLocal, 0, mdl.fan.y, mdl.fan.z, 0, 0, car.fanAngle || 0);
+        M4.mul(this.model, this.flapBody, this.flapLocal);
+        this._draw(prog, mdl.fan.mesh, this.model);
+      }
+    }
     const sy = Math.sin(p.yaw), cy = Math.cos(p.yaw), gl = this.gl;
     const corners = [[-c.trackFront / 2, a], [c.trackFront / 2, a], [-c.trackRear / 2, -b], [c.trackRear / 2, -b]];
     for (let i = 0; i < 4; i++) {
       const [lx, lz] = corners[i];
-      const y = 0.33 + (ghost ? 0 : (p.road ? p.road[i] : 0));
+      const y = (c.history ? c.wheelRadius : .33) + (ghost ? 0 : (p.road ? p.road[i] : 0));
       if (prog === this.main) gl.uniform1f(prog.u.uBrake, car.brakes ? car.brakes[i] : 0);
       this._draw(prog, (far ? mdl.wheelsLod : mdl.wheels)[i], M4.fromPose(this.model, p.x + cy * lx + sy * lz, y, p.z - sy * lx + cy * lz, p.yaw + (i < 2 ? p.steer : 0), ghost ? 0 : (p.spin ? p.spin[i] : 0), 0));
     }
@@ -6435,8 +8043,9 @@ class CameraRig {
     this.lastMode = mode;
     if (mode === 'cockpit') {
       const sway = -info.aLat * 0.0035 * s.shake * motion;
-      const ex = pose.x + fwd[0] * 0.18 + rgt[0] * sway, ez = pose.z + fwd[2] * 0.18 + rgt[2] * sway;
-      const ey = 0.93 - pose.h - pose.pitch * 0.18;
+      const { y = .93, z = .18 } = s.cockpit || {};
+      const ex = pose.x + fwd[0] * z + rgt[0] * sway, ez = pose.z + fwd[2] * z + rgt[2] * sway;
+      const ey = y - pose.h - pose.pitch * z;
       eye = [ex, ey, ez];
       tgt = [ex + fwd[0] * 30, ey - 0.9 - pose.pitch * 30 * 0.6, ez + fwd[2] * 30];
       fov = (s.fov + 10 + 10 * Math.min(1, u / 85) * motion) * DEG;
@@ -6621,6 +8230,8 @@ class Input {
     r.recover = shortcut('KeyR') || pe(2) || te('recover');
     r.telemetry = shortcut('KeyT') || pe(8);
     r.perf = shortcut('KeyF');
+    r.deploy = shortcut('KeyB') || pe(10);
+    r.straight = shortcut('KeyV') || pe(11);
     r.navNext = this.edges.has('ArrowDown') || this.edges.has('ArrowRight') || pe(13) || pe(15);
     r.navPrev = this.edges.has('ArrowUp') || this.edges.has('ArrowLeft') || pe(12) || pe(14);
     r.confirm = pe(0);
@@ -6696,6 +8307,8 @@ class GameAudio {
       // crank speed (optional actual gear only changes its harmonic emphasis).
       this.gearOsc=oscillator('sine');this.gearGain=gain(0);
       this.gearOsc.connect(this.gearGain);this.gearGain.connect(this.master);
+      this.technologyOsc=oscillator('sine');this.technologyGain=gain(0);
+      this.technologyOsc.connect(this.technologyGain);this.technologyGain.connect(this.master);
       this.tireGain=gain(0);this.tireFilter=filter('bandpass',1000,0.65);
       noise(1.13).connect(this.tireFilter);this.tireFilter.connect(this.tireGain);this.tireGain.connect(this.master);
       this.windGain=gain(0);this.windFilter=filter('lowpass',520,0.6);
@@ -6718,7 +8331,7 @@ class GameAudio {
   rival(st) {
     if(!this.ok)return;const t=this.ctx.currentTime;
     if(!st){this.rGain.gain.setTargetAtTime(0,t,0.09);return;}
-    const closing=clamp(st.closing,-60,60),dop=343/(343-closing),f=clamp(st.rpm,1500,15000)/60*4*dop;
+    const closing=clamp(st.closing,-60,60),dop=343/(343-closing),f=clamp(st.rpm,1000,st.history ? 20000 : 15000)/60*(st.history?.cylinders/2 || 4)*dop;
     this.r1.frequency.setTargetAtTime(f,t,0.025);this.r2.frequency.setTargetAtTime(f*0.25,t,0.025);
     const dist=clamp(st.dist,0,200);this.rFilter.frequency.setTargetAtTime(900+1700/(1+dist/15),t,0.08);
     this.rGain.gain.setTargetAtTime(this.vol.engine*0.25/(1+(dist/8)**2),t,0.06);
@@ -6727,8 +8340,8 @@ class GameAudio {
   // Optional gear/aLong enrich the mix; no invented state is needed when absent.
   update(st) {
     if(!this.ok)return;const t=this.ctx.currentTime,V=this.vol,run=st.running?1:0;
-    const rpm=clamp(st.rpm,1000,15000),load=clamp(st.throttle,0,1),speed=clamp(st.speed,0,150),slip=clamp(st.slip,0,5);
-    const f=rpm/60*4,shift=t<this.shiftUntil?0.22:1,high=clamp((rpm-3500)/9000,0,1);
+    const rpm=clamp(st.rpm,1000,st.history ? 20000 : 15000),load=clamp(st.throttle,0,1),speed=clamp(st.speed,0,150),slip=clamp(st.slip,0,5);
+    const f=rpm/60*(st.history?.cylinders/2 || 4),shift=t<this.shiftUntil?0.22:1,high=clamp((rpm-3500)/9000,0,1);
     const tractive=Number.isFinite(st.aLong)?clamp(st.aLong/12,0,1):load;
     this.master.gain.setTargetAtTime(run&&!this.muted?V.master:0,t,0.07);
     this.o1.frequency.setTargetAtTime(f,t,0.014);this.o2.frequency.setTargetAtTime(f,t,0.014);this.o3.frequency.setTargetAtTime(f*0.25,t,0.018);
@@ -6740,6 +8353,10 @@ class GameAudio {
     this.overrunGain.gain.setTargetAtTime(V.engine*0.025*(1-load)*high*run,t,0.06);
     this.gearOsc.frequency.setTargetAtTime(180+rpm/60*(6+clamp(st.gear||1,1,8)*0.12),t,0.03);
     this.gearGain.gain.setTargetAtTime(V.engine*(0.007+0.010*load)*Math.min(1,speed/15)*run,t,0.05);
+    const spool = clamp(st.spool, 0, 1), motor = clamp(Math.abs(st.electricKW || 0) / 350, 0, 1);
+    const blower = st.history?.year === 1950 ? load * .25 : 0;
+    this.technologyOsc.frequency.setTargetAtTime(280 + spool * 1350 + speed * (motor ? 16 : 5) + blower * rpm / 12, t, .07);
+    this.technologyGain.gain.setTargetAtTime(V.engine * run * (.037 * spool + .044 * motor + .025 * blower), t, .07);
     const scrub=smooth((slip-0.55)/1.05)*Math.min(1,speed/8);
     this.tireFilter.frequency.setTargetAtTime(750+900*scrub+speed*2,t,0.06);
     this.tireGain.gain.setTargetAtTime(V.fx*0.18*scrub*run,t,0.04);
@@ -7638,6 +9255,7 @@ const { DEFAULT_KEYS } = __m_game_input;
 const { defaultCareer, normalizeCareer } = __m_game_career;
 const { defaultOpenline, normalizeOpenline } = __m_game_openline_state;
 const { defaultStoryCareer, normalizeStoryCareer } = __m_game_career_mode;
+const { HISTORY_RIDES } = __m_sim_history_rides;
 const SAVE_KEY = 'velocityverse.m0.save';
 const SAVE_VERSION = 1;
 
@@ -7653,7 +9271,7 @@ function defaultSave() {
       motion: true, reducedMotion: reduced, renderScale: 'auto', graphics: 'auto', weather: 'rain', units: 'kmh', textScale: 1, showTelemetry: false, showPerf: false,
       volMaster: 0.8, volEngine: 0.8, volFx: 0.8, keys: { ...DEFAULT_KEYS },
     },
-    pbs: {}, history: [], career: defaultCareer(), openline: defaultOpenline(), storyCareer: defaultStoryCareer(), customLivery: { primary: '#c9d1d5', secondary: '#167c97', accent: '#d1a05b' },
+    pbs: {}, history: [], career: defaultCareer(), openline: defaultOpenline(), storyCareer: defaultStoryCareer(), timePortal: { completed: [] }, customLivery: { primary: '#c9d1d5', secondary: '#167c97', accent: '#d1a05b' },
   };
 }
 
@@ -7675,6 +9293,14 @@ class SaveStore {
     this.data.career = normalizeCareer(this.data.career);
     this.data.openline = normalizeOpenline(this.data.openline);
     this.data.storyCareer = normalizeStoryCareer(this.data.storyCareer);
+    const chapters = Object.values(HISTORY_RIDES).sort((a, b) => a.history.year - b.history.year);
+    const completed = this.data.timePortal?.completed;
+    const earned = [];
+    for (const car of chapters) {
+      if (!Array.isArray(completed) || !completed.includes(car.id)) break;
+      earned.push(car.id);
+    }
+    this.data.timePortal = { completed: earned };
     this.data.customLivery = { ...defaultSave().customLivery, ...(this.data.customLivery && typeof this.data.customLivery === 'object' ? this.data.customLivery : {}) };
   }
   save() {
@@ -8775,7 +10401,7 @@ ${cur === 'custom' ? `<div class="pd-row"><input type="color" data-paint="primar
 <div class="sheet-foot">${viewId === p.ride ? foot : `<button type="button" class="nc-go" data-act="pick-ride" data-id="${viewId}"><span>Race this car</span>${ARROW}</button>`}</div>`;
     }
     return `<div class="gar"><div id="sweep" aria-hidden="true"></div><div class="rotate-zone" id="car-rotate-zone" style="inset:16% 38% 24% 2%" aria-label="Drag to turn the car"></div>
-<div class="gar-title" data-in><h1 class="nc-hero">Garage<i>/</i>${esc(view.name)}</h1></div>
+<div class="gar-title" data-in><h1 class="nc-hero">Garage<i>/</i>${esc(view.name)}</h1><button class="nc-btn sm" data-nav="time-portal" type="button">Time Portal</button></div>
 <div class="gar-stats" data-in><div><b>${Math.round(fresh ? bench.topKmh : st.topKmh)}</b><small>km/h</small></div><div><b>${num(st.powerKw)}</b><small>kW</small></div><div><b>${st.pr}</b><small>Rating</small></div></div>
 <div class="gar-rides" data-in>${rides}</div><aside class="nc-card sheet" data-in>${sheet}</aside></div>`;
   }
@@ -8803,7 +10429,7 @@ ${cur === 'custom' ? `<div class="pd-row"><input type="color" data-paint="primar
 <p class="pd-note">${laps} laps · ${AI_NAMES[ai]} rivals · a win pays ${Math.round(PG.PURSE[0] * PG.AI_PAY[ai] * laps / 3)}</p>`;
     }
     return `<div class="mapwrap">${this.harborMap({ active: id, pin: '', done })}
-<div class="map-title" data-in><h2 class="nc-h">World<small>Lumen Harbor · ${PG.totalStars(d)} of 18 mastery stars</small></h2></div>
+<div class="map-title" data-in><h2 class="nc-h">World<small>Lumen Harbor · ${PG.totalStars(d)} of 18 mastery stars</small></h2><button class="nc-btn sm" data-nav="time-portal" type="button">Time Portal</button></div>
 <aside class="nc-card sheet" data-in><div class="nc-seg" role="tablist">${[['circuit', 'Circuit'], ['cups', 'Cups'], ['school', 'School']].map(([k, l]) => `<button type="button" role="tab" data-act="world-tab" data-id="${k}" aria-pressed="${k === tab}">${l}</button>`).join('')}</div>
 <div class="sheet-body scroll">${tab === 'circuit' ? `<h2 class="nc-h">${esc(c.name)}<small>${(t.length / 1000).toFixed(2)} km · ${cs.best ? `Best ${fmtLap(cs.best)}` : 'No lap yet'} · ${cs.stars.length} of 6 stars</small></h2>` : ''}${body}</div><div class="sheet-foot">${foot}</div></aside></div>`;
   }
@@ -9204,7 +10830,7 @@ const __m_game_navigation = (() => {
 // Android/WebView back navigation. Returning false delegates root-exit policy to the native shell.
 // This module never exits the app, changes the vehicle, or inserts fake entries in browser history.
 const ROOTS = new Set(['title', 'hub']);
-const SAFE_HISTORY = new Set(['hub', 'garage', 'event', 'onboard', 'academy', 'customize', 'lab', 'explorer', 'team', 'records', 'story', 'universe', 'career', 'workshop', 'world']);
+const SAFE_HISTORY = new Set(['hub', 'garage', 'event', 'onboard', 'academy', 'customize', 'lab', 'explorer', 'team', 'records', 'story', 'universe', 'career', 'workshop', 'world', 'time-portal']);
 const SESSION_BOUNDARIES = new Set(['none', 'pause', 'lesson', 'results']);
 
 function visible(element) {
@@ -9679,6 +11305,266 @@ class StoryCareerClient {
 return { StoryCareerClient };
 })();
 
+// ---- game/time-portal.js ----
+const __m_game_time_portal = (() => {
+const { HISTORY_CATALOGUE, HISTORY_ERAS, HISTORY_RULES_2026 } = __m_sim_history_data;
+const { HISTORY_RIDES } = __m_sim_history_rides;
+const { HISTORY_VENUES, historyCircuit } = __m_sim_history_circuits;
+const { benchCar } = __m_sim_lab;
+const { ASSIST_PRESETS } = __m_sim_assists;
+const cars = Object.values(HISTORY_RIDES).sort((a, b) => a.history.year - b.history.year);
+const $ = id => document.getElementById(id);
+const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const option = (value, title) => `<option value="${esc(value)}">${esc(title)}</option>`;
+const modeNames = { drive: 'Free historical drive', career: 'History career', era: 'Same-era exhibition', mixed: 'Multiverse race', balance: 'Balanced multiverse race' };
+const styles = ['Arcade', 'Simcade', 'Simulation'];
+const setups = { standard:'Standard', shorter:'Shorter final drive', braking:'Forward brake bias', wing:'More wing' };
+const sourceLink = (url, label) => /^https:\/\//.test(url || '') ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(label)}</a>` : '';
+
+// Fictional equalization. Shared target power-to-mass, tyre grip, braking and aero
+// narrow the spread, while chassis layout, response and gearbox stay specific to the car.
+function portalBalance(car) {
+  const peak = Math.max(...car.engine.curve.map(([rpm, torque]) => rpm * torque * Math.PI / 30));
+  const electric = car.history.tech.hybrid?.deployKW ?? 0;
+  const powerFactor = (car.mass * 450 - electric * 300) / peak;
+  return {
+    ...car,
+    engine: { ...car.engine, curve: car.engine.curve.map(([rpm, torque]) => [rpm, torque * powerFactor]) },
+    tire: { ...car.tire, mu: 1.50 },
+    aero: { ...car.aero, cdA: .92, clA: 1.55 },
+    brakes: { ...car.brakes, maxTorque: car.mass * car.wheelRadius * 15 },
+  };
+}
+
+const specLabels = { enginePlacement: 'Engine placement', engineLayout: 'Engine layout', displacementCc: 'Displacement (cc)', nominalDisplacementL: 'Nominal displacement (L)', aspiration: 'Induction', power: 'Documented power', rpmLimit: 'RPM limit', transmission: 'Transmission', gears: 'Gears', massKg: 'Mass (kg)', tyreType: 'Tyres', aero: 'Aerodynamics', brakes: 'Brakes', suspension: 'Suspension', energy: 'Energy' };
+
+function archiveEntry(entry) {
+  const specs = Object.entries(specLabels).filter(([key]) => ['number','string'].includes(typeof entry.historicalSpecs?.[key]));
+  return `<section class="tp-entry"><span class="tp-kicker">HISTORICAL REFERENCE</span><h3>${esc(entry.name)}</h3><p>${esc(entry.summary)}</p><p>${esc(entry.formula)} · ${esc(entry.competition)}</p>
+    ${specs.length ? `<dl class="tp-specs">${specs.map(([key, title]) => `<dt>${title}</dt><dd>${esc(entry.historicalSpecs[key])}</dd>`).join('')}</dl>` : ''}
+    <p class="tp-note">${esc(entry.confidence)}</p>${sourceLink(entry.source, entry.sourceLabel || 'Historical source')} ${sourceLink(entry.seasonSource, 'Official season results')} ${(entry.additionalSources || []).map(link => typeof link === 'string' ? sourceLink(link, 'Additional source') : sourceLink(link.url, link.label || link.title || 'Additional source')).join(' ')}</section>`;
+}
+
+class TimePortal {
+  constructor(game) {
+    this.game = game;
+    this.year = 1950;
+    this.view = 'museum';
+    this.selected = cars[0].id;
+    this.comparison = cars.at(-1).id;
+    this.venue = HISTORY_VENUES[0].id;
+    this.condition = 'dry';
+    this.style = 'Arcade';
+    this.setup = 'standard';
+    this.bench = new Map();
+    this.session = null;
+    $('toast').insertAdjacentHTML('beforebegin', `<section id="scr-time-portal" class="screen" aria-labelledby="tp-heading">
+      <div class="tp-shell">
+        <header class="tp-header"><div><span class="tp-kicker">VELOCITYVERSE / HISTORICAL MOTORSPORT</span><h1 id="tp-heading">Time <em>Portal</em></h1></div>
+        <nav aria-label="Time Portal navigation"><button class="nc-btn sm" data-nav="garage" data-back type="button">Garage</button><button class="nc-btn sm" data-nav="world" type="button">World</button></nav></header>
+        <nav class="tp-tabs" aria-label="Historical activities"><button data-tp-view="museum" type="button">Museum</button><button data-tp-view="drive" type="button">Drive &amp; race</button><button data-tp-view="career" type="button">History career</button><button data-tp-view="bench" type="button">Engineering bench</button></nav>
+        <div id="tp-content" class="tp-content"></div>
+      </div>
+    </section>
+    <aside id="tp-hud" class="tp-hud" hidden aria-label="Historical vehicle instruments"><div id="tp-readout"></div><div class="tp-controls"><button id="tp-boost" type="button" aria-pressed="true">Deploy</button><button id="tp-wing" type="button" aria-pressed="true">Straight aero</button><button id="tp-universal" type="button" aria-pressed="false">Hide era HUD</button></div></aside>`);
+    $('scr-time-portal').addEventListener('click', event => this.click(event));
+    $('scr-time-portal').addEventListener('change', event => this.change(event.target));
+    $('tp-boost').addEventListener('click', () => this.toggle('deploy'));
+    $('tp-wing').addEventListener('click', () => this.toggle('straight'));
+    $('tp-universal').addEventListener('click', () => this.toggle('instruments'));
+  }
+
+  state() {
+    const save = this.game.save.data;
+    if (!save.timePortal) save.timePortal = { completed: [] };
+    return save.timePortal;
+  }
+
+  render() {
+    document.querySelectorAll('[data-tp-view]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.tpView === this.view)));
+    const renderers = { museum: () => this.museum(), drive: () => this.driving(), career: () => this.career(), bench: () => this.lab() };
+    $('tp-content').innerHTML = renderers[this.view]();
+  }
+
+  museum() {
+    const era = HISTORY_ERAS.find(item => this.year >= item.from && this.year <= item.to) || HISTORY_ERAS[0];
+    const entries = HISTORY_CATALOGUE.filter(entry => this.year === 1947 ? entry.year < 1950 : entry.year === this.year);
+    const playable = cars.filter(car => car.history.year === this.year);
+    return `<div class="tp-columns"><aside class="tp-panel"><h2>Engineering timeline</h2><div class="tp-era-list">${HISTORY_ERAS.map(item => `<button type="button" data-tp-era="${esc(item.id)}" aria-pressed="${era.id === item.id}"><span>${item.from}${item.from === item.to ? '' : '–' + item.to}</span>${esc(item.title)}</button>`).join('')}</div></aside>
+      <article class="tp-panel"><label for="tp-year">Championship year</label><select id="tp-year" data-tp-field="year">${option(1947, '1947–1949 / Origins')}${Array.from({length:77}, (_, index) => option(index + 1950, index + 1950)).join('')}</select>
+      <h2 class="tp-year">${this.year === 1947 ? '1947–1949' : this.year}</h2><h3>${esc(era.title)}</h3><p>${esc(era.summary)}</p>
+      ${sourceLink(era.source, 'Era overview')}${entries.map(archiveEntry).join('')}
+      ${this.year === 2026 ? `<section class="tp-entry"><h3>2026 rulebook</h3>${HISTORY_RULES_2026.facts.map(fact => `<p>${esc(fact)}</p>`).join('')}${HISTORY_RULES_2026.sources.map((source, index) => sourceLink(source, ['FIA Technical Regulations','FIA Sporting Regulations','Formula 1 terminology'][index])).join(' ')}</section>` : ''}
+      ${playable.length ? playable.map(car => `<section class="tp-entry"><span class="tp-kicker">DRIVABLE SIMULATION</span><h3>${esc(car.name)}</h3><p>${esc(car.history.focus)}</p><button class="nc-go" type="button" data-tp-pick="${car.id}">Drive ${esc(car.name)}</button></section>`).join('') : '<p class="tp-note">Historical archive. Choose Drive &amp; race for the playable collection.</p>'}
+      <p class="tp-note">Selected season entries adapted from F1DB v2026.20.0 by Marcel Overdijk and contributors. ${sourceLink('https://github.com/f1db/f1db/releases/tag/v2026.20.0','Data attribution')} ${sourceLink('https://creativecommons.org/licenses/by/4.0/','CC BY 4.0')}</p></article></div>`;
+  }
+
+  carOptions() { return cars.map(car => option(car.id, `${car.history.year} · ${car.name}`)).join(''); }
+
+  configured(car) {
+    if (this.setup === 'shorter') return { ...car, gearbox: { ...car.gearbox, final: car.gearbox.final * 1.06 } };
+    if (this.setup === 'braking') return { ...car, brakes: { ...car.brakes, bias: car.brakes.bias + .025 } };
+    if (this.setup === 'wing' && car.aero.clA > .2) return { ...car, aero: { ...car.aero, clA: car.aero.clA * 1.10, cdA: car.aero.cdA * 1.07 } };
+    return car;
+  }
+
+  controls() {
+    return `<div class="tp-fields"><label>Circuit<select data-tp-field="venue">${HISTORY_VENUES.map(venue => option(venue.id, venue.name)).join('')}</select></label>
+      <label>Surface<select data-tp-field="condition">${option('dry','Dry')}${option('damp','Damp')}${option('rain','Heavy rain')}</select></label>
+      <label>Handling<select data-tp-field="style">${styles.map(style => option(style, style)).join('')}</select></label></div>`;
+  }
+
+  driving() {
+    const car = HISTORY_RIDES[this.selected];
+    return `<div class="tp-columns"><article class="tp-panel"><label>Choose your car<select data-tp-field="selected">${this.carOptions()}</select></label>
+      <h2 class="tp-year">${car.history.year}</h2><h3>${esc(car.name)}</h3><p>${esc(car.history.focus)}</p>
+      <dl class="tp-specs"><dt>Architecture</dt><dd>${esc(car.history.layout)}</dd><dt>Tyres</dt><dd>${esc(car.history.tyres)}</dd><dt>Transmission</dt><dd>${esc(car.history.transmission)}</dd><dt>Simulation mass</dt><dd>${car.mass} kg</dd><dt>Simulation downforce area</dt><dd>${car.aero.clA.toFixed(2)} m²</dd></dl>
+      <p class="tp-note">Original car inspired by ${esc(car.history.historicalReference)}. Displayed masses, force coefficients and setup values tune the game.</p>${sourceLink(car.history.source,'Read about the historical reference')}
+      <label>Period setup<select data-tp-field="setup">${Object.entries(setups).filter(([key]) => key !== 'wing' || car.aero.clA > .2).map(([key, label]) => option(key, label)).join('')}</select></label>
+      <div class="tp-actions"><button class="nc-btn" type="button" data-tp-action="inspect">Inspect in photo mode</button><button class="nc-btn" type="button" data-tp-action="bench">Compare on the bench</button></div></article>
+      <article class="tp-panel"><h2>Choose a session</h2>${this.controls()}<p class="tp-note">${esc(HISTORY_VENUES.find(venue => venue.id === this.venue)?.description)} These are original courses. Damp and rain affect grip in Time Portal sessions.</p>
+      <label>Cross-era opponent<select data-tp-field="comparison">${this.carOptions()}</select></label>
+      <div class="tp-actions"><button class="nc-go" type="button" data-tp-launch="drive">Free historical drive</button><button class="nc-btn" type="button" data-tp-launch="era">Same-era exhibition</button><button class="nc-btn" type="button" data-tp-launch="mixed">Race across eras</button><button class="nc-btn" type="button" data-tp-launch="balance">Balanced race</button></div>
+      <p class="tp-note">Exhibitions are three laps against five AI drivers. The balanced option uses fictional power, grip, braking and aero targets. Arcade uses Rookie assists, Simcade uses Racer assists, and Simulation uses Pro controls.</p></article></div>`;
+  }
+
+  career() {
+    const {completed} = this.state();
+    return `<div class="tp-panel"><h2>Race through ${cars.length} chapters</h2><p>Bring back one valid timed lap to complete a chapter and open the next. Use any handling preset. Free historical drive is open for all cars.</p>${this.controls()}
+      <div class="tp-chapters">${cars.map((car, index) => `<article class="tp-entry"><span class="tp-kicker">${car.history.year} / ${completed.includes(car.id) ? 'COMPLETE' : index <= completed.length ? 'AVAILABLE' : 'LOCKED'}</span><h3>${esc(car.name)}</h3><p>${esc(car.history.focus)}</p><button class="nc-btn" type="button" data-tp-chapter="${car.id}" ${index > completed.length ? 'disabled' : ''}>${completed.includes(car.id) ? 'Revisit' : 'Start chapter'}</button></article>`).join('')}</div></div>`;
+  }
+
+  lab() {
+    return `<div class="tp-panel"><h2>Compare two generations</h2><div class="tp-fields"><label>First car<select data-tp-field="selected">${this.carOptions()}</select></label><label>Second car<select data-tp-field="comparison">${this.carOptions()}</select></label></div><p>Measure 0–100 km/h, stopping distance from 100 km/h, and top speed using the same simulation as the race. Tests use dry asphalt, automatic shifts and driving assists.</p>
+      <button class="nc-go" type="button" data-tp-action="measure">Run comparison</button><div id="tp-metrics" role="status"></div></div>`;
+  }
+
+  syncFields() {
+    document.querySelectorAll('#scr-time-portal [data-tp-field]').forEach(field => { field.value = String(this[field.dataset.tpField]); });
+  }
+
+  open() { this.render(); this.syncFields(); }
+
+  click(event) {
+    const button = event.target.closest('button');
+    if (!button || button.disabled) return;
+    const data = button.dataset;
+    if (data.tpView) { this.view = data.tpView; this.open(); }
+    if (data.tpEra) { this.year = HISTORY_ERAS.find(era => era.id === data.tpEra)?.from ?? 1950; this.open(); }
+    if (data.tpPick) { this.selected = data.tpPick; this.view = 'drive'; this.open(); }
+    if (data.tpLaunch) this.launch(data.tpLaunch);
+    if (data.tpChapter) this.launch('career', data.tpChapter);
+    if (data.tpAction === 'bench') { this.view = 'bench'; this.open(); }
+    if (data.tpAction === 'measure') this.measure();
+    if (data.tpAction === 'inspect') this.inspect();
+  }
+
+  change(field) {
+    const key = field.dataset.tpField;
+    if (!key) return;
+    this[key] = key === 'year' ? Number(field.value) : field.value;
+    if (key === 'selected' && this.setup === 'wing' && HISTORY_RIDES[this.selected].aero.clA <= .2) this.setup = 'standard';
+    if (key === 'year' || key === 'selected' || key === 'venue') this.open();
+  }
+
+  measure() {
+    const host = $('tp-metrics');
+    host.textContent = 'Running the shared vehicle simulation…';
+    const ids = [this.selected, this.comparison];
+    const firstCar = this.configured(HISTORY_RIDES[this.selected]);
+    const setup = this.setup;
+    requestAnimationFrame(() => setTimeout(() => {
+      try {
+        host.innerHTML = `<table><thead><tr><th>Car</th><th>0–100 km/h</th><th>100–0 km/h</th><th>Top speed</th></tr></thead><tbody>${ids.map((id, index) => {
+          const car = index ? HISTORY_RIDES[id] : firstCar;
+          const label = index ? 'standard' : setup;
+          const key = `${id}:${label}`;
+          if (!this.bench.has(key)) this.bench.set(key, benchCar(car).metrics);
+          const metrics = this.bench.get(key);
+          return `<tr><th>${car.history.year} ${esc(car.name)} <small>${setups[label]}</small></th><td>${metrics.accel.toFixed(2)} s</td><td>${metrics.brake.toFixed(1)} m</td><td>${metrics.topKmh.toFixed(0)} km/h</td></tr>`;
+        }).join('')}</tbody></table><p class="tp-note">Simulation results for original vehicles under this test protocol.</p>`;
+      } catch (error) { host.textContent = `Comparison unavailable. ${error.message}`; }
+    }, 0));
+  }
+
+  inspect() {
+    const game = this.game;
+    const car = HISTORY_RIDES[this.selected];
+    const preview = historyCircuit(this.venue);
+    if (game.configureDrive(car.id, this.venue, this.configured(car), preview)) game.openPhoto();
+  }
+
+  launch(mode, id = this.selected) {
+    const game = this.game;
+    const chosen = HISTORY_RIDES[id];
+    if (!chosen || !modeNames[mode]) return;
+    if (mode === 'career' && cars.indexOf(chosen) > this.state().completed.length) return;
+    game.campaign.leaveDrive();
+    game.storyCareer.abort();
+    game.careerMission = null;
+    game.raceOverride = null;
+    const circuit = historyCircuit(this.venue, this.condition);
+    const mixed = mode === 'mixed' || mode === 'balance';
+    const player = mode === 'balance' ? portalBalance(chosen) : mode === 'drive' || mode === 'mixed' ? this.configured(chosen) : chosen;
+    const opponent = mixed ? HISTORY_RIDES[this.comparison] : chosen;
+    const rival = mode === 'balance' ? portalBalance(opponent) : opponent;
+    if (!game.configureDrive(id, circuit.id, player, circuit)) return;
+    const preset = ASSIST_PRESETS[{ Arcade:'rookie', Simcade:'racer', Simulation:'pro' }[this.style]];
+    const assists = this.style === 'Arcade' && chosen.history.year <= 1954 ? { ...preset, speedScale: .52 + .26 * circuit.world.surfaces.asphalt.mu } : preset;
+    this.session = { mode, id, circuit, rival, assists, condition: this.condition, deploy: true, straight: true, instruments: true, settled: false };
+    game.startRace(['era', 'mixed', 'balance'].includes(mode) ? 'race' : 'practice');
+    game.coach(chosen.history.focus, 8);
+  }
+
+  toggle(key) {
+    if (!this.session || this.game.paused) return;
+    this.session[key] = !this.session[key];
+    this.updateHud();
+  }
+
+  updateHud() {
+    const game = this.game, session = this.session, car = game.veh.car;
+    const show = session && game.mode === 'race' && !game.paused;
+    $('tp-hud').hidden = !show;
+    if (!show) return;
+    const tech = car.history.tech;
+    $('tp-boost').hidden = !tech.hybrid;
+    $('tp-wing').hidden = !tech.activeAero;
+    $('tp-boost').textContent = 'Deploy · B';
+    $('tp-wing').textContent = 'Straight aero · V';
+    $('tp-boost').setAttribute('aria-pressed', String(session.deploy));
+    $('tp-wing').setAttribute('aria-pressed', String(session.straight));
+    $('tp-universal').setAttribute('aria-pressed', String(!session.instruments));
+    $('tp-universal').textContent = session.instruments ? 'Hide era HUD' : 'Show era HUD';
+    const readout = $('tp-readout');
+    readout.hidden = !session.instruments;
+    readout.classList.toggle('tp-analog', car.history.year < 1990);
+    const vehicle = game.veh;
+    const status = [tech.turbo && `Boost ${Math.round(vehicle.turboSpool * 100)}%`, tech.ground && `Floor ${Math.round(vehicle.floorEfficiency * 100)}%`, tech.fan && `Fan ${Math.round(vehicle.fanSpeed * 100)}%`, tech.hybrid && `Battery ${Math.round(vehicle.energyKJ / tech.hybrid.capacityKJ * 100)}% · ${vehicle.electricKW < 0 ? 'recharge' : 'deploy'} ${Math.round(Math.abs(vehicle.electricKW))} kW`, tech.activeAero && (vehicle.straightMode ? 'Straight Mode' : 'Corner Mode')].filter(Boolean);
+    readout.textContent = `${car.history.year} · ${Math.round(vehicle.rpm)} rpm · Gear ${vehicle.gear}${status.length ? ' · ' + status.join(' · ') : ''}`;
+  }
+
+  finish() {
+    const session = this.session, game = this.game;
+    if (!session || session.settled) return;
+    session.settled = true;
+    const state = this.state();
+    const valid = game.race.laps.filter(lap => lap.valid).length;
+    const next = cars[state.completed.length];
+    const newChapter = session.mode === 'career' && valid > 0 && next?.id === session.id;
+    if (newChapter) state.completed.push(session.id);
+    const saved = !newChapter || game.save.save();
+    $('results-eyebrow').textContent = `${modeNames[session.mode]} · ${session.circuit.name}`;
+    $('results-progression').textContent = newChapter ? `${saved ? 'Chapter completed' : 'Chapter completed for this session'} · ${state.completed.length}/${cars.length} chapters` : `${valid} valid timed lap${valid === 1 ? '' : 's'} · Time Portal`;
+    $('results-rewards').replaceChildren();
+    $('results-detail').hidden = true;
+    $('btn-retry').hidden = false;
+  }
+}
+
+return { portalBalance, TimePortal };
+})();
+
 // ---- game/main.js ----
 const __m_game_main = (() => {
 // VELOCITYVERSE client: game shell — fixed-step loop with render interpolation, screens, HUD, race flow
@@ -9709,6 +11595,8 @@ const { OpenlineCampaign } = __m_game_openline;
 const { StoryCareerClient } = __m_game_story_career;
 const { getRide } = __m_sim_rides;
 const { getCircuit } = __m_sim_circuits;
+const { TimePortal } = __m_game_time_portal;
+const { historicalEye } = __m_game_history_model;
 const SIM_DT = 1 / 120, MAX_STEPS = 8;
 const $ = (id) => document.getElementById(id);
 const isTouch = (navigator.maxTouchPoints || 0) > 0;
@@ -9816,23 +11704,26 @@ class Game {
     };
     document.body.classList.toggle('native-android', !!window.NativeBridge);
     this.lobby = new LobbyMotion(this);
+    this.portal = new TimePortal(this);
     this.wireUi();
     this.pad.wire(); this.campaign.wire(); this.storyCareer.wire();
-    this.show(window.NativeBridge ? 'hub' : 'title');
-    if (!this.juice.reduced()) this.juice.intro(); else document.getElementById('intro')?.remove();
+    const openPortal = new URLSearchParams(location.search).get('view') === 'time-portal';
+    this.show(openPortal ? 'time-portal' : window.NativeBridge ? 'hub' : 'title');
+    if (!openPortal && !this.juice.reduced()) this.juice.intro(); else document.getElementById('intro')?.remove();
     document.addEventListener('visibilitychange', () => { if (document.hidden && this.mode === 'race' && !this.paused) this.pause(); });
     window.addEventListener('resize', () => this.layoutCheck());
     requestAnimationFrame((t) => this.frame(t));
     window.__vv = this; // exposed for automated smoke tests and debugging
   }
 
-  livery() { if (this.save.data.livery === 'custom') return personalLivery(this.save.data.customLivery); const paints=this.veh?.car?.liveries||CAR_VX1.liveries;return paints.find(l=>l.id===this.save.data.livery)||paints[0]; }
-  assists() { return this.school ? { ...ASSIST_PRESETS.racer, autoReverse: false } : this.save.data.assists; }
+  livery() { if (this.veh?.car?.history) return this.veh.car.liveries[0]; if (this.save.data.livery === 'custom') return personalLivery(this.save.data.customLivery); const paints=this.veh?.car?.liveries||CAR_VX1.liveries;return paints.find(l=>l.id===this.save.data.livery)||paints[0]; }
+  assists() { return this.portal?.session?.assists || (this.school ? { ...ASSIST_PRESETS.racer, autoReverse: false } : this.save.data.assists); }
   isRace() { return !!(this.race && this.race.mode === 'race'); }
 
-  configureDrive(rideId='vx1',circuitId='harbor_loop',carOverride=null) {
-    const ride=getRide(rideId),circuit=getCircuit(circuitId),car=carOverride||ride.car;
-    const signature=JSON.stringify([ride.id,circuit.id,car]);
+  configureDrive(rideId='vx1',circuitId='harbor_loop',carOverride=null,circuitOverride=null) {
+    const ride=getRide(rideId),circuit=circuitOverride||getCircuit(circuitId),car=carOverride||ride.car;
+    const activeRideId=car.history ? car.id : ride.id;
+    const signature=JSON.stringify([activeRideId,circuit.id,circuit.world,car]);
     if(this.driveSignature===signature)return true;
     const old={track:this.track,world:this.world,veh:this.veh,ride:this.baseRideId,circuit:this.currentCircuitId};
     this.clearRivals();this.renderer?.dispose();
@@ -9840,7 +11731,7 @@ class Game {
       const track=new Track(circuit.track,circuit.world,car),veh=new Vehicle(car,circuit.world,track);
       veh.reset(track.def.lineS+18,0);
       this.renderer=new Renderer($('gl'),track,car);this.track=track;this.veh=veh;this.world=circuit.world;
-      this.baseRideId=ride.id;this.currentCircuitId=circuit.id;this.driveSignature=signature;
+      this.baseRideId=activeRideId;this.currentCircuitId=circuit.id;this.driveSignature=signature;
     } catch(error) {
       this.track=old.track;this.world=old.world;this.veh=old.veh;
       this.renderer=new Renderer($('gl'),old.track,old.veh.car);this.toast('This ride could not load. Your previous ride is restored.');
@@ -9882,13 +11773,13 @@ class Game {
     this.renderMs = performance.now() - t0;
     if (this.mode === 'race' && !this.paused) {
       this.perf.push(dtReal * 1000, this.simMs, this.renderMs, this.steps);
-      this.hudT += dtReal; if (this.hudT > 0.05) { this.hudT = 0; this.updateHud(); }
+      this.hudT += dtReal; if (this.hudT > 0.05) { this.hudT = 0; this.updateHud(); if (this.portal.session) this.portal.updateHud(); }
       this.telT += dtReal; if (this.S.showTelemetry && this.telT > 0.066) { this.telT = 0; this.telemetry.draw(this.veh, this.driver.out, this.rawLast || this.raw0, this.S.units, { simMs: this.simMs, steps: this.steps }); }
       this.adaptScale();
       if (this.finishT !== null && this.time - this.finishT > 4.5) { this.finishT = null; this.finishSession(); }
     }
     if (this.S.showPerf && (this.time - (this._perfT || 0)) > 0.5) { this._perfT = this.time; this.updatePerf(); }
-    this.audio.update({ rpm: this.veh.rpm, throttle: this.driver.out.throttle * this.veh.tcsFactor, speed: Math.abs(this.veh.forwardSpeed), slip: Math.max(...this.veh.wheels.map((w) => w.slipNorm)), curb: this.veh.wheels.some((w) => w.surface === 'curb') && Math.abs(this.veh.forwardSpeed) > 2 ? 1 : 0, gear: this.veh.gear, aLong: this.veh.aLong, running: this.mode === 'race' && !this.paused });
+    this.audio.update({ rpm: this.veh.rpm, history: this.veh.car.history, spool: this.veh.turboSpool, electricKW: this.veh.electricKW, throttle: this.driver.out.throttle * this.veh.tcsFactor, speed: Math.abs(this.veh.forwardSpeed), slip: Math.max(...this.veh.wheels.map((w) => w.slipNorm)), curb: this.veh.wheels.some((w) => w.surface === 'curb') && Math.abs(this.veh.forwardSpeed) > 2 ? 1 : 0, gear: this.veh.gear, aLong: this.veh.aLong, running: this.mode === 'race' && !this.paused });
     this.rivalAudio();
     requestAnimationFrame((t) => this.frame(t));
   }
@@ -9926,6 +11817,10 @@ class Game {
       if (r.ai.needsReset) { r.ai.needsReset = false; const p = this.track.project(r.veh.x, r.veh.z, -1, {}); r.veh.reset(p.s - 2, 0); r.prev = snapshot(r.veh, r.prev); }
     }
     const ctl = this.autopilot ? this.autopilot.process(SIM_DT, veh, this.track, this.field ? this.field.entries : []) : this.driver.process(SIM_DT, raw, veh, this.track, a, { speedRef: this.S.steerSpeedRef, linearity: 1 });
+    if (this.portal.session && !this.autopilot) {
+      ctl.deployEnergy = this.portal.session.deploy;
+      ctl.enableStraight = this.portal.session.straight;
+    }
     const gearBefore = veh.gear;
     veh.step(SIM_DT, ctl);
     if (this.rivals.length) { const all = [veh, ...this.rivals.map((r) => r.veh)]; resolveCarContacts(all); applySlipstream(all); }
@@ -9992,10 +11887,10 @@ class Game {
     const info = { speed: this.veh.forwardSpeed, aLat: this.veh.aLat, aLong: this.veh.aLong, curb: this.veh.wheels.some((w) => w.surface === 'curb'), impact: this.lastImpact || 0 };
     this.lastImpact = 0;
     const motion = !this.S.reducedMotion && this.S.motion;
-    const cam = this.cam.update(dt, camMode, pose, info, { fov: this.S.fov, shake: this.S.shake, reducedMotion: !motion, aspect: R.canvas.clientWidth / Math.max(1, R.canvas.clientHeight), photo: this.photo, lobbyAngle: this.lobbyAngle || 0, lobbySide: this.screen === 'garage' ? -1.85 : 1.6, orbitSide: this.screen === 'prep' ? 0.25 : undefined });
+    const cam = this.cam.update(dt, camMode, pose, info, { cockpit: historicalEye(this.veh.car), fov: this.S.fov, shake: this.S.shake, reducedMotion: !motion, aspect: R.canvas.clientWidth / Math.max(1, R.canvas.clientHeight), photo: this.photo, lobbyAngle: this.lobbyAngle || 0, lobbySide: this.screen === 'garage' ? -1.85 : 1.6, orbitSide: this.screen === 'prep' ? 0.25 : undefined });
     const playerModel = R.carModel(this.livery());
-    const cars = [{ id: 'player', pose, model: playerModel, brakes: brakeGlow(this.veh) }];
-    for (const r of this.rivals) { r.pose = lerpPose(r.prev, r.curr, alpha, r.pose || {}); cars.push({ id: r.id, pose: r.pose, model: R.carModel(r.livery), brakes: brakeGlow(r.veh) }); }
+    const cars = [{ id: 'player', pose, model: playerModel, brakes: brakeGlow(this.veh), straightMode: this.veh.straightMode, fanAngle: this.veh.fanAngle }];
+    for (const r of this.rivals) { r.pose = lerpPose(r.prev, r.curr, alpha, r.pose || {}); cars.push({ id: r.id, pose: r.pose, model: R.carModel(r.livery, r.historyCar), brakes: brakeGlow(r.veh), straightMode: r.veh.straightMode, fanAngle: r.veh.fanAngle }); }
     let ghost = null;
     if (racing && !this.isRace() && this.pbGhost && this.race && this.race.lapStart !== null) {
       ghost = ghostPoseAt(this.pbGhost, this.race.currentLapTime(this.veh.time + (this.paused ? 0 : this.acc)), this.ghostPose);
@@ -10006,10 +11901,11 @@ class Game {
     // effects from simulation state (trails, sparks, smoke, exhaust); they age on simulation time
     const fxCars = [this.fxCar('player', pose, this.veh, this.autopilot ? this.autopilot.input.out.throttle : this.driver.out.throttle)];
     for (const r of this.rivals) fxCars.push(this.fxCar(r.id, r.pose, r.veh, r.ai.input.out.throttle));
-    const rain = this.S.weather === 'clear' ? 0 : 1;
+    const condition = this.portal.session?.condition;
+    const rain = condition ? { dry: 0, damp: .42, rain: 1 }[condition] : this.S.weather === 'clear' ? 0 : 1;
     R.updateFx(racing && !this.paused ? dt : 0, fxCars, simT, { active: racing, player: { pose, speed: u }, streaks: motion, rain });
     this.fxHits.forEach((l) => { l.length = 0; }); this.gearEvents.clear();
-    const trailCols = (id) => { const r = this.rivals.find((x) => x.id === id); return r ? R.carModel(r.livery).trail : playerModel.trail; };
+    const trailCols = (id) => { const r = this.rivals.find((x) => x.id === id); return r ? R.carModel(r.livery, r.historyCar).trail : playerModel.trail; };
     const mission=this.storyCareer.activeMission,gateS=this.storyCareer.run?.nextGateS;
     const careerGate=this.storyCareer.active&&['sprint','checkpoint'].includes(mission?.type)&&Number.isFinite(gateS)?{s:gateS,next:(this.storyCareer.run.checkpoints||0)+1,total:mission.checkpoints}:null;
     R.render({ cam, cars, careerGate, rain, lobby: ['hub','garage','workshop'].includes(this.screen), beacon: this.save.data.openline.completed, focus: pose, showLine: racing && this.assists().showLine && !this.autopilot, time: this.time, fxTime: simT,
@@ -10027,7 +11923,7 @@ class Game {
     for (const r of this.rivals) { const d = Math.hypot(r.veh.x - this.veh.x, r.veh.z - this.veh.z); if (d < bd) { bd = d; best = r; } }
     if (!best || bd > 60) { this.audio.rival(null); return; }
     const dx = best.veh.x - this.veh.x, dz = best.veh.z - this.veh.z, closing = -((best.veh.vx - this.veh.vx) * dx + (best.veh.vz - this.veh.vz) * dz) / Math.max(bd, 0.1);
-    this.audio.rival({ rpm: best.veh.rpm, dist: bd, closing });
+    this.audio.rival({ rpm: best.veh.rpm, history: best.veh.car.history, dist: bd, closing });
   }
 
   qualityName() {
@@ -10065,9 +11961,12 @@ class Game {
       if (raw.telemetry) { this.S.showTelemetry = !this.S.showTelemetry; this.applySettings(); this.save.save(); }
       if (raw.camera) { this.S.camera = this.S.camera === 'chase' ? 'cockpit' : 'chase'; this.cam.snap(); this.save.save(); }
       if (raw.recover && this.countdown <= 0 && !this.autopilot) this.recover();
+      if (raw.deploy && this.veh.car.history?.tech.hybrid) this.portal.toggle('deploy');
+      if (raw.straight && this.veh.car.history?.tech.activeAero) this.portal.toggle('straight');
       return;
     }
     if (raw.back) { const back = document.querySelector('.screen.active [data-back]'); if (back) back.click(); }
+    if (this.screen === 'time-portal' && document.activeElement?.tagName === 'SELECT' && (raw.navNext || raw.navPrev) && !this.input.padConnected) return;
     this.menuNav(raw);
   }
   menuNav(raw) {
@@ -10086,6 +11985,11 @@ class Game {
   // ---------- screens ----------
   show(id) {
     const previous = this.screen;
+    if (this.mode === 'menu' && ['hub','garage','world','career','team','records','title'].includes(id) && this.veh.car.history) {
+      this.portal.session = null;
+      const progress = progressOf(this.save.data);
+      this.configureDrive(progress.ride, progress.circuit, selectedCar(this.save.data));
+    }
     document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('active', s.id === 'scr-' + id));
     this.screen = id;
     this.navigation.onScreen(id, previous);
@@ -10107,6 +12011,8 @@ class Game {
     this.pad.render(id, id !== previous);
     this.campaign.render(id);
     this.storyCareer.render(id);
+    if (id === 'time-portal') this.portal.open();
+    this.portal.updateHud();
     $('academy-hud').hidden = !(this.school && this.mode === 'race' && !this.paused);
     if (this.school && this.mode === 'race' && !this.paused) $('hud-coach').classList.remove('on');
     const first = document.querySelector('.screen.active .btn.primary, .screen.active button');
@@ -10168,15 +12074,16 @@ class Game {
     $('btn-pause-settings').addEventListener('click', () => { this.settingsReturn = 'pause'; this.show('settings'); });
     $('btn-end').addEventListener('click', () => this.finishSession());
     $('btn-retry').addEventListener('click', () => this.startRace(this.lastMode || 'timetrial'));
-    $('btn-results-garage').addEventListener('click', () => { this.mode = 'menu'; this.clearRivals(); this.raceOverride = null; this.show('hub'); });
+    $('btn-results-garage').addEventListener('click', () => { const historical = !!this.portal.session; this.mode = 'menu'; this.clearRivals(); this.raceOverride = null; this.portal.session = null; this.show(historical ? 'time-portal' : 'hub'); });
     $('btn-settings-back').addEventListener('click', () => { const r = this.settingsReturn || 'garage'; this.settingsReturn = null; this.show(r); });
     $('btn-copy-tel').addEventListener('click', () => this.copyTelemetry());
     $('dialog-cancel').addEventListener('click', () => { $('dialog').hidden = true; });
     $('dialog-ok').addEventListener('click', () => { $('dialog').hidden = true; this.save.reset(); this.S = this.save.data.settings; this.input.bindings = { ...DEFAULT_KEYS }; this.applySettings(); this.renderSettings(); this.toast('Saved data cleared.'); });
   }
   navTo(where) {
-    if (this.mode === 'race' && ['hub','story','universe','garage','event','team','academy','lab','explorer','records','career','workshop','world'].includes(where)) {
+    if (this.mode === 'race' && ['hub','story','universe','garage','event','team','academy','lab','explorer','records','career','workshop','world','time-portal'].includes(where)) {
       this.storyCareer.abort();this.careerMission=null;
+      this.portal.session = null;
       this.campaign.leaveDrive(); this.input.reset(); this.mode='menu'; this.paused=false; this.school=null;
       this.clearRivals(); this.audio.mute(true); this.acc=0; this.cam.snap();
     }
@@ -10352,8 +12259,10 @@ class Game {
     const career=this.storyCareer?.launching?this.careerMission:null;
     if(career||this.campaign?.launching||mode!=='race')this.raceOverride=null;
     const over=this.raceOverride;
-    const a = this.assists(), cls = assistClass(a), laps = career?.laps || (mode === 'race' ? Number(over?.laps || this.S.raceLaps || 3) : 3);
-    const fieldSize=career?Math.max(2,Math.min(8,career.fieldSize||8)):8;
+    const portal = this.portal.session;
+    if (portal) portal.settled = false;
+    const a = this.assists(), cls = assistClass(a), laps = portal ? 3 : career?.laps || (mode === 'race' ? Number(over?.laps || this.S.raceLaps || 3) : 3);
+    const fieldSize=portal ? 6 : career?Math.max(2,Math.min(8,career.fieldSize||8)):8;
     const playerGrid=Math.min(PLAYER_GRID,fieldSize-1);
     this.clearRivals();
     this.race = new RaceSession(this.track, mode, { laps });
@@ -10363,16 +12272,18 @@ class Game {
       this.field = new RaceField(this.track, laps);
       this.field.add(this.veh, { id: 'player', code: 'YOU', name: 'You', team: this.veh.car.name+' · ' + this.livery().name, color: this.livery().secondary, player: true });
       const base = Number.isFinite(career?.pace)?career.pace:AI_LEVELS[over?.ai || this.S.aiLevel || 'medium'];
-      const rs = this.pad.rivalSetup(career || this.campaign?.launching); this.rivalTrack = rs.track;
+      const rs = portal ? { car: portal.rival, track: portal.rival === this.veh.car ? this.track : new Track(this.track.def, this.world, portal.rival) } : this.pad.rivalSetup(career || this.campaign?.launching);
+      this.rivalTrack = rs.track;
       let slot = 0;
       RIVALS.slice(0,fieldSize-1).forEach((original, k) => {
         const lead={neri:['NER','Neri Vale','Openline Garage'],juno:['JUN','Juno Venn','Venn Touring'],sola:['SOL','Sola Kest','Crownline']}[career?.rival]||['SOL','Sola Kest','Crownline'];
         const rv=(this.campaign.launching||career) && k===0 ? { ...original, code:lead[0],name:lead[1],team:lead[2],livery:{id:'sola',primary:[.92,.91,.87],secondary:[.92,.28,.1],accent:[.22,.1,.28],stripe:[.92,.28,.1]} } : original;
         if (slot === playerGrid) slot++;
         const veh = new Vehicle(rs.car, this.world, rs.track); const [gs, go] = grid(slot++); veh.reset(gs, go);
-        const r = { id: rv.code, ...rv, veh, ai: new AIDriver({ pace: base + PACE_SPREAD[k], seed: 1000 + k * 77 }), prev: snapshot(veh, {}), curr: snapshot(veh, {}) };
-        r.entry = this.field.add(veh, { id: rv.code, code: rv.code, name: rv.name, team: rv.team, color: rv.livery.secondary });
-        this.renderer.carModel(rv.livery);
+        const r = { id: rv.code, ...rv, veh, historyCar: portal ? rs.car : undefined, ai: new AIDriver({ pace: base + PACE_SPREAD[k], seed: 1000 + k * 77 }), prev: snapshot(veh, {}), curr: snapshot(veh, {}) };
+        if (portal) r.team = rs.car.name;
+        r.entry = this.field.add(veh, { id: rv.code, code: rv.code, name: rv.name, team: r.team, color: rv.livery.secondary });
+        this.renderer.carModel(rv.livery, r.historyCar);
         this.rivals.push(r);
       });
       this.countTotal = 5 + 0.6 + Math.random() * 1.0; // five lights, then a random hold before lights out
@@ -10385,7 +12296,7 @@ class Game {
     this.driver = new DriverInput();
     this.prev = snapshot(this.veh, this.prev); this.curr = snapshot(this.veh, this.curr);
     this.acc = 0; this.paused = false; this.mode = 'race'; this.lastPos = 0; this._goShown = true;
-    const pb = this.pbFor(cls);
+    const pb = portal ? null : this.pbFor(cls);
     this.pbGhost = pb && pb.ghost && mode !== 'race' ? decodeGhost(pb.ghost) : null; this.pbTime = pb ? pb.time : null; this.pbSectors = pb ? pb.sectors : null;
     this.sessionStartPb = this.pbTime;
     this.sessionBestSectors = [Infinity, Infinity, Infinity];
@@ -10395,7 +12306,11 @@ class Game {
     $('hud-flag').hidden = true; $('hud-delta').textContent = '';
     $('hud-best').textContent = mode === 'race' ? `${laps} LAPS · ${(over?.ai || this.S.aiLevel || 'medium').toUpperCase()}` : (this.pbTime ? `BEST ${fmtTime(this.pbTime)}` : 'NO BEST YET');
     $('hud-mode').textContent = (over?.cup ? over.label.toUpperCase()+' · ' : mode === 'practice' ? 'PRACTICE · ' : mode === 'race' ? 'GRAND PRIX · ' : 'TIME TRIAL · ')+this.track.def.name.toUpperCase();
-    this.pad.sessionStart(mode, !!(career || this.campaign?.launching));
+    if (portal) {
+      this.pad.session = null;
+      $('hud-mode').textContent = `${this.veh.car.history.year} · ${this.track.def.name}`;
+      $('hud-best').textContent = mode === 'race' ? '3 LAPS · 5 AI RIVALS' : 'TIME PORTAL · PRACTICE';
+    } else this.pad.sessionStart(mode, !!(career || this.campaign?.launching));
     this.buildTower();
     this.show('none');
     this._goShown = mode !== 'race' && mode !== 'timetrial';
@@ -10434,6 +12349,8 @@ class Game {
       if (this.isRace()) { // races do not set personal bests (slipstream and traffic change lap times)
         if (race.targetLaps - race.laps.length === 1) this.banner('FINAL LAP', 'final', 1800);
         this.toast(`Lap ${lap.n}: ${fmtTime(lap.time)}${lap.valid ? '' : ' — invalid (' + lap.reason + ')'}`);
+      } else if (lap.valid && this.portal.session) {
+        this.toast(`Valid historical lap · ${fmtTime(lap.time)}`);
       } else if (lap.valid) {
         const key = this.pbKey(lap.assist);
         const pb = this.save.data.pbs[key];
@@ -10447,12 +12364,13 @@ class Game {
           this.toast(delta === null ? `First valid lap: ${fmtTime(lap.time)}. Ghost saved.` : `New personal best ${fmtTime(lap.time)} (${fmtDelta(delta)})`);
         } else this.toast(`Lap ${lap.n}: ${fmtTime(lap.time)} (${fmtDelta(lap.time - pb.time)} to best)`);
       } else this.toast(`Lap ${lap.n}: ${fmtTime(lap.time)} — invalid (${lap.reason})`);
+      if (this.portal.session) return;
       this.pad.onLap(lap);
       this.save.data.history.unshift({ t: lap.time, valid: lap.valid, cls: lap.assist, mode: race.mode, date: new Date().toISOString() });
       this.save.data.history = this.save.data.history.slice(0, 30);
       this.save.save();
       $('hud-sectors').querySelectorAll('span').forEach((s, i) => { s.className = ''; s.textContent = `S${i + 1}`; });
-      if (!this.isRace() && race.finished) setTimeout(() => this.finishSession(), 900);
+      if (!this.isRace() && race.finished) setTimeout(() => { if (this.race === race && this.mode === 'race') this.finishSession(); }, 900);
       else if (!this.isRace() && a.autoThrottle) this.coach('Lap complete. Try Racer assists when you feel ready.', 3, 'lap1');
     }
   }
@@ -10497,7 +12415,7 @@ class Game {
       $('results-title').textContent = me.finished ? (me.pos === 1 ? 'Victory' : `Finished P${me.pos}`) : 'Race ended early';
       $('results-table').innerHTML = `<thead><tr><th>Pos</th><th>Driver</th><th>Time / gap</th><th>Best lap</th></tr></thead><tbody>${rows}</tbody>`;
       $('results-laps').innerHTML = lapsTable; $('results-laps-wrap').hidden = false;
-      $('results-summary').textContent = me.finished ? `P${me.pos} of ${order.length}${me.pos === 1 ? ' — you beat all seven AI rivals.' : `, ${me.gap.toFixed(3)} s behind the winner.`}` : `You were P${me.pos} when the race ended.`;
+      $('results-summary').textContent = me.finished ? `P${me.pos} of ${order.length}${me.pos === 1 ? ` · ${order.length - 1} AI rivals beaten` : `, ${me.gap.toFixed(3)} s behind the winner.`}` : `You were P${me.pos} when the race ended.`;
       $('results-note').textContent = `Race time includes the run from the grid to the line. Classification comes from fixed ${Math.round(1 / SIM_DT)} Hz steps, interpolated to the line; cars still running when you finished are ranked by distance covered with an estimated gap. Rivals are computer-controlled (not other players). Races do not set personal bests.`;
     } else {
       $('results-title').textContent = race.mode === 'practice' ? 'Practice complete' : 'Time trial complete';
@@ -10510,6 +12428,7 @@ class Game {
         : (pb ? `Your ${cls} best is still ${fmtTime(pb.time)}.` : 'Finish a valid lap to set your first best.');
       $('results-note').textContent = `Lap times come from fixed ${Math.round(1 / SIM_DT)} Hz simulation steps, interpolated to the line, so they do not depend on frame rate. Dropped simulation steps this session: ${this.perf.dropped}.`;
     }
+    if (this.portal.session) { this.portal.finish(); this.show('results'); return; }
     const me=this.field?.entries[0];
     const earned=awardSession(this.save.data.career,{id:this.sessionId,validLaps:race.laps.filter(l=>l.valid).length,personalBest:race.laps.some(l=>l.pb),finishedRace:!!me?.finished,position:me?.pos});
     this.save.data.career=earned.career;this.save.save();
@@ -10709,5 +12628,6 @@ return { fmtTime };
 })();
 
 </script>
+
 </body>
 </html>

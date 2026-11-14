@@ -65,6 +65,17 @@ export class Vehicle {
     this.aLong = 0; this.aLat = 0; this.drag = 0; this.downF = 0; this.downR = 0;
     this.lastImpact = 0; this.impactCount = 0; this.collidingSteps = 0;
     this.dragScale = 1; this.downScale = 1; this.slip = 0; this.bottoming = 0; this.carHits.length = 0;
+    const technology = this.car.history?.tech;
+    this.enginePedal = 0;
+    this.turboSpool = 0;
+    this.energyKJ = technology?.hybrid?.capacityKJ ?? 0;
+    this.electricKW = 0;
+    this.recoveredKJ = 0;
+    this.deployedKJ = 0;
+    this.straightMode = false;
+    this.floorEfficiency = 1;
+    this.fanSpeed = 0;
+    this.fanAngle = 0;
     const c = this.car, g = this.world.gravity;
     for (const w of this.wheels) {
       const front = w.i < 2;
@@ -154,10 +165,22 @@ export class Vehicle {
     ratio = this.gearRatio(this.gear);
     rpmLocked = Math.abs(wDriven * ratio) * RADS_TO_RPM;
 
-    let throttle = clamp(ctl.throttle, 0, 1) * this.tcsFactor * this.escCut;
+    const technology = c.history?.tech;
+    const pedal = clamp(ctl.throttle, 0, 1);
+    const response = technology?.throttleSeconds;
+    this.enginePedal = response ? this.enginePedal + (pedal - this.enginePedal) * (1 - Math.exp(-dt / response)) : pedal;
+    let throttle = this.enginePedal * this.tcsFactor * this.escCut;
     if (rpmLocked >= eng.limiterRpm) this.limiter = true;
     if (this.limiter) { if (rpmLocked < eng.limiterRpm - 200) this.limiter = false; else throttle = 0; }
 
+    const turbo = technology?.turbo;
+    if (turbo) {
+      const target = throttle * clamp((this.rpm / eng.limiterRpm - .25) / .37, 0, 1);
+      const time = target > this.turboSpool ? turbo.spoolSeconds : turbo.decaySeconds;
+      this.turboSpool += (target - this.turboSpool) * (1 - Math.exp(-dt / time));
+    }
+    const hybrid = technology?.hybrid;
+    this.electricKW = 0;
     let wheelTorque = 0;
     if (this.gear === 0 || this.shiftTimer > 0) {
       const target = eng.idleRpm + clamp(ctl.throttle, 0, 1) * (eng.limiterRpm - eng.idleRpm) * 0.85;
@@ -169,13 +192,25 @@ export class Vehicle {
       if (rpmLocked < slipTarget && throttle > 0.01) { rpmEff = slipTarget; this.clutchSlip = true; }
       else if (rpmLocked < eng.idleRpm) { rpmEff = eng.idleRpm; this.clutchSlip = true; }
       else { rpmEff = rpmLocked; this.clutchSlip = false; }
-      const Tcurve = tableLookup(eng.curve, rpmEff);
+      const boost = turbo ? turbo.offBoostFraction + (1 - turbo.offBoostFraction) * this.turboSpool : 1;
+      const Tcurve = tableLookup(eng.curve, rpmEff) * boost;
       const Tfric = eng.frictionBase + eng.frictionPerRpm * rpmEff;
       // Net engine torque: the full-load curve scaled by throttle, blending into closed-throttle engine
       // braking below 5% pedal so small openings still produce drive (continuous at 5%).
       let Te = throttle * Tcurve - Math.max(0, 1 - throttle / 0.05) * Tfric;
       if (this.clutchSlip && Te < 0) Te = 0; // a slipping clutch transmits no engine braking
       wheelTorque = Te * ratio * (Te > 0 ? gb.efficiency : 1);
+      if (hybrid && this.gear > 0 && u > 10 && throttle > .64 && !this.limiter && ctl.deployEnergy !== false) {
+        // An axle power model with a speed taper and a finite store, in kW and kJ.
+        const speedKmh = u * 3.6;
+        const normal2026 = speedKmh >= 345 ? 0 : speedKmh >= 340 ? 6900 - 20 * speedKmh : 1800 - 5 * speedKmh;
+        const maxKW = technology.activeAero ? Math.min(hybrid.deployKW, normal2026) : hybrid.deployKW * clamp((102 - u) / 27, 0, 1);
+        this.electricKW = Math.min(maxKW * throttle, this.energyKJ / dt);
+        const used = this.electricKW * dt;
+        this.energyKJ -= used;
+        this.deployedKJ += used;
+        wheelTorque += this.electricKW * 1000 * c.wheelRadius / u;
+      }
       this.rpm = rpmEff;
       this.engineTorque = Te;
     }
@@ -275,6 +310,8 @@ export class Vehicle {
         if (comp > s.travel) f += s.bumpStopK * (comp - s.travel);
         f += (rate > 0 ? (front ? s.cBumpF : s.cBumpR) : (front ? s.cRebF : s.cRebR)) * rate;
       }
+      const levelling = c.history?.tech?.activeSuspension;
+      if (levelling && comp > 0) f += clamp(d * levelling.stiffness + rate * levelling.damping, -levelling.maxForce, levelling.maxForce);
       F[i] = f;
       wh.comp = comp; wh.travelRel = comp - wh.compStatic;
     }
@@ -286,9 +323,31 @@ export class Vehicle {
 
     // Aerodynamics
     const q = 0.5 * rho * u * u;
-    const down = c.aero.clA * q * this.downScale;
+    const tech = c.history?.tech;
+    const floor = tech?.ground;
+    if (floor) {
+      const clearance = floor.idealHeight + .019 - this.h - Math.abs(this.pitch) * .45;
+      const offset = (clearance - floor.idealHeight) / floor.falloffHeight;
+      this.floorEfficiency = clearance <= .008 ? .13 : .22 + .78 * Math.exp(-offset * offset);
+    }
+    const active = tech?.activeAero;
+    if (active) {
+      const sample = w[0].proj.i;
+      const segment = this.track.segments[this.track.seg[sample]];
+      const beforeCorner = this.track.seg[(sample + Math.ceil(Math.max(40, u * .85) / 1.5)) % this.track.n] === this.track.seg[sample];
+      this.straightMode = ctl.enableStraight !== false && segment?.kind === 'S' && segment.len >= 135 && beforeCorner && u > 25 && ctl.throttle > .65 && ctl.brake < .05 && Math.abs(this.steerAngle) < .048;
+    }
+    const floorFactor = floor ? 1 - floor.fraction * (1 - this.floorEfficiency) : 1;
+    const fan = tech?.fan;
+    if (fan) {
+      const target = clamp((this.rpm / c.engine.limiterRpm) * 1.5, .18, 1);
+      this.fanSpeed += (target - this.fanSpeed) * (1 - Math.exp(-dt / fan.rampSeconds));
+      this.fanAngle = (this.fanAngle + this.fanSpeed * 85 * dt) % (2 * Math.PI);
+    }
+    const suction = fan ? fan.maxDownforceN * this.fanSpeed ** 2 : 0;
+    const down = c.aero.clA * q * this.downScale * floorFactor * (this.straightMode ? active.straightDownforceMultiplier : 1) + suction;
     this.downF = down * c.aero.balance; this.downR = down * (1 - c.aero.balance);
-    const dragMag = 0.5 * rho * c.aero.cdA * speed * speed * this.dragScale;
+    const dragMag = 0.5 * rho * c.aero.cdA * speed * speed * this.dragScale * (this.straightMode ? active.straightDragMultiplier : 1);
     this.drag = dragMag;
     const dragX = speed > 1e-6 ? dragMag * this.vx / speed : 0;
     const dragZ = speed > 1e-6 ? dragMag * this.vz / speed : 0;
@@ -300,6 +359,9 @@ export class Vehicle {
     const bf = c.brakes.maxTorque * c.brakes.bias / 2, br = c.brakes.maxTorque * (1 - c.brakes.bias) / 2;
     const nSub = this.wheelSubsteps, dts = dt / nSub;
     const brakeCmd = clamp(ctl.brake, 0, 1);
+    const hybrid = tech?.hybrid;
+    // Recovered energy is a bounded fraction of actual rear-axle braking work.
+    const recoverableKW = hybrid && u > 4 ? hybrid.harvestKW * brakeCmd : 0;
     for (const wh of w) {
       const i = wh.i, front = i < 2;
       const steer = front ? this.steerAngle : 0;
@@ -362,6 +424,13 @@ export class Vehicle {
       const Fr = fx * wh._sd + fy * wh._cd, Ff = fx * wh._cd - fy * wh._sd;
       sumFr += Fr; sumFf += Ff;
       Mz += this.cz[wh.i] * Fr - this.cx[wh.i] * Ff;
+    }
+    if (recoverableKW > 0) {
+      const rearBrakingKW = Math.max(0, -(w[RL].fx + w[RR].fx) * u / 1000);
+      const recovered = Math.min(recoverableKW, rearBrakingKW * .65, (hybrid.capacityKJ - this.energyKJ) / dt) * dt;
+      this.energyKJ += recovered;
+      this.recoveredKJ += recovered;
+      this.electricKW = -recovered / dt;
     }
     this.sumFf = sumFf; this.sumFr = sumFr;
 

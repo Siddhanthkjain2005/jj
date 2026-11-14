@@ -240,7 +240,7 @@ ${cur === 'custom' ? `<div class="pd-row"><input type="color" data-paint="primar
 <div class="sheet-foot">${viewId === p.ride ? foot : `<button type="button" class="nc-go" data-act="pick-ride" data-id="${viewId}"><span>Race this car</span>${ARROW}</button>`}</div>`;
     }
     return `<div class="gar"><div id="sweep" aria-hidden="true"></div><div class="rotate-zone" id="car-rotate-zone" style="inset:16% 38% 24% 2%" aria-label="Drag to turn the car"></div>
-<div class="gar-title" data-in><h1 class="nc-hero">Garage<i>/</i>${esc(view.name)}</h1></div>
+<div class="gar-title" data-in><h1 class="nc-hero">Garage<i>/</i>${esc(view.name)}</h1><button class="nc-btn sm" data-nav="time-portal" type="button">Time Portal</button></div>
 <div class="gar-stats" data-in><div><b>${Math.round(fresh ? bench.topKmh : st.topKmh)}</b><small>km/h</small></div><div><b>${num(st.powerKw)}</b><small>kW</small></div><div><b>${st.pr}</b><small>Rating</small></div></div>
 <div class="gar-rides" data-in>${rides}</div><aside class="nc-card sheet" data-in>${sheet}</aside></div>`;
   }
@@ -268,7 +268,7 @@ ${cur === 'custom' ? `<div class="pd-row"><input type="color" data-paint="primar
 <p class="pd-note">${laps} laps · ${AI_NAMES[ai]} rivals · a win pays ${Math.round(PG.PURSE[0] * PG.AI_PAY[ai] * laps / 3)}</p>`;
     }
     return `<div class="mapwrap">${this.harborMap({ active: id, pin: '', done })}
-<div class="map-title" data-in><h2 class="nc-h">World<small>Lumen Harbor · ${PG.totalStars(d)} of 18 mastery stars</small></h2></div>
+<div class="map-title" data-in><h2 class="nc-h">World<small>Lumen Harbor · ${PG.totalStars(d)} of 18 mastery stars</small></h2><button class="nc-btn sm" data-nav="time-portal" type="button">Time Portal</button></div>
 <aside class="nc-card sheet" data-in><div class="nc-seg" role="tablist">${[['circuit', 'Circuit'], ['cups', 'Cups'], ['school', 'School']].map(([k, l]) => `<button type="button" role="tab" data-act="world-tab" data-id="${k}" aria-pressed="${k === tab}">${l}</button>`).join('')}</div>
 <div class="sheet-body scroll">${tab === 'circuit' ? `<h2 class="nc-h">${esc(c.name)}<small>${(t.length / 1000).toFixed(2)} km · ${cs.best ? `Best ${fmtLap(cs.best)}` : 'No lap yet'} · ${cs.stars.length} of 6 stars</small></h2>` : ''}${body}</div><div class="sheet-foot">${foot}</div></aside></div>`;
   }

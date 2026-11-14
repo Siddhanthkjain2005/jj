@@ -271,9 +271,11 @@ export class Track {
     // Speed profile with a conservative grip estimate so assists are safe
     const m = car.mass, g = this.world.gravity, rho = this.world.airDensity;
     const mu = car.tire.mu * 0.86 * this.world.surfaces.asphalt.mu;
-    const kDown = 0.5 * rho * car.aero.clA, kDrag = 0.5 * rho * car.aero.cdA;
-    const powerW = 400000 * car.gearbox.efficiency; // approximate peak wheel power (fictional engine, see data)
-    const vTop = 95;
+    const historical = car.history;
+    const kDown = 0.5 * rho * car.aero.clA * (historical?.tech?.ground ? .77 : 1), kDrag = 0.5 * rho * car.aero.cdA;
+    const peak = historical ? Math.max(...car.engine.curve.map(([rpm, torque]) => rpm * torque * Math.PI / 30)) : 400000;
+    const powerW = peak * car.gearbox.efficiency;
+    const vTop = historical ? Math.min(105, car.engine.limiterRpm * Math.PI / 30 * car.wheelRadius / (car.gearbox.ratios.at(-1) * car.gearbox.final)) : 95;
     const v = new Float64Array(N);
     for (let i = 0; i < N; i++) {
       const k = Math.abs(kapS[i]);
@@ -284,7 +286,8 @@ export class Track {
       for (let n = 0; n < N; n++) { // backward pass: braking
         const i = (N - 1 - n + N) % N, j = (i + 1) % N;
         const vj = v[j];
-        const aBrake = mu * (g + (kDown * vj * vj) / m) + (kDrag * vj * vj) / m;
+        const tireBrake = mu * (g + (kDown * vj * vj) / m);
+        const aBrake = (historical ? Math.min(tireBrake, car.brakes.maxTorque / (m * car.wheelRadius)) : tireBrake) + (kDrag * vj * vj) / m;
         const vmax = Math.sqrt(vj * vj + 2 * aBrake * 0.85 * dsl[i]);
         if (v[i] > vmax) v[i] = vmax;
       }

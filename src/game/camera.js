@@ -83,8 +83,9 @@ export class CameraRig {
     this.lastMode = mode;
     if (mode === 'cockpit') {
       const sway = -info.aLat * 0.0035 * s.shake * motion;
-      const ex = pose.x + fwd[0] * 0.18 + rgt[0] * sway, ez = pose.z + fwd[2] * 0.18 + rgt[2] * sway;
-      const ey = 0.93 - pose.h - pose.pitch * 0.18;
+      const { y = .93, z = .18 } = s.cockpit || {};
+      const ex = pose.x + fwd[0] * z + rgt[0] * sway, ez = pose.z + fwd[2] * z + rgt[2] * sway;
+      const ey = y - pose.h - pose.pitch * z;
       eye = [ex, ey, ez];
       tgt = [ex + fwd[0] * 30, ey - 0.9 - pose.pitch * 30 * 0.6, ez + fwd[2] * 30];
       fov = (s.fov + 10 + 10 * Math.min(1, u / 85) * motion) * DEG;

@@ -1,5 +1,13 @@
 # VELOCITYVERSE 0.8 — Neon Coast
 
+## Time Portal
+
+Open **Time Portal** from Garage or World. Browse 102 historical references across all Championship seasons from 1950 to 2026, then drive 16 original cars on three additional closed courses. Each car has its own geometry, engine curve, gearing, tyre and chassis tune. The collection includes a 1952 Formula 2 interpretation, a 1954 streamliner, both ground-effect and fan-assisted 1978 cars, a 1992 active-suspension car and a 2026 active-aero hybrid.
+
+Try Free historical drive, the 16-chapter History Career, a same-era AI exhibition or a cross-era race. Wet grip and fictional balancing are selectable in Time Portal events. The engineering bench compares the actual simulation profiles. During eligible drives, **B** controls battery deployment and **V** enables Straight Mode where the course permits it. Both controls also have touch buttons.
+
+Run `npm run build` and open `dist/velocityverse.html`. Add `?view=time-portal` to the local preview URL for direct entry. Run `npm run test:history` and `npm run test:history-browser` for the additional checks. [Research, playable roster and implementation status](docs/TIME_PORTAL.md).
+
 *Working title, not yet cleared for trademarks or store names.*
 
 ## What changed in 0.8 (11 November 2026)

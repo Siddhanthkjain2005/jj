@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const ORDER = ['sim/units', 'sim/data', 'sim/rides', 'sim/circuits', 'sim/track', 'sim/vehicle', 'sim/assists', 'sim/race', 'sim/traffic', 'sim/ai', 'sim/academy', 'sim/lab', 'game/gfx', 'game/world', 'game/carmodel', 'game/fx', 'game/assets', 'game/renderer', 'game/camera', 'game/input', 'game/audio', 'game/career', 'game/openline-data', 'game/openline-state', 'game/career-mode', 'game/save', 'game/telemetry', 'game/platform', 'game/progress', 'game/juice', 'game/paddock', 'game/lobby', 'game/navigation', 'game/openline', 'game/story-career', 'game/main'];
+const ORDER = ['sim/units', 'sim/data', 'sim/rides', 'sim/history-rides', 'sim/history-data', 'sim/history-circuits', 'sim/circuits', 'sim/track', 'sim/vehicle', 'sim/assists', 'sim/race', 'sim/traffic', 'sim/ai', 'sim/academy', 'sim/lab', 'game/gfx', 'game/world', 'game/history-model', 'game/carmodel', 'game/fx', 'game/assets', 'game/renderer', 'game/camera', 'game/input', 'game/audio', 'game/career', 'game/openline-data', 'game/openline-state', 'game/career-mode', 'game/save', 'game/telemetry', 'game/platform', 'game/progress', 'game/juice', 'game/paddock', 'game/lobby', 'game/navigation', 'game/openline', 'game/story-career', 'game/time-portal', 'game/main'];
 const id = (p) => '__m_' + p.replace(/[^a-z0-9]/gi, '_');
 let bundle = '';
 for (const mod of ORDER) {
@@ -30,7 +30,7 @@ const stamp = JSON.parse(fs.readFileSync(path.join(ROOT,'package.json'),'utf8'))
 let out = html
   .replace('<!--OPENLINE-->',fs.readFileSync(path.join(ROOT,'web','openline.html'),'utf8'))
   .replace('<!--CAREER-->',fs.readFileSync(path.join(ROOT,'web','career.html'),'utf8'))
-  .replace(/<link rel="stylesheet" href="\.\/(app|neon-panels|openline|career|paddock)\.css">/g,(_,name)=>'<style>\n'+fs.readFileSync(path.join(ROOT,'web',name+'.css'),'utf8')+'\n</style>')
+  .replace(/<link rel="stylesheet" href="\.\/(app|neon-panels|openline|career|paddock|time-portal)\.css">/g,(_,name)=>'<style>\n'+fs.readFileSync(path.join(ROOT,'web',name+'.css'),'utf8')+'\n</style>')
   .replace(/<script src="\.\.\/node_modules\/gsap\/dist\/gsap\.min\.js"><\/script>\n?/, () => {
     // GSAP drives the menu motion. Without it (npm install not run) the game still works, just without those transitions.
     const file = path.join(ROOT, 'node_modules/gsap/dist/gsap.min.js');

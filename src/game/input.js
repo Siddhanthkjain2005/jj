@@ -148,6 +148,8 @@ export class Input {
     r.recover = shortcut('KeyR') || pe(2) || te('recover');
     r.telemetry = shortcut('KeyT') || pe(8);
     r.perf = shortcut('KeyF');
+    r.deploy = shortcut('KeyB') || pe(10);
+    r.straight = shortcut('KeyV') || pe(11);
     r.navNext = this.edges.has('ArrowDown') || this.edges.has('ArrowRight') || pe(13) || pe(15);
     r.navPrev = this.edges.has('ArrowUp') || this.edges.has('ArrowLeft') || pe(12) || pe(14);
     r.confirm = pe(0);

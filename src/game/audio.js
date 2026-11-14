@@ -57,6 +57,8 @@ export class GameAudio {
       // crank speed (optional actual gear only changes its harmonic emphasis).
       this.gearOsc=oscillator('sine');this.gearGain=gain(0);
       this.gearOsc.connect(this.gearGain);this.gearGain.connect(this.master);
+      this.technologyOsc=oscillator('sine');this.technologyGain=gain(0);
+      this.technologyOsc.connect(this.technologyGain);this.technologyGain.connect(this.master);
       this.tireGain=gain(0);this.tireFilter=filter('bandpass',1000,0.65);
       noise(1.13).connect(this.tireFilter);this.tireFilter.connect(this.tireGain);this.tireGain.connect(this.master);
       this.windGain=gain(0);this.windFilter=filter('lowpass',520,0.6);
@@ -79,7 +81,7 @@ export class GameAudio {
   rival(st) {
     if(!this.ok)return;const t=this.ctx.currentTime;
     if(!st){this.rGain.gain.setTargetAtTime(0,t,0.09);return;}
-    const closing=clamp(st.closing,-60,60),dop=343/(343-closing),f=clamp(st.rpm,1500,15000)/60*4*dop;
+    const closing=clamp(st.closing,-60,60),dop=343/(343-closing),f=clamp(st.rpm,1000,st.history ? 20000 : 15000)/60*(st.history?.cylinders/2 || 4)*dop;
     this.r1.frequency.setTargetAtTime(f,t,0.025);this.r2.frequency.setTargetAtTime(f*0.25,t,0.025);
     const dist=clamp(st.dist,0,200);this.rFilter.frequency.setTargetAtTime(900+1700/(1+dist/15),t,0.08);
     this.rGain.gain.setTargetAtTime(this.vol.engine*0.25/(1+(dist/8)**2),t,0.06);
@@ -88,8 +90,8 @@ export class GameAudio {
   // Optional gear/aLong enrich the mix; no invented state is needed when absent.
   update(st) {
     if(!this.ok)return;const t=this.ctx.currentTime,V=this.vol,run=st.running?1:0;
-    const rpm=clamp(st.rpm,1000,15000),load=clamp(st.throttle,0,1),speed=clamp(st.speed,0,150),slip=clamp(st.slip,0,5);
-    const f=rpm/60*4,shift=t<this.shiftUntil?0.22:1,high=clamp((rpm-3500)/9000,0,1);
+    const rpm=clamp(st.rpm,1000,st.history ? 20000 : 15000),load=clamp(st.throttle,0,1),speed=clamp(st.speed,0,150),slip=clamp(st.slip,0,5);
+    const f=rpm/60*(st.history?.cylinders/2 || 4),shift=t<this.shiftUntil?0.22:1,high=clamp((rpm-3500)/9000,0,1);
     const tractive=Number.isFinite(st.aLong)?clamp(st.aLong/12,0,1):load;
     this.master.gain.setTargetAtTime(run&&!this.muted?V.master:0,t,0.07);
     this.o1.frequency.setTargetAtTime(f,t,0.014);this.o2.frequency.setTargetAtTime(f,t,0.014);this.o3.frequency.setTargetAtTime(f*0.25,t,0.018);
@@ -101,6 +103,10 @@ export class GameAudio {
     this.overrunGain.gain.setTargetAtTime(V.engine*0.025*(1-load)*high*run,t,0.06);
     this.gearOsc.frequency.setTargetAtTime(180+rpm/60*(6+clamp(st.gear||1,1,8)*0.12),t,0.03);
     this.gearGain.gain.setTargetAtTime(V.engine*(0.007+0.010*load)*Math.min(1,speed/15)*run,t,0.05);
+    const spool = clamp(st.spool, 0, 1), motor = clamp(Math.abs(st.electricKW || 0) / 350, 0, 1);
+    const blower = st.history?.year === 1950 ? load * .25 : 0;
+    this.technologyOsc.frequency.setTargetAtTime(280 + spool * 1350 + speed * (motor ? 16 : 5) + blower * rpm / 12, t, .07);
+    this.technologyGain.gain.setTargetAtTime(V.engine * run * (.037 * spool + .044 * motor + .025 * blower), t, .07);
     const scrub=smooth((slip-0.55)/1.05)*Math.min(1,speed/8);
     this.tireFilter.frequency.setTargetAtTime(750+900*scrub+speed*2,t,0.06);
     this.tireGain.gain.setTargetAtTime(V.fx*0.18*scrub*run,t,0.04);

@@ -121,15 +121,21 @@ export function benchCar(car) {
   v.reset(50, 0); ctl.throttle = 1; ctl.brake = 0;
   const tT = v.time, tZ = v.z;
   samples.top.push(sample(v, tT, tZ));
-  let top = 0, ref = 0, quarter = null;
+  let top = 0, ref = 0, quarter = null, stable = 0;
   for (let i = 0; i < 120 * 60; i++) {
     v.step(DT, ctl);
     top = Math.max(top, v.forwardSpeed);
     if (quarter === null && v.z - tZ >= 400) quarter = v.time - tT;
     if (i % 60 === 59) {
       samples.top.push(sample(v, tT, tZ));
-      if (i > 120 * 12 && v.forwardSpeed - ref < 0.03) break; // the car has stopped gaining speed
-      ref = v.forwardSpeed;
+      if (car.history) {
+        stable = top - ref < .03 ? stable + 1 : 0;
+        if (quarter !== null && stable >= 5 && i > 120 * 12) break;
+        ref = top;
+      } else {
+        if (i > 120 * 12 && v.forwardSpeed - ref < 0.03) break;
+        ref = v.forwardSpeed;
+      }
     }
     if (v.z - tZ > 5600) break;
   }

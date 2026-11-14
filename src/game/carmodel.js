@@ -3,6 +3,7 @@
 // (axle along x) so the renderer can steer, spin and move them with the suspension.
 // Materials: 22 car paint (clear-coated) · 5 emissive · 12 carbon · 13 rubber · 14 metal · 15 glass · 16 brake disc (glows with heat)
 import { MeshBuilder, framesAlong, bezier, circle } from './gfx.js';
+import { buildHistoricalBody } from './history-model.js';
 
 const CARBON = [0.035, 0.037, 0.045, 0], DARK = [0.012, 0.012, 0.016, 0], TI = [0.42, 0.44, 0.48, 0];
 const RED = [1.0, 0.05, 0.10, 0.35];
@@ -52,8 +53,14 @@ function body(mb, cx, sections, seg, col, mat = 0) {
 // Every material-0 vertex in a car mesh is paint: switch it to the clear-coat paint material (22).
 function paint(mb) { for (let k = 0; k < mb.n; k++) if (mb.v[k * 13 + 10] === 0) mb.v[k * 13 + 10] = 22; return mb; }
 
-export function buildCarLOD0(car, livery) { return paint(car.bodyStyle==='gt'?clubGT(car,livery,false):car.bodyStyle==='sprint'?clubSprint(car,livery,false):carLOD0(car, livery)); }
-export function buildCarLOD1(car, livery) { return paint(car.bodyStyle==='gt'?clubGT(car,livery,true):car.bodyStyle==='sprint'?clubSprint(car,livery,true):carLOD1(car, livery)); }
+export function buildCarLOD0(car, livery) {
+  if (car.history?.body) return buildHistoricalBody(car, livery, 0);
+  return paint(car.bodyStyle==='gt'?clubGT(car,livery,false):car.bodyStyle==='sprint'?clubSprint(car,livery,false):carLOD0(car, livery));
+}
+export function buildCarLOD1(car, livery) {
+  if (car.history?.body) return buildHistoricalBody(car, livery, 1);
+  return paint(car.bodyStyle==='gt'?clubGT(car,livery,true):car.bodyStyle==='sprint'?clubSprint(car,livery,true):carLOD1(car, livery));
+}
 
 
 // The club rides have their own body construction, not a livery on the VX-1.

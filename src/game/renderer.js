@@ -6,6 +6,7 @@
 import { M4, MeshBuilder, compile, upload, dynamicMesh } from './gfx.js';
 import { buildWorld, buildRacingLine, buildSoftQuad, buildRing, NEON, LANES } from './world.js';
 import { buildCarLOD0, buildCarLOD1, buildWheel } from './carmodel.js';
+import { buildHistoricalWheel, buildHistoricalFlaps, buildHistoricalFan } from './history-model.js';
 import { FX } from './fx.js';
 import { ASPHALT_URL } from './assets.js';
 
@@ -626,6 +627,8 @@ export class Renderer {
     const sp = track.pointAt(track.def.lineS, 0, {});
     this.L = { moon: norm([0.35, 0.72, -0.6]), moonCol: [0.70, 0.78, 0.94], sky: [0.10, 0.14, 0.22], gnd: [0.025, 0.03, 0.042], fog: [0.035, 0.055, 0.09], fogD: 1 / 2300,
       sun: norm([Math.sin(sp.heading), 0.02, Math.cos(sp.heading)]), sunCol: [0.72, 0.36, 0.18], flood: 0.45 };
+    if (track.def.archive === 'archive_airfield') Object.assign(this.L, { moonCol: [.93,.82,.62], sky: [.25,.21,.18], fog: [.16,.12,.09], sunCol: [1.05,.60,.29], fogD: 1 / 1850 });
+    if (track.def.archive === 'archive_road') Object.assign(this.L, { moonCol: [.77,.89,.75], sky: [.17,.23,.20], fog: [.09,.15,.12], sunCol: [.58,.66,.50], fogD: 1 / 1400 });
     this.triangles = this.worldMesh.tris + this.waterMesh.tris + this.fenceMesh.tris;
     this.drawCalls = 0; this.targets = null; this.qName = 'high'; this.q = QUALITY.high;
     this.signTex = this._makeSign();
@@ -750,20 +753,25 @@ export class Renderer {
   setQuality(name) { if (QUALITY[name] && name !== this.qName) { this.qName = name; this.q = QUALITY[name]; this._freeTargets(); this._freeProbe(); this._freeShadow(); } }
 
   // Car meshes per livery (LOD0/LOD1 bodies, four wheels each, underglow) — built once and cached.
-  carModel(livery) {
-    let m = this.models.get(livery.id);
+  carModel(livery, car = this.car) {
+    const key = car.history ? `${car.id}:${livery.id}` : livery.id;
+    let m = this.models.get(key);
     if (m) return m;
-    const gl = this.gl, c = this.car, stripe = livery.stripe || [0.95, 0.12, 0.12];
-    const wheels = (lod) => [[0.30, -1], [0.30, 1], [0.38, -1], [0.38, 1]].map(([w, s]) => upload(gl, buildWheel(w, s, livery.secondary, stripe, lod)));
-    m = { livery, lod0: upload(gl, buildCarLOD0(c, livery)), lod1: upload(gl, buildCarLOD1(c, livery)), wheels: wheels(0), wheelsLod: wheels(1),
+    const gl = this.gl, stripe = livery.stripe || [0.95, 0.12, 0.12];
+    const wheels = lod => [[.30, -1], [.30, 1], [.38, -1], [.38, 1]].map(([width, side], index) => upload(gl, car.history ? buildHistoricalWheel(car, index < 2, side, lod) : buildWheel(width, side, livery.secondary, stripe, lod)));
+    const flaps = car.history ? buildHistoricalFlaps(car, livery, 1).map(flap => ({ ...flap, mesh: upload(gl, flap.mesh) })) : [];
+    const fanPart = car.history && buildHistoricalFan(car, livery, 1);
+    const fan = fanPart ? { ...fanPart, mesh: upload(gl, fanPart.mesh) } : null;
+    m = { car, livery, flaps, fan, lod0: upload(gl, buildCarLOD0(car, livery)), lod1: upload(gl, buildCarLOD1(car, livery)), wheels: wheels(0), wheelsLod: wheels(1),
       glow: upload(gl, buildSoftQuad(1.2, 2.8, 0.02, [...livery.accent, 0.09])), trail: { tail: [1.0, 0.06, 0.16], tip: livery.secondary } };
-    this.models.set(livery.id, m);
+    this.models.set(key, m);
     return m;
   }
 
   invalidateModel(id) {
     const m=this.models.get(id);if(!m)return;const gl=this.gl;
-    for(const mesh of [m.lod0,m.lod1,m.glow,...m.wheels,...m.wheelsLod]){gl.deleteBuffer(mesh.vb);gl.deleteBuffer(mesh.ib);gl.deleteVertexArray(mesh.vao);}
+    for(const mesh of [m.lod0,m.lod1,m.glow,...m.wheels,...m.wheelsLod,...m.flaps.map(flap=>flap.mesh)]){gl.deleteBuffer(mesh.vb);gl.deleteBuffer(mesh.ib);gl.deleteVertexArray(mesh.vao);}
+    if (m.fan) { gl.deleteBuffer(m.fan.mesh.vb); gl.deleteBuffer(m.fan.mesh.ib); gl.deleteVertexArray(m.fan.mesh.vao); }
     this.models.delete(id);
   }
   resize(pixelRatio) {
@@ -969,14 +977,29 @@ export class Renderer {
   }
   // car: { pose, model, brakes[4] (0..1 glow), ghost }
   _drawCar(prog, car, eye, lodFar) {
-    const c = this.car, p = car.pose, mdl = car.model, a = c.wheelbase * (1 - c.frontWeight), b = c.wheelbase * c.frontWeight;
+    const p = car.pose, mdl = car.model, c = mdl.car, a = c.wheelbase * (1 - c.frontWeight), b = c.wheelbase * c.frontWeight;
     const far = lodFar || Math.hypot(p.x - eye[0], p.z - eye[2]) > 45, ghost = car.ghost;
     this._draw(prog, far ? mdl.lod1 : mdl.lod0, M4.fromPose(this.model, p.x, ghost ? 0 : -p.h, p.z, p.yaw, ghost ? 0 : p.pitch, ghost ? 0 : p.roll));
+    if (mdl.flaps.length || mdl.fan) {
+      this.flapBody ||= M4.create();
+      this.flapLocal ||= M4.create();
+      this.flapBody.set(this.model);
+      for (const flap of mdl.flaps) {
+        M4.fromPose(this.flapLocal, 0, flap.y, flap.z, 0, car.straightMode ? -.20 : 0, 0);
+        M4.mul(this.model, this.flapBody, this.flapLocal);
+        this._draw(prog, flap.mesh, this.model);
+      }
+      if (mdl.fan) {
+        M4.fromPose(this.flapLocal, 0, mdl.fan.y, mdl.fan.z, 0, 0, car.fanAngle || 0);
+        M4.mul(this.model, this.flapBody, this.flapLocal);
+        this._draw(prog, mdl.fan.mesh, this.model);
+      }
+    }
     const sy = Math.sin(p.yaw), cy = Math.cos(p.yaw), gl = this.gl;
     const corners = [[-c.trackFront / 2, a], [c.trackFront / 2, a], [-c.trackRear / 2, -b], [c.trackRear / 2, -b]];
     for (let i = 0; i < 4; i++) {
       const [lx, lz] = corners[i];
-      const y = 0.33 + (ghost ? 0 : (p.road ? p.road[i] : 0));
+      const y = (c.history ? c.wheelRadius : .33) + (ghost ? 0 : (p.road ? p.road[i] : 0));
       if (prog === this.main) gl.uniform1f(prog.u.uBrake, car.brakes ? car.brakes[i] : 0);
       this._draw(prog, (far ? mdl.wheelsLod : mdl.wheels)[i], M4.fromPose(this.model, p.x + cy * lx + sy * lz, y, p.z - sy * lx + cy * lz, p.yaw + (i < 2 ? p.steer : 0), ghost ? 0 : (p.spin ? p.spin[i] : 0), 0));
     }

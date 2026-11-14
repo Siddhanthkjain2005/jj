@@ -26,6 +26,8 @@ import { OpenlineCampaign } from './openline.js';
 import { StoryCareerClient } from './story-career.js';
 import { getRide } from '../sim/rides.js';
 import { getCircuit } from '../sim/circuits.js';
+import { TimePortal } from './time-portal.js';
+import { historicalEye } from './history-model.js';
 
 const SIM_DT = 1 / 120, MAX_STEPS = 8;
 const $ = (id) => document.getElementById(id);
@@ -134,23 +136,26 @@ class Game {
     };
     document.body.classList.toggle('native-android', !!window.NativeBridge);
     this.lobby = new LobbyMotion(this);
+    this.portal = new TimePortal(this);
     this.wireUi();
     this.pad.wire(); this.campaign.wire(); this.storyCareer.wire();
-    this.show(window.NativeBridge ? 'hub' : 'title');
-    if (!this.juice.reduced()) this.juice.intro(); else document.getElementById('intro')?.remove();
+    const openPortal = new URLSearchParams(location.search).get('view') === 'time-portal';
+    this.show(openPortal ? 'time-portal' : window.NativeBridge ? 'hub' : 'title');
+    if (!openPortal && !this.juice.reduced()) this.juice.intro(); else document.getElementById('intro')?.remove();
     document.addEventListener('visibilitychange', () => { if (document.hidden && this.mode === 'race' && !this.paused) this.pause(); });
     window.addEventListener('resize', () => this.layoutCheck());
     requestAnimationFrame((t) => this.frame(t));
     window.__vv = this; // exposed for automated smoke tests and debugging
   }
 
-  livery() { if (this.save.data.livery === 'custom') return personalLivery(this.save.data.customLivery); const paints=this.veh?.car?.liveries||CAR_VX1.liveries;return paints.find(l=>l.id===this.save.data.livery)||paints[0]; }
-  assists() { return this.school ? { ...ASSIST_PRESETS.racer, autoReverse: false } : this.save.data.assists; }
+  livery() { if (this.veh?.car?.history) return this.veh.car.liveries[0]; if (this.save.data.livery === 'custom') return personalLivery(this.save.data.customLivery); const paints=this.veh?.car?.liveries||CAR_VX1.liveries;return paints.find(l=>l.id===this.save.data.livery)||paints[0]; }
+  assists() { return this.portal?.session?.assists || (this.school ? { ...ASSIST_PRESETS.racer, autoReverse: false } : this.save.data.assists); }
   isRace() { return !!(this.race && this.race.mode === 'race'); }
 
-  configureDrive(rideId='vx1',circuitId='harbor_loop',carOverride=null) {
-    const ride=getRide(rideId),circuit=getCircuit(circuitId),car=carOverride||ride.car;
-    const signature=JSON.stringify([ride.id,circuit.id,car]);
+  configureDrive(rideId='vx1',circuitId='harbor_loop',carOverride=null,circuitOverride=null) {
+    const ride=getRide(rideId),circuit=circuitOverride||getCircuit(circuitId),car=carOverride||ride.car;
+    const activeRideId=car.history ? car.id : ride.id;
+    const signature=JSON.stringify([activeRideId,circuit.id,circuit.world,car]);
     if(this.driveSignature===signature)return true;
     const old={track:this.track,world:this.world,veh:this.veh,ride:this.baseRideId,circuit:this.currentCircuitId};
     this.clearRivals();this.renderer?.dispose();
@@ -158,7 +163,7 @@ class Game {
       const track=new Track(circuit.track,circuit.world,car),veh=new Vehicle(car,circuit.world,track);
       veh.reset(track.def.lineS+18,0);
       this.renderer=new Renderer($('gl'),track,car);this.track=track;this.veh=veh;this.world=circuit.world;
-      this.baseRideId=ride.id;this.currentCircuitId=circuit.id;this.driveSignature=signature;
+      this.baseRideId=activeRideId;this.currentCircuitId=circuit.id;this.driveSignature=signature;
     } catch(error) {
       this.track=old.track;this.world=old.world;this.veh=old.veh;
       this.renderer=new Renderer($('gl'),old.track,old.veh.car);this.toast('This ride could not load. Your previous ride is restored.');
@@ -200,13 +205,13 @@ class Game {
     this.renderMs = performance.now() - t0;
     if (this.mode === 'race' && !this.paused) {
       this.perf.push(dtReal * 1000, this.simMs, this.renderMs, this.steps);
-      this.hudT += dtReal; if (this.hudT > 0.05) { this.hudT = 0; this.updateHud(); }
+      this.hudT += dtReal; if (this.hudT > 0.05) { this.hudT = 0; this.updateHud(); if (this.portal.session) this.portal.updateHud(); }
       this.telT += dtReal; if (this.S.showTelemetry && this.telT > 0.066) { this.telT = 0; this.telemetry.draw(this.veh, this.driver.out, this.rawLast || this.raw0, this.S.units, { simMs: this.simMs, steps: this.steps }); }
       this.adaptScale();
       if (this.finishT !== null && this.time - this.finishT > 4.5) { this.finishT = null; this.finishSession(); }
     }
     if (this.S.showPerf && (this.time - (this._perfT || 0)) > 0.5) { this._perfT = this.time; this.updatePerf(); }
-    this.audio.update({ rpm: this.veh.rpm, throttle: this.driver.out.throttle * this.veh.tcsFactor, speed: Math.abs(this.veh.forwardSpeed), slip: Math.max(...this.veh.wheels.map((w) => w.slipNorm)), curb: this.veh.wheels.some((w) => w.surface === 'curb') && Math.abs(this.veh.forwardSpeed) > 2 ? 1 : 0, gear: this.veh.gear, aLong: this.veh.aLong, running: this.mode === 'race' && !this.paused });
+    this.audio.update({ rpm: this.veh.rpm, history: this.veh.car.history, spool: this.veh.turboSpool, electricKW: this.veh.electricKW, throttle: this.driver.out.throttle * this.veh.tcsFactor, speed: Math.abs(this.veh.forwardSpeed), slip: Math.max(...this.veh.wheels.map((w) => w.slipNorm)), curb: this.veh.wheels.some((w) => w.surface === 'curb') && Math.abs(this.veh.forwardSpeed) > 2 ? 1 : 0, gear: this.veh.gear, aLong: this.veh.aLong, running: this.mode === 'race' && !this.paused });
     this.rivalAudio();
     requestAnimationFrame((t) => this.frame(t));
   }
@@ -244,6 +249,10 @@ class Game {
       if (r.ai.needsReset) { r.ai.needsReset = false; const p = this.track.project(r.veh.x, r.veh.z, -1, {}); r.veh.reset(p.s - 2, 0); r.prev = snapshot(r.veh, r.prev); }
     }
     const ctl = this.autopilot ? this.autopilot.process(SIM_DT, veh, this.track, this.field ? this.field.entries : []) : this.driver.process(SIM_DT, raw, veh, this.track, a, { speedRef: this.S.steerSpeedRef, linearity: 1 });
+    if (this.portal.session && !this.autopilot) {
+      ctl.deployEnergy = this.portal.session.deploy;
+      ctl.enableStraight = this.portal.session.straight;
+    }
     const gearBefore = veh.gear;
     veh.step(SIM_DT, ctl);
     if (this.rivals.length) { const all = [veh, ...this.rivals.map((r) => r.veh)]; resolveCarContacts(all); applySlipstream(all); }
@@ -310,10 +319,10 @@ class Game {
     const info = { speed: this.veh.forwardSpeed, aLat: this.veh.aLat, aLong: this.veh.aLong, curb: this.veh.wheels.some((w) => w.surface === 'curb'), impact: this.lastImpact || 0 };
     this.lastImpact = 0;
     const motion = !this.S.reducedMotion && this.S.motion;
-    const cam = this.cam.update(dt, camMode, pose, info, { fov: this.S.fov, shake: this.S.shake, reducedMotion: !motion, aspect: R.canvas.clientWidth / Math.max(1, R.canvas.clientHeight), photo: this.photo, lobbyAngle: this.lobbyAngle || 0, lobbySide: this.screen === 'garage' ? -1.85 : 1.6, orbitSide: this.screen === 'prep' ? 0.25 : undefined });
+    const cam = this.cam.update(dt, camMode, pose, info, { cockpit: historicalEye(this.veh.car), fov: this.S.fov, shake: this.S.shake, reducedMotion: !motion, aspect: R.canvas.clientWidth / Math.max(1, R.canvas.clientHeight), photo: this.photo, lobbyAngle: this.lobbyAngle || 0, lobbySide: this.screen === 'garage' ? -1.85 : 1.6, orbitSide: this.screen === 'prep' ? 0.25 : undefined });
     const playerModel = R.carModel(this.livery());
-    const cars = [{ id: 'player', pose, model: playerModel, brakes: brakeGlow(this.veh) }];
-    for (const r of this.rivals) { r.pose = lerpPose(r.prev, r.curr, alpha, r.pose || {}); cars.push({ id: r.id, pose: r.pose, model: R.carModel(r.livery), brakes: brakeGlow(r.veh) }); }
+    const cars = [{ id: 'player', pose, model: playerModel, brakes: brakeGlow(this.veh), straightMode: this.veh.straightMode, fanAngle: this.veh.fanAngle }];
+    for (const r of this.rivals) { r.pose = lerpPose(r.prev, r.curr, alpha, r.pose || {}); cars.push({ id: r.id, pose: r.pose, model: R.carModel(r.livery, r.historyCar), brakes: brakeGlow(r.veh), straightMode: r.veh.straightMode, fanAngle: r.veh.fanAngle }); }
     let ghost = null;
     if (racing && !this.isRace() && this.pbGhost && this.race && this.race.lapStart !== null) {
       ghost = ghostPoseAt(this.pbGhost, this.race.currentLapTime(this.veh.time + (this.paused ? 0 : this.acc)), this.ghostPose);
@@ -324,10 +333,11 @@ class Game {
     // effects from simulation state (trails, sparks, smoke, exhaust); they age on simulation time
     const fxCars = [this.fxCar('player', pose, this.veh, this.autopilot ? this.autopilot.input.out.throttle : this.driver.out.throttle)];
     for (const r of this.rivals) fxCars.push(this.fxCar(r.id, r.pose, r.veh, r.ai.input.out.throttle));
-    const rain = this.S.weather === 'clear' ? 0 : 1;
+    const condition = this.portal.session?.condition;
+    const rain = condition ? { dry: 0, damp: .42, rain: 1 }[condition] : this.S.weather === 'clear' ? 0 : 1;
     R.updateFx(racing && !this.paused ? dt : 0, fxCars, simT, { active: racing, player: { pose, speed: u }, streaks: motion, rain });
     this.fxHits.forEach((l) => { l.length = 0; }); this.gearEvents.clear();
-    const trailCols = (id) => { const r = this.rivals.find((x) => x.id === id); return r ? R.carModel(r.livery).trail : playerModel.trail; };
+    const trailCols = (id) => { const r = this.rivals.find((x) => x.id === id); return r ? R.carModel(r.livery, r.historyCar).trail : playerModel.trail; };
     const mission=this.storyCareer.activeMission,gateS=this.storyCareer.run?.nextGateS;
     const careerGate=this.storyCareer.active&&['sprint','checkpoint'].includes(mission?.type)&&Number.isFinite(gateS)?{s:gateS,next:(this.storyCareer.run.checkpoints||0)+1,total:mission.checkpoints}:null;
     R.render({ cam, cars, careerGate, rain, lobby: ['hub','garage','workshop'].includes(this.screen), beacon: this.save.data.openline.completed, focus: pose, showLine: racing && this.assists().showLine && !this.autopilot, time: this.time, fxTime: simT,
@@ -345,7 +355,7 @@ class Game {
     for (const r of this.rivals) { const d = Math.hypot(r.veh.x - this.veh.x, r.veh.z - this.veh.z); if (d < bd) { bd = d; best = r; } }
     if (!best || bd > 60) { this.audio.rival(null); return; }
     const dx = best.veh.x - this.veh.x, dz = best.veh.z - this.veh.z, closing = -((best.veh.vx - this.veh.vx) * dx + (best.veh.vz - this.veh.vz) * dz) / Math.max(bd, 0.1);
-    this.audio.rival({ rpm: best.veh.rpm, dist: bd, closing });
+    this.audio.rival({ rpm: best.veh.rpm, history: best.veh.car.history, dist: bd, closing });
   }
 
   qualityName() {
@@ -383,9 +393,12 @@ class Game {
       if (raw.telemetry) { this.S.showTelemetry = !this.S.showTelemetry; this.applySettings(); this.save.save(); }
       if (raw.camera) { this.S.camera = this.S.camera === 'chase' ? 'cockpit' : 'chase'; this.cam.snap(); this.save.save(); }
       if (raw.recover && this.countdown <= 0 && !this.autopilot) this.recover();
+      if (raw.deploy && this.veh.car.history?.tech.hybrid) this.portal.toggle('deploy');
+      if (raw.straight && this.veh.car.history?.tech.activeAero) this.portal.toggle('straight');
       return;
     }
     if (raw.back) { const back = document.querySelector('.screen.active [data-back]'); if (back) back.click(); }
+    if (this.screen === 'time-portal' && document.activeElement?.tagName === 'SELECT' && (raw.navNext || raw.navPrev) && !this.input.padConnected) return;
     this.menuNav(raw);
   }
   menuNav(raw) {
@@ -404,6 +417,11 @@ class Game {
   // ---------- screens ----------
   show(id) {
     const previous = this.screen;
+    if (this.mode === 'menu' && ['hub','garage','world','career','team','records','title'].includes(id) && this.veh.car.history) {
+      this.portal.session = null;
+      const progress = progressOf(this.save.data);
+      this.configureDrive(progress.ride, progress.circuit, selectedCar(this.save.data));
+    }
     document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('active', s.id === 'scr-' + id));
     this.screen = id;
     this.navigation.onScreen(id, previous);
@@ -425,6 +443,8 @@ class Game {
     this.pad.render(id, id !== previous);
     this.campaign.render(id);
     this.storyCareer.render(id);
+    if (id === 'time-portal') this.portal.open();
+    this.portal.updateHud();
     $('academy-hud').hidden = !(this.school && this.mode === 'race' && !this.paused);
     if (this.school && this.mode === 'race' && !this.paused) $('hud-coach').classList.remove('on');
     const first = document.querySelector('.screen.active .btn.primary, .screen.active button');
@@ -486,15 +506,16 @@ class Game {
     $('btn-pause-settings').addEventListener('click', () => { this.settingsReturn = 'pause'; this.show('settings'); });
     $('btn-end').addEventListener('click', () => this.finishSession());
     $('btn-retry').addEventListener('click', () => this.startRace(this.lastMode || 'timetrial'));
-    $('btn-results-garage').addEventListener('click', () => { this.mode = 'menu'; this.clearRivals(); this.raceOverride = null; this.show('hub'); });
+    $('btn-results-garage').addEventListener('click', () => { const historical = !!this.portal.session; this.mode = 'menu'; this.clearRivals(); this.raceOverride = null; this.portal.session = null; this.show(historical ? 'time-portal' : 'hub'); });
     $('btn-settings-back').addEventListener('click', () => { const r = this.settingsReturn || 'garage'; this.settingsReturn = null; this.show(r); });
     $('btn-copy-tel').addEventListener('click', () => this.copyTelemetry());
     $('dialog-cancel').addEventListener('click', () => { $('dialog').hidden = true; });
     $('dialog-ok').addEventListener('click', () => { $('dialog').hidden = true; this.save.reset(); this.S = this.save.data.settings; this.input.bindings = { ...DEFAULT_KEYS }; this.applySettings(); this.renderSettings(); this.toast('Saved data cleared.'); });
   }
   navTo(where) {
-    if (this.mode === 'race' && ['hub','story','universe','garage','event','team','academy','lab','explorer','records','career','workshop','world'].includes(where)) {
+    if (this.mode === 'race' && ['hub','story','universe','garage','event','team','academy','lab','explorer','records','career','workshop','world','time-portal'].includes(where)) {
       this.storyCareer.abort();this.careerMission=null;
+      this.portal.session = null;
       this.campaign.leaveDrive(); this.input.reset(); this.mode='menu'; this.paused=false; this.school=null;
       this.clearRivals(); this.audio.mute(true); this.acc=0; this.cam.snap();
     }
@@ -670,8 +691,10 @@ class Game {
     const career=this.storyCareer?.launching?this.careerMission:null;
     if(career||this.campaign?.launching||mode!=='race')this.raceOverride=null;
     const over=this.raceOverride;
-    const a = this.assists(), cls = assistClass(a), laps = career?.laps || (mode === 'race' ? Number(over?.laps || this.S.raceLaps || 3) : 3);
-    const fieldSize=career?Math.max(2,Math.min(8,career.fieldSize||8)):8;
+    const portal = this.portal.session;
+    if (portal) portal.settled = false;
+    const a = this.assists(), cls = assistClass(a), laps = portal ? 3 : career?.laps || (mode === 'race' ? Number(over?.laps || this.S.raceLaps || 3) : 3);
+    const fieldSize=portal ? 6 : career?Math.max(2,Math.min(8,career.fieldSize||8)):8;
     const playerGrid=Math.min(PLAYER_GRID,fieldSize-1);
     this.clearRivals();
     this.race = new RaceSession(this.track, mode, { laps });
@@ -681,16 +704,18 @@ class Game {
       this.field = new RaceField(this.track, laps);
       this.field.add(this.veh, { id: 'player', code: 'YOU', name: 'You', team: this.veh.car.name+' · ' + this.livery().name, color: this.livery().secondary, player: true });
       const base = Number.isFinite(career?.pace)?career.pace:AI_LEVELS[over?.ai || this.S.aiLevel || 'medium'];
-      const rs = this.pad.rivalSetup(career || this.campaign?.launching); this.rivalTrack = rs.track;
+      const rs = portal ? { car: portal.rival, track: portal.rival === this.veh.car ? this.track : new Track(this.track.def, this.world, portal.rival) } : this.pad.rivalSetup(career || this.campaign?.launching);
+      this.rivalTrack = rs.track;
       let slot = 0;
       RIVALS.slice(0,fieldSize-1).forEach((original, k) => {
         const lead={neri:['NER','Neri Vale','Openline Garage'],juno:['JUN','Juno Venn','Venn Touring'],sola:['SOL','Sola Kest','Crownline']}[career?.rival]||['SOL','Sola Kest','Crownline'];
         const rv=(this.campaign.launching||career) && k===0 ? { ...original, code:lead[0],name:lead[1],team:lead[2],livery:{id:'sola',primary:[.92,.91,.87],secondary:[.92,.28,.1],accent:[.22,.1,.28],stripe:[.92,.28,.1]} } : original;
         if (slot === playerGrid) slot++;
         const veh = new Vehicle(rs.car, this.world, rs.track); const [gs, go] = grid(slot++); veh.reset(gs, go);
-        const r = { id: rv.code, ...rv, veh, ai: new AIDriver({ pace: base + PACE_SPREAD[k], seed: 1000 + k * 77 }), prev: snapshot(veh, {}), curr: snapshot(veh, {}) };
-        r.entry = this.field.add(veh, { id: rv.code, code: rv.code, name: rv.name, team: rv.team, color: rv.livery.secondary });
-        this.renderer.carModel(rv.livery);
+        const r = { id: rv.code, ...rv, veh, historyCar: portal ? rs.car : undefined, ai: new AIDriver({ pace: base + PACE_SPREAD[k], seed: 1000 + k * 77 }), prev: snapshot(veh, {}), curr: snapshot(veh, {}) };
+        if (portal) r.team = rs.car.name;
+        r.entry = this.field.add(veh, { id: rv.code, code: rv.code, name: rv.name, team: r.team, color: rv.livery.secondary });
+        this.renderer.carModel(rv.livery, r.historyCar);
         this.rivals.push(r);
       });
       this.countTotal = 5 + 0.6 + Math.random() * 1.0; // five lights, then a random hold before lights out
@@ -703,7 +728,7 @@ class Game {
     this.driver = new DriverInput();
     this.prev = snapshot(this.veh, this.prev); this.curr = snapshot(this.veh, this.curr);
     this.acc = 0; this.paused = false; this.mode = 'race'; this.lastPos = 0; this._goShown = true;
-    const pb = this.pbFor(cls);
+    const pb = portal ? null : this.pbFor(cls);
     this.pbGhost = pb && pb.ghost && mode !== 'race' ? decodeGhost(pb.ghost) : null; this.pbTime = pb ? pb.time : null; this.pbSectors = pb ? pb.sectors : null;
     this.sessionStartPb = this.pbTime;
     this.sessionBestSectors = [Infinity, Infinity, Infinity];
@@ -713,7 +738,11 @@ class Game {
     $('hud-flag').hidden = true; $('hud-delta').textContent = '';
     $('hud-best').textContent = mode === 'race' ? `${laps} LAPS · ${(over?.ai || this.S.aiLevel || 'medium').toUpperCase()}` : (this.pbTime ? `BEST ${fmtTime(this.pbTime)}` : 'NO BEST YET');
     $('hud-mode').textContent = (over?.cup ? over.label.toUpperCase()+' · ' : mode === 'practice' ? 'PRACTICE · ' : mode === 'race' ? 'GRAND PRIX · ' : 'TIME TRIAL · ')+this.track.def.name.toUpperCase();
-    this.pad.sessionStart(mode, !!(career || this.campaign?.launching));
+    if (portal) {
+      this.pad.session = null;
+      $('hud-mode').textContent = `${this.veh.car.history.year} · ${this.track.def.name}`;
+      $('hud-best').textContent = mode === 'race' ? '3 LAPS · 5 AI RIVALS' : 'TIME PORTAL · PRACTICE';
+    } else this.pad.sessionStart(mode, !!(career || this.campaign?.launching));
     this.buildTower();
     this.show('none');
     this._goShown = mode !== 'race' && mode !== 'timetrial';
@@ -752,6 +781,8 @@ class Game {
       if (this.isRace()) { // races do not set personal bests (slipstream and traffic change lap times)
         if (race.targetLaps - race.laps.length === 1) this.banner('FINAL LAP', 'final', 1800);
         this.toast(`Lap ${lap.n}: ${fmtTime(lap.time)}${lap.valid ? '' : ' — invalid (' + lap.reason + ')'}`);
+      } else if (lap.valid && this.portal.session) {
+        this.toast(`Valid historical lap · ${fmtTime(lap.time)}`);
       } else if (lap.valid) {
         const key = this.pbKey(lap.assist);
         const pb = this.save.data.pbs[key];
@@ -765,12 +796,13 @@ class Game {
           this.toast(delta === null ? `First valid lap: ${fmtTime(lap.time)}. Ghost saved.` : `New personal best ${fmtTime(lap.time)} (${fmtDelta(delta)})`);
         } else this.toast(`Lap ${lap.n}: ${fmtTime(lap.time)} (${fmtDelta(lap.time - pb.time)} to best)`);
       } else this.toast(`Lap ${lap.n}: ${fmtTime(lap.time)} — invalid (${lap.reason})`);
+      if (this.portal.session) return;
       this.pad.onLap(lap);
       this.save.data.history.unshift({ t: lap.time, valid: lap.valid, cls: lap.assist, mode: race.mode, date: new Date().toISOString() });
       this.save.data.history = this.save.data.history.slice(0, 30);
       this.save.save();
       $('hud-sectors').querySelectorAll('span').forEach((s, i) => { s.className = ''; s.textContent = `S${i + 1}`; });
-      if (!this.isRace() && race.finished) setTimeout(() => this.finishSession(), 900);
+      if (!this.isRace() && race.finished) setTimeout(() => { if (this.race === race && this.mode === 'race') this.finishSession(); }, 900);
       else if (!this.isRace() && a.autoThrottle) this.coach('Lap complete. Try Racer assists when you feel ready.', 3, 'lap1');
     }
   }
@@ -815,7 +847,7 @@ class Game {
       $('results-title').textContent = me.finished ? (me.pos === 1 ? 'Victory' : `Finished P${me.pos}`) : 'Race ended early';
       $('results-table').innerHTML = `<thead><tr><th>Pos</th><th>Driver</th><th>Time / gap</th><th>Best lap</th></tr></thead><tbody>${rows}</tbody>`;
       $('results-laps').innerHTML = lapsTable; $('results-laps-wrap').hidden = false;
-      $('results-summary').textContent = me.finished ? `P${me.pos} of ${order.length}${me.pos === 1 ? ' — you beat all seven AI rivals.' : `, ${me.gap.toFixed(3)} s behind the winner.`}` : `You were P${me.pos} when the race ended.`;
+      $('results-summary').textContent = me.finished ? `P${me.pos} of ${order.length}${me.pos === 1 ? ` · ${order.length - 1} AI rivals beaten` : `, ${me.gap.toFixed(3)} s behind the winner.`}` : `You were P${me.pos} when the race ended.`;
       $('results-note').textContent = `Race time includes the run from the grid to the line. Classification comes from fixed ${Math.round(1 / SIM_DT)} Hz steps, interpolated to the line; cars still running when you finished are ranked by distance covered with an estimated gap. Rivals are computer-controlled (not other players). Races do not set personal bests.`;
     } else {
       $('results-title').textContent = race.mode === 'practice' ? 'Practice complete' : 'Time trial complete';
@@ -828,6 +860,7 @@ class Game {
         : (pb ? `Your ${cls} best is still ${fmtTime(pb.time)}.` : 'Finish a valid lap to set your first best.');
       $('results-note').textContent = `Lap times come from fixed ${Math.round(1 / SIM_DT)} Hz simulation steps, interpolated to the line, so they do not depend on frame rate. Dropped simulation steps this session: ${this.perf.dropped}.`;
     }
+    if (this.portal.session) { this.portal.finish(); this.show('results'); return; }
     const me=this.field?.entries[0];
     const earned=awardSession(this.save.data.career,{id:this.sessionId,validLaps:race.laps.filter(l=>l.valid).length,personalBest:race.laps.some(l=>l.pb),finishedRace:!!me?.finished,position:me?.pos});
     this.save.data.career=earned.career;this.save.save();
